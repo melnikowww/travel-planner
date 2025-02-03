@@ -3,6 +3,9 @@ package main
 import (
 	"database/sql"
 	_ "github.com/gin-gonic/gin"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"log"
 	"travelPlanner/internal/config"
@@ -21,6 +24,11 @@ func main() {
 	db, err = sql.Open("postgres", cfg.DB.DSN)
 	if err != nil {
 		log.Fatalf("Ошибка подключения к БД: %v ", err)
+	}
+
+	_, err = migrate.New("file://migrations", cfg.DB.DSN)
+	if err != nil {
+		log.Fatalf("Migration failed: %v", err)
 	}
 
 	handler := handlers.UserHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}

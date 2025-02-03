@@ -23,11 +23,13 @@ func (repo *UserRepository) FindById(id int) (*models.User, error) {
 }
 
 func (repo *UserRepository) CreateUser(person *models.User) int {
-	result, err := repo.DB.Exec("INSERT INTO persons (name, email) VALUES ($1, $2)", person.Name, person.Email)
+	var id int
+	err := repo.DB.QueryRow("INSERT INTO persons (name, email) VALUES ($1, $2) RETURNING id", person.Name, person.Email).Scan(&id)
 	if err != nil {
-		log.Fatalf("Database error: %v", err)
+		log.Printf("Database error: %v", err)
+		return -1 // или другое значение, указывающее на ошибку
 	}
-	id, _ := result.LastInsertId()
-	person.ID = int(id)
-	return person.ID
+	log.Printf("ID: %v", id)
+	person.ID = id
+	return id
 }

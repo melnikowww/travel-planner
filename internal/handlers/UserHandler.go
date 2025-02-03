@@ -19,11 +19,7 @@ func (h *UserHandler) GetUserHandler(c *gin.Context) {
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
-
-	log.Println("Id is present: " + key)
-
 	person, err := h.UserService.GetUser(id)
-
 	if err != nil {
 		c.String(http.StatusConflict, err.Error())
 		log.Fatalf("Error DB: %v", err)
@@ -36,8 +32,8 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 	}
-	//id :=
-	h.UserService.CreateUser(&user)
+	id := h.UserService.CreateUser(&user)
+	user.ID = id
 	c.JSON(http.StatusOK, gin.H{"User": user})
 }
 
