@@ -13,7 +13,7 @@ type Config struct {
 }
 
 func Load() *Config {
-	viper.SetConfigFile("config.yaml")
+	viper.SetConfigFile("internal/config/config.yaml")
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Ошибка чтения конфигурации: %v", err)
 	}
