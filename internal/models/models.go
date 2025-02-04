@@ -1,44 +1,44 @@
 package models
 
 type User struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID    int    `json:"id" example:"1"`
+	Name  string `json:"name" example:"Alex"`
+	Email string `json:"email" example:"alex@example.com"`
 }
 
 type Car struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	EquipmentID []int  `json:"equipmentID"`
-	GoodsID     []int  `json:"goodsID"`
+	ID          int    `json:"id" example:"1"`
+	Name        string `json:"name" example:"Toyota Land Cruiser 100"`
+	EquipmentID []int  `json:"equipmentID" example:"1,2,3"`
+	GoodsID     []int  `json:"goodsID" example:"4,5"`
 }
 
 type Expedition struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	PointsID []int  `json:"pointsID"`
-	CrewID   []int  `json:"crewID"`
+	ID       int    `json:"id" example:"1"`
+	Name     string `json:"name" example:"Karjala"`
+	PointsID []int  `json:"pointsID" example:"1,2"`
+	CrewID   []int  `json:"crewID" example:"3,4"`
 }
 
 type Point struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Place string `json:"place"`
+	ID    int    `json:"id" example:"1"`
+	Name  string `json:"name" example:"Gas Station"`
+	Place string `json:"place" example:"Karelia, Russia"`
 }
 
 type Crew struct {
-	ID           int   `json:"id"`
-	CarID        int   `json:"carID"`
-	MembersID    []int `json:"membersID"`
-	ExpeditionID int   `json:"expeditionID"`
+	ID           int   `json:"id" example:"1"`
+	CarID        int   `json:"carID" example:"13"`
+	MembersID    []int `json:"membersID" example:"1,2"`
+	ExpeditionID int   `json:"expeditionID" example:"1"`
 }
 
 type Equipment struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `json:"id" example:"1"`
+	Name string `json:"name" example:"GPS Navigator"`
 }
 
 type Good struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `json:"id" example:"1"`
+	Name string `json:"name" example:"First Aid Kit"`
 }

@@ -1,0 +1,146 @@
+basePath: /
+definitions:
+  models.User:
+    properties:
+      email:
+        example: alex@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Alex
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  title: Travel Planner
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Проверка работоспособности API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Hi
+          schema:
+            type: string
+      summary: Hello endpoint
+  /users:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить пользователя по ID
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: User deleted
+          schema:
+            type: string
+        "400":
+          description: Invalid user ID
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+      summary: Delete user by ID
+    get:
+      consumes:
+      - application/json
+      description: Получить пользователя по ID. Если id не передан, получить всех
+        пользователей.
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "404":
+          description: User not found
+          schema:
+            type: string
+        "409":
+          description: Error fetching users
+          schema:
+            type: string
+      summary: Get user by ID
+    patch:
+      consumes:
+      - application/json
+      description: Обновить данные пользователя по ID
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "404":
+          description: User not found
+          schema:
+            type: string
+      summary: Update user by ID
+    post:
+      consumes:
+      - application/json
+      description: Создать нового пользователя
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Created user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "409":
+          description: User already exists
+          schema:
+            type: string
+      summary: Create a new user
+swagger: "2.0"
