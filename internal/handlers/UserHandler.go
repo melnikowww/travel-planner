@@ -7,21 +7,26 @@ import (
 	"strconv"
 	_ "travelPlanner/docs"
 	"travelPlanner/internal/models"
+	"travelPlanner/internal/security"
 	"travelPlanner/internal/services"
+	"travelPlanner/internal/utils"
 )
 
 type UserHandler struct {
 	UserService *services.UserService
 }
 
-// @Summary Get user by ID
-// @Description Получить пользователя по ID. Если id не передан, получить всех пользователей.
-// @Accept json
+// GetUserHandler Получение информации о пользователе(ях)
+// @Summary Получить пользователя/пользователей
+// @Description Возвращает конкретного пользователя по ID или всех пользователей, если ID не указан
+// @Tags Users
 // @Produce json
-// @Param id query int false "User ID"
-// @Success 200 {array} models.User "Success"
-// @Failure 404 {string} string "User not found"
-// @Failure 409 {string} string "Error fetching users"
+// @Param id query int false "ID пользователя"
+// @Success 200 {object} []models.User "Список пользователей"
+// @Success 200 {object} models.User "Данные пользователя"
+// @Failure 400 {string} string "Некорректный ID"
+// @Failure 404 {string} string "Пользователь не найден"
+// @Failure 500 {string} string "Внутренняя ошибка сервера"
 // @Router /users [get]
 func (h *UserHandler) GetUserHandler(c *gin.Context) {
 	key := c.Query("id")
@@ -29,59 +34,66 @@ func (h *UserHandler) GetUserHandler(c *gin.Context) {
 		users, err := h.UserService.GetAllUsers()
 		if err != nil {
 			c.JSON(http.StatusConflict, err)
-			return // Не забываем завершать выполнение функции
 		}
 		c.JSON(http.StatusOK, users)
-		return // Не забываем завершать выполнение функции
 	} else {
 		id, err := strconv.Atoi(key)
 		if err != nil {
 			log.Printf("Error: %v", err)
 			c.String(http.StatusBadRequest, "Invalid user ID")
-			return // Обработка ошибок
+			return
 		}
 		person, err := h.UserService.GetUser(id)
 		if err != nil {
 			c.String(http.StatusNotFound, err.Error())
 			log.Printf("Error DB: %v", err)
-			return // Обработка ошибок
+			return
 		}
-		c.JSON(http.StatusOK, person)
+		c.JSON(http.StatusOK, gin.H{"id": person.ID, "name": person.Name, "email": person.Email})
 	}
 }
 
-// @Summary Create a new user
-// @Description Создать нового пользователя
+// CreateUserHandler Создание нового пользователя
+// @Summary Создать пользователя
+// @Description Регистрация нового пользователя в системе
+// @Tags Users
 // @Accept json
 // @Produce json
-// @Param user body models.User true "User object"
-// @Success 200 {object} models.User "Created user"
-// @Failure 400 {string} string "Invalid input"
-// @Failure 409 {string} string "User already exists"
+// @Param user body models.User true "Данные пользователя"
+// @Success 201 {object} models.User "Созданный пользователь"
+// @Failure 400 {string} string "Некорректные входные данные"
+// @Failure 409 {string} string "Пользователь уже существует"
+// @Failure 500 {string} string "Ошибка хеширования пароля"
 // @Router /users [post]
 func (h *UserHandler) CreateUserHandler(c *gin.Context) {
 	var user models.User
+	var err error
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
-		return // Завершение функции
+		return
+	}
+	user.Password, err = security.HashPassword(user.Password)
+	if err != nil {
+		c.JSON(http.StatusConflict, "Password hash error")
 	}
 	id := h.UserService.CreateUser(&user)
 	if id != -1 {
 		user.ID = id
-		c.JSON(http.StatusOK, gin.H{"User": user})
+		c.JSON(http.StatusCreated, gin.H{"id": user.ID, "name": user.Name, "email": user.Email})
 	} else {
 		c.JSON(http.StatusConflict, "User already exists")
 	}
 }
 
-// @Summary Delete user by ID
-// @Description Удалить пользователя по ID
-// @Accept json
+// DeleteUserHandler Удаление пользователя
+// @Summary Удалить пользователя
+// @Description Удаление пользователя по ID
+// @Tags Users
 // @Produce json
-// @Param id query int true "User ID"
-// @Success 204 {string} string "User deleted"
-// @Failure 400 {string} string "Invalid user ID"
-// @Failure 404 {string} string "User not found"
+// @Param id query int true "ID пользователя"
+// @Success 204 "Пользователь удален"
+// @Failure 400 {string} string "Некорректный ID"
+// @Failure 404 {string} string "Пользователь не найден"
 // @Router /users [delete]
 func (h *UserHandler) DeleteUserHandler(c *gin.Context) {
 	key := c.Query("id")
@@ -99,15 +111,18 @@ func (h *UserHandler) DeleteUserHandler(c *gin.Context) {
 	c.Status(http.StatusNoContent) // Успешное удаление
 }
 
-// @Summary Update user by ID
-// @Description Обновить данные пользователя по ID
+// PatchUserHandler Обновление данных пользователя
+// @Summary Обновить пользователя
+// @Description Частичное обновление данных пользователя. Пароль будет автоматически хеширован.
+// @Tags Users
 // @Accept json
 // @Produce json
-// @Param id query int true "User ID"
-// @Param user body models.User true "User object"
-// @Success 200 {object} models.User "Updated user"
-// @Failure 400 {string} string "Invalid input"
-// @Failure 404 {string} string "User not found"
+// @Param id query int true "ID пользователя"
+// @Param user body models.User true "Обновляемые данные"
+// @Success 200 {object} models.User "Обновленные данные"
+// @Failure 400 {string} string "Некорректные данные"
+// @Failure 404 {string} string "Пользователь не найден"
+// @Failure 409 {string} string "Конфликт данных"
 // @Router /users [patch]
 func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 	var user models.User
@@ -115,34 +130,38 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 	id, err := strconv.Atoi(key)
 	if err != nil {
 		c.String(http.StatusBadRequest, "Invalid user ID")
-		return // Завершение функции
+		return
 	}
+
+	oldUser, err := h.UserService.GetUser(id)
+	if err != nil {
+		c.String(http.StatusNotFound, err.Error())
+	}
+
 	if err = c.ShouldBindJSON(&user); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
-		return // Завершение функции
+		return
+	}
+
+	user.Name = utils.FirstNonEmpty(user.Name, oldUser.Name)
+	user.Email = utils.FirstNonEmpty(user.Email, oldUser.Email)
+	if user.Password == "" {
+		user.Password = oldUser.Password
+	} else {
+		user.Password, err = security.HashPassword(user.Password)
 	}
 	user.ID = id
-	newUser, err := h.UserService.UpdateUser(&user)
+	updateUser, err := h.UserService.UpdateUser(&user)
 	if err != nil {
 		log.Printf("Update error: %v", err)
 		c.JSON(http.StatusConflict, err)
-		return // Завершение функции
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"Patched user": newUser})
-}
-
-// @Summary Hello endpoint
-// @Description Проверка работоспособности API
-// @Produce json
-// @Success 200 {string} string "Hi"
-// @Router / [get]
-func (h *UserHandler) HelloHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, "Hi")
+	c.JSON(http.StatusOK, gin.H{"id": updateUser.ID, "name": updateUser.Name, "email": updateUser.Email})
 }
 
 // RegisterRoutes registers all routes for the UserHandler
 func (h *UserHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
-	router.GET("/", h.HelloHandler)
 	router.GET("/users", h.GetUserHandler)
 	router.POST("/users", h.CreateUserHandler)
 	router.DELETE("/users", h.DeleteUserHandler)

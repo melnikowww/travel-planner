@@ -15,16 +15,176 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/points": {
             "get": {
-                "description": "Проверка работоспособности API",
+                "description": "Получить все точки или конкретную точку по ID",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Hello endpoint",
+                "tags": [
+                    "Points"
+                ],
+                "summary": "Получить точку/точки",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID точки",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Hi",
+                        "description": "Успешный ответ для одной точки",
+                        "schema": {
+                            "$ref": "#/definitions/models.Point"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Точка не найдена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавление новой географической точки",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Points"
+                ],
+                "summary": "Создать новую точку",
+                "parameters": [
+                    {
+                        "description": "Данные точки",
+                        "name": "point",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Point"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданная точка",
+                        "schema": {
+                            "$ref": "#/definitions/models.Point"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление точки по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Points"
+                ],
+                "summary": "Удалить точку",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID точки",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Точка удалена"
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Точка не найдена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частичное или полное обновление данных точки",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Points"
+                ],
+                "summary": "Обновить точку",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID точки",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Обновленные данные",
+                        "name": "point",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Point"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленная точка",
+                        "schema": {
+                            "$ref": "#/definitions/models.Point"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Точка не найдена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
                         "schema": {
                             "type": "string"
                         }
@@ -34,40 +194,43 @@ const docTemplate = `{
         },
         "/users": {
             "get": {
-                "description": "Получить пользователя по ID. Если id не передан, получить всех пользователей.",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Возвращает конкретного пользователя по ID или всех пользователей, если ID не указан",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get user by ID",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Получить пользователя/пользователей",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "User ID",
+                        "description": "ID пользователя",
                         "name": "id",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "Данные пользователя",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.User"
-                            }
+                            "$ref": "#/definitions/models.User"
                         }
                     },
-                    "404": {
-                        "description": "User not found",
+                    "400": {
+                        "description": "Некорректный ID",
                         "schema": {
                             "type": "string"
                         }
                     },
-                    "409": {
-                        "description": "Error fetching users",
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
                         "schema": {
                             "type": "string"
                         }
@@ -75,17 +238,20 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Создать нового пользователя",
+                "description": "Регистрация нового пользователя в системе",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Create a new user",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Создать пользователя",
                 "parameters": [
                     {
-                        "description": "User object",
+                        "description": "Данные пользователя",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -95,20 +261,26 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Created user",
+                    "201": {
+                        "description": "Созданный пользователь",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
-                        "description": "Invalid input",
+                        "description": "Некорректные входные данные",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "409": {
-                        "description": "User already exists",
+                        "description": "Пользователь уже существует",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка хеширования пароля",
                         "schema": {
                             "type": "string"
                         }
@@ -116,18 +288,18 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Удалить пользователя по ID",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Удаление пользователя по ID",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Delete user by ID",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Удалить пользователя",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "User ID",
+                        "description": "ID пользователя",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -135,19 +307,16 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "204": {
-                        "description": "User deleted",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "description": "Пользователь удален"
                     },
                     "400": {
-                        "description": "Invalid user ID",
+                        "description": "Некорректный ID",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "User not found",
+                        "description": "Пользователь не найден",
                         "schema": {
                             "type": "string"
                         }
@@ -155,24 +324,27 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Обновить данные пользователя по ID",
+                "description": "Частичное обновление данных пользователя. Пароль будет автоматически хеширован.",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Update user by ID",
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Обновить пользователя",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "User ID",
+                        "description": "ID пользователя",
                         "name": "id",
                         "in": "query",
                         "required": true
                     },
                     {
-                        "description": "User object",
+                        "description": "Обновляемые данные",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -183,19 +355,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Updated user",
+                        "description": "Обновленные данные",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
                     },
                     "400": {
-                        "description": "Invalid input",
+                        "description": "Некорректные данные",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "User not found",
+                        "description": "Пользователь не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
                         "schema": {
                             "type": "string"
                         }
@@ -205,6 +383,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Point": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "location": {
+                    "type": "string",
+                    "example": "69.164529, 35.138287"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Teriberka"
+                }
+            }
+        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -219,6 +414,10 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "example": "Alex"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password"
                 }
             }
         }

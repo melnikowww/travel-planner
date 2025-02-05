@@ -38,10 +38,11 @@ func main() {
 		log.Fatalf("Migration failed: %v", err)
 	}
 
-	handler := handlers.UserHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
-
+	userHandler := handlers.UserHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
+	pointsHandler := handlers.PointsHandler{PointsService: &services.PointsService{PointRepo: &repositories.PointsRepository{DB: db}}}
 	router := gin.Default()
-	router = handler.RegisterRoutes(router)
+	router = userHandler.RegisterRoutes(router)
+	router = pointsHandler.RegisterRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	err = router.Run("localhost:8081")

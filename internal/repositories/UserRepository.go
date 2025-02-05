@@ -15,7 +15,7 @@ func (repo *UserRepository) FindById(id int) (*models.User, error) {
 	err := repo.DB.QueryRow(
 		"SELECT * FROM persons WHERE id = $1",
 		id,
-	).Scan(&person.ID, &person.Name, &person.Email)
+	).Scan(&person.ID, &person.Name, &person.Email, &person.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (repo *UserRepository) FindByEmail(email string) (*models.User, error) {
 	err := repo.DB.QueryRow(
 		"SELECT * FROM persons WHERE email = $1",
 		&email,
-	).Scan(&person.ID, &person.Name, &person.Email)
+	).Scan(&person.ID, &person.Name, &person.Email, &person.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,8 @@ func (repo *UserRepository) GetAllUsers() ([]*models.User, error) {
 
 	for rows.Next() {
 		user := &models.User{} // Создаем новый экземпляр User
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
+		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+		if err != nil {
 			return nil, err
 		}
 		users = append(users, user) // Добавляем указатель на нового пользователя в список
@@ -59,12 +60,12 @@ func (repo *UserRepository) GetAllUsers() ([]*models.User, error) {
 
 func (repo *UserRepository) CreateUser(person *models.User) int {
 	var id int
-	err := repo.DB.QueryRow("INSERT INTO persons (name, email) VALUES ($1, $2) RETURNING id", person.Name, person.Email).Scan(&id)
+	err := repo.DB.QueryRow("INSERT INTO persons (name, email, password) VALUES ($1, $2, $3) RETURNING id",
+		person.Name, person.Email, person.Password).Scan(&id)
 	if err != nil {
 		log.Printf("Database error: %v", err)
 		return -1
 	}
-	log.Printf("ID: %v", id)
 	person.ID = id
 	return id
 }
@@ -83,6 +84,7 @@ func (repo *UserRepository) UpdateUser(user *models.User) (*models.User, error) 
 	if err != nil {
 		return nil, err
 	}
-	_, err = repo.DB.Exec("UPDATE persons SET name = $1, email = $2 WHERE id = $3;", user.Name, user.Email, user.ID)
+	_, err = repo.DB.Exec("UPDATE persons SET name = $1, email = $2, password = $3 WHERE id = $4;",
+		user.Name, user.Email, user.Password, user.ID)
 	return repo.FindByEmail(user.Email)
 }
