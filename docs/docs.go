@@ -15,6 +15,186 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/equip": {
+            "get": {
+                "description": "Получить список всего снаряжения или конкретный экземпляр по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equipment"
+                ],
+                "summary": "Получить снаряжение",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID снаряжения",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список снаряжения",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Equipment"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Снаряжение не найдено",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Создать новое снаряжение",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equipment"
+                ],
+                "summary": "Создать снаряжение",
+                "parameters": [
+                    {
+                        "description": "Данные снаряжения",
+                        "name": "equipment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Equipment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданное снаряжение",
+                        "schema": {
+                            "$ref": "#/definitions/models.Equipment"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удалить снаряжение по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equipment"
+                ],
+                "summary": "Удалить снаряжение",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID снаряжения",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Снаряжение удалено"
+                    },
+                    "400": {
+                        "description": "Неверный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Ошибка удаления",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частичное обновление данных снаряжения",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equipment"
+                ],
+                "summary": "Обновить снаряжение",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID снаряжения",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Обновляемые поля",
+                        "name": "equipment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Equipment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленное снаряжение",
+                        "schema": {
+                            "$ref": "#/definitions/models.Equipment"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Снаряжение не найдено",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Ошибка обновления",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/points": {
             "get": {
                 "description": "Получить все точки или конкретную точку по ID",
@@ -383,6 +563,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Equipment": {
+            "type": "object",
+            "properties": {
+                "expedition_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "GPS Navigator"
+                }
+            }
+        },
         "models.Point": {
             "type": "object",
             "properties": {

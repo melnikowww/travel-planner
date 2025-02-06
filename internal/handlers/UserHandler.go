@@ -143,8 +143,8 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 		return
 	}
 
-	user.Name = utils.FirstNonEmpty(user.Name, oldUser.Name)
-	user.Email = utils.FirstNonEmpty(user.Email, oldUser.Email)
+	user.Name = utils.FirstNonEmptyString(user.Name, oldUser.Name)
+	user.Email = utils.FirstNonEmptyString(user.Email, oldUser.Email)
 	if user.Password == "" {
 		user.Password = oldUser.Password
 	} else {

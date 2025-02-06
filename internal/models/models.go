@@ -1,5 +1,6 @@
 package models
 
+// Done
 type User struct {
 	ID       int    `json:"id" example:"1"`
 	Name     string `json:"name" example:"Alex"`
@@ -21,6 +22,7 @@ type Expedition struct {
 	CrewID   []int  `json:"crewID" example:"3,4"`
 }
 
+// Done
 type Point struct {
 	ID       int    `json:"id" example:"1"`
 	Name     string `json:"name" example:"Teriberka"`
@@ -31,19 +33,22 @@ type Crew struct {
 	ID           int   `json:"id" example:"1"`
 	CarID        int   `json:"carID" example:"13"`
 	ExpeditionID int   `json:"expeditionID" example:"1"`
+	DriverID     int   `json:"driverID" example:"1"`
 	MembersID    []int `json:"membersID" example:"1,2"`
 	EquipmentID  []int `json:"equipmentID" example:"1,2"`
 	GoodID       []int `json:"goodID" example:"1,2"`
 }
 
+// Done
 type Equipment struct {
 	ID           int    `json:"id" example:"1"`
 	Name         string `json:"name" example:"GPS Navigator"`
-	ExpeditionID int    `json:"expeditionID" example:"1"`
+	ExpeditionID int    `json:"expedition_id" example:"1"`
 }
 
+// Done
 type Good struct {
 	ID           int    `json:"id" example:"1"`
 	Name         string `json:"name" example:"First Aid Kit"`
-	ExpeditionID int    `json:"expeditionID" example:"1"`
+	ExpeditionID int    `json:"expedition_id" example:"1"`
 }

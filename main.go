@@ -8,15 +8,10 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"travelPlanner/internal/config"
-	"travelPlanner/internal/handlers"
 	_ "travelPlanner/internal/handlers"
 	_ "travelPlanner/internal/models"
-	"travelPlanner/internal/repositories"
-	"travelPlanner/internal/services"
 )
 
 var db *sql.DB
@@ -38,12 +33,9 @@ func main() {
 		log.Fatalf("Migration failed: %v", err)
 	}
 
-	userHandler := handlers.UserHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
-	pointsHandler := handlers.PointsHandler{PointsService: &services.PointsService{PointRepo: &repositories.PointsRepository{DB: db}}}
 	router := gin.Default()
-	router = userHandler.RegisterRoutes(router)
-	router = pointsHandler.RegisterRoutes(router)
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	router = RegisterAllRoutes(router)
 
 	err = router.Run("localhost:8081")
 	if err != nil {

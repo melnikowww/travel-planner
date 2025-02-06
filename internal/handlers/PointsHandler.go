@@ -124,8 +124,8 @@ func (h *PointsHandler) UpdatePoint(c *gin.Context) {
 	if err = c.ShouldBindJSON(&point); err != nil {
 		c.String(http.StatusConflict, err.Error())
 	}
-	point.Name = utils.FirstNonEmpty(point.Name, oldPoint.Name)
-	point.Location = utils.FirstNonEmpty(point.Location, oldPoint.Location)
+	point.Name = utils.FirstNonEmptyString(point.Name, oldPoint.Name)
+	point.Location = utils.FirstNonEmptyString(point.Location, oldPoint.Location)
 	point.ID = id
 	updatePoint, err := h.PointsService.UpdatePoint(&point)
 	if err != nil {

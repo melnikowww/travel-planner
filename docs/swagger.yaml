@@ -1,5 +1,17 @@
 basePath: /
 definitions:
+  models.Equipment:
+    properties:
+      expedition_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: GPS Navigator
+        type: string
+    type: object
   models.Point:
     properties:
       id:
@@ -33,6 +45,125 @@ info:
   title: Travel Planner
   version: "1.0"
 paths:
+  /equip:
+    delete:
+      description: Удалить снаряжение по ID
+      parameters:
+      - description: ID снаряжения
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Снаряжение удалено
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "409":
+          description: Ошибка удаления
+          schema:
+            type: string
+      summary: Удалить снаряжение
+      tags:
+      - Equipment
+    get:
+      description: Получить список всего снаряжения или конкретный экземпляр по ID
+      parameters:
+      - description: ID снаряжения
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список снаряжения
+          schema:
+            items:
+              $ref: '#/definitions/models.Equipment'
+            type: array
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "404":
+          description: Снаряжение не найдено
+          schema:
+            type: string
+      summary: Получить снаряжение
+      tags:
+      - Equipment
+    patch:
+      consumes:
+      - application/json
+      description: Частичное обновление данных снаряжения
+      parameters:
+      - description: ID снаряжения
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Обновляемые поля
+        in: body
+        name: equipment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Equipment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленное снаряжение
+          schema:
+            $ref: '#/definitions/models.Equipment'
+        "400":
+          description: Неверные данные
+          schema:
+            type: string
+        "404":
+          description: Снаряжение не найдено
+          schema:
+            type: string
+        "409":
+          description: Ошибка обновления
+          schema:
+            type: string
+      summary: Обновить снаряжение
+      tags:
+      - Equipment
+    post:
+      consumes:
+      - application/json
+      description: Создать новое снаряжение
+      parameters:
+      - description: Данные снаряжения
+        in: body
+        name: equipment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Equipment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданное снаряжение
+          schema:
+            $ref: '#/definitions/models.Equipment'
+        "400":
+          description: Ошибка валидации
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Создать снаряжение
+      tags:
+      - Equipment
   /points:
     delete:
       description: Удаление точки по ID

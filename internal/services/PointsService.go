@@ -21,6 +21,6 @@ func (s *PointsService) CreatePoint(point *models.Point) int {
 func (s *PointsService) DeletePoint(id int) error {
 	return s.PointRepo.DeletePoint(id)
 }
-func (s PointsService) UpdatePoint(point *models.Point) (*models.Point, error) {
+func (s *PointsService) UpdatePoint(point *models.Point) (*models.Point, error) {
 	return s.PointRepo.PatchPoint(point)
 }
