@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"gorm.io/gorm"
-	"log"
 	"travelPlanner/internal/models"
 )
 
@@ -10,42 +9,34 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
-func (repo *UserRepository) FindById(id int) (*models.User, error) {
+func (r *UserRepository) FindById(id int) (*models.User, error) {
 	var person models.User
-	repo.DB.First(&person, id)
-	return &person, nil
+	err := r.DB.First(&person, id)
+	return &person, err.Error
 }
 
-func (repo *UserRepository) FindByEmail(email string) (*models.User, error) {
+func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	var person models.User
-	repo.DB.First(&person).Where("email = $1", email)
-	return &person, nil
+	err := r.DB.First(&person).Where("email = $1", email)
+	return &person, err.Error
 }
 
-func (repo *UserRepository) GetAllUsers() ([]*models.User, error) {
+func (r *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
-	result := repo.DB.Find(&users)
-	if result.Error != nil {
-		log.Printf("Ошибка при извлечении всех записей: %v", result.Error)
-		return nil, result.Error
-	}
-	return users, nil
+	err := r.DB.Find(&users)
+	return users, err.Error
 }
 
-func (repo *UserRepository) CreateUser(person *models.User) uint {
-	var newUser *models.User
-	result := repo.DB.Create(&person).Scan(&newUser)
-	if result.Error != nil {
-		log.Printf("Ошибка при создании записи: %v", result.Error)
-	}
-	return newUser.ID
+func (r *UserRepository) CreateUser(person *models.User) (int, error) {
+	result := r.DB.Create(&person)
+	return person.ID, result.Error
 }
 
-func (repo *UserRepository) DeleteUser(id int) error {
-	return repo.DB.Delete(&models.User{}, id).Error
+func (r *UserRepository) DeleteUser(id int) error {
+	return r.DB.Delete(&models.User{}, id).Error
 }
 
-func (repo *UserRepository) UpdateUser(user *models.User) (*models.User, error) {
-	repo.DB.Save(&user)
-	return repo.FindByEmail(user.Email)
+func (r *UserRepository) UpdateUser(user *models.User) (*models.User, error) {
+	err := r.DB.Save(&user)
+	return user, err.Error
 }

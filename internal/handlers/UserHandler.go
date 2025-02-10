@@ -9,7 +9,6 @@ import (
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/security"
 	"travelPlanner/internal/services"
-	"travelPlanner/internal/utils"
 )
 
 type UserHandler struct {
@@ -76,12 +75,12 @@ func (h *UserHandler) CreateUserHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusConflict, "Password hash error")
 	}
-	id := h.UserService.CreateUser(&user)
-	if id != 1 {
+	id, err := h.UserService.CreateUser(&user)
+	if id != 0 {
 		user.ID = id
 		c.JSON(http.StatusCreated, gin.H{"id": user.ID, "name": user.Name, "email": user.Email})
 	} else {
-		c.JSON(http.StatusConflict, "User already exists")
+		c.JSON(http.StatusConflict, err)
 	}
 }
 
@@ -132,25 +131,11 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 		c.String(http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-
-	oldUser, err := h.UserService.GetUser(id)
-	if err != nil {
-		c.String(http.StatusNotFound, err.Error())
-	}
-
 	if err = c.ShouldBindJSON(&user); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-
-	user.Name = utils.FirstNonEmptyString(user.Name, oldUser.Name)
-	user.Email = utils.FirstNonEmptyString(user.Email, oldUser.Email)
-	if user.Password == "" {
-		user.Password = oldUser.Password
-	} else {
-		user.Password, err = security.HashPassword(user.Password)
-	}
-	user.ID = uint(id)
+	user.ID = id
 	updateUser, err := h.UserService.UpdateUser(&user)
 	if err != nil {
 		log.Printf("Update error: %v", err)

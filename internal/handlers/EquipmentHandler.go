@@ -7,7 +7,6 @@ import (
 	_ "travelPlanner/docs"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/services"
-	"travelPlanner/internal/utils"
 )
 
 type EquipmentHandler struct {
@@ -63,12 +62,12 @@ func (h *EquipmentHandler) CreateEquip(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	id := h.EquipService.CreateEquip(&equip)
-	if id != -1 {
+	id, err := h.EquipService.CreateEquip(&equip)
+	if id != 0 {
 		equip.ID = id
 		c.JSON(http.StatusCreated, &equip)
 	} else {
-		c.String(http.StatusConflict, "Equip already exists")
+		c.String(http.StatusConflict, err.Error())
 	}
 }
 
@@ -117,17 +116,9 @@ func (h *EquipmentHandler) UpdateEquip(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	oldEquip, err := h.EquipService.GetEquip(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
-	}
 	if err = c.ShouldBindJSON(&equip); err != nil {
 		c.String(http.StatusConflict, err.Error())
 	}
-
-	equip.Name = utils.FirstNonEmptyString(equip.Name, oldEquip.Name)
-	equip.ExpeditionID = utils.FirstNonEmptyInt(equip.ExpeditionID, oldEquip.ExpeditionID)
-
 	equip.ID = id
 	updateEquip, err := h.EquipService.UpdateEquip(&equip)
 	if err != nil {

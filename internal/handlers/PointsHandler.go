@@ -7,7 +7,6 @@ import (
 	_ "travelPlanner/docs"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/services"
-	"travelPlanner/internal/utils"
 )
 
 type PointsHandler struct {
@@ -63,12 +62,12 @@ func (h *PointsHandler) CreatePoint(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	id := h.PointsService.CreatePoint(&point)
-	if id != -1 {
+	id, err := h.PointsService.CreatePoint(&point)
+	if id != 0 {
 		point.ID = id
 		c.JSON(http.StatusCreated, &point)
 	} else {
-		c.String(http.StatusConflict, "Point already exists")
+		c.String(http.StatusConflict, err.Error())
 	}
 }
 
@@ -117,15 +116,9 @@ func (h *PointsHandler) UpdatePoint(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	oldPoint, err := h.PointsService.GetPoint(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
-	}
 	if err = c.ShouldBindJSON(&point); err != nil {
 		c.String(http.StatusConflict, err.Error())
 	}
-	point.Name = utils.FirstNonEmptyString(point.Name, oldPoint.Name)
-	point.Location = utils.FirstNonEmptyString(point.Location, oldPoint.Location)
 	point.ID = id
 	updatePoint, err := h.PointsService.UpdatePoint(&point)
 	if err != nil {

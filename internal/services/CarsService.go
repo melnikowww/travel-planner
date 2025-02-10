@@ -1,8 +1,10 @@
 package services
 
 import (
+	"log"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/repositories"
+	"travelPlanner/internal/utils"
 )
 
 type CarsService struct {
@@ -10,18 +12,46 @@ type CarsService struct {
 }
 
 func (s *CarsService) GetAllCars() ([]*models.Car, error) {
-	return s.CarsRepo.GetAllCars()
+	cars, err := s.CarsRepo.GetAllCars()
+	if err != nil {
+		log.Printf("Ошибка при получении списка автомобилей: %v", err)
+		return nil, err
+	}
+	return cars, nil
 }
-
 func (s *CarsService) GetCar(id int) (*models.Car, error) {
-	return s.CarsRepo.GetCar(id)
+	car, err := s.CarsRepo.GetCar(id)
+	if err != nil {
+		log.Printf("Ошибка при получении автомобиля: %v", err)
+		return nil, err
+	}
+	return car, nil
 }
-func (s *CarsService) CreateCar(car *models.Car) int {
-	return s.CarsRepo.CreateCar(car)
+func (s *CarsService) CreateCar(car *models.Car) (int, error) {
+	id, err := s.CarsRepo.CreateCar(car)
+	if err != nil {
+		log.Printf("Ошибка при создании автомобиля: %v", err)
+		return id, err
+	}
+	return id, nil
 }
 func (s *CarsService) UpdateCar(car *models.Car) (*models.Car, error) {
-	return s.CarsRepo.UpdateCar(car)
+	oldCar, err := s.GetCar(car.ID)
+	car.Name = utils.FirstNonEmptyString(car.Name, oldCar.Name)
+	car.UserID = utils.FirstNonEmptyInt(car.UserID, oldCar.UserID)
+
+	updCar, err := s.CarsRepo.UpdateCar(car)
+	if err != nil {
+		log.Printf("Ошибка при обновлении автомобиля: %v", err)
+		return nil, err
+	}
+	return updCar, nil
 }
 func (s *CarsService) DeleteCar(id int) error {
-	return s.CarsRepo.DeleteCar(id)
+	err := s.CarsRepo.DeleteCar(id)
+	if err != nil {
+		log.Printf("Ошибка при удалении пользователя: %v", err)
+		return err
+	}
+	return nil
 }

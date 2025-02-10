@@ -4,7 +4,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/gin-gonic/gin"
-	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
@@ -16,6 +15,7 @@ import (
 	"travelPlanner/internal/config"
 	_ "travelPlanner/internal/handlers"
 	"travelPlanner/internal/handlers/route"
+	"travelPlanner/internal/models"
 	_ "travelPlanner/internal/models"
 )
 
@@ -60,11 +60,7 @@ func main() {
 		log.Fatalf("Ошибка подключения к БД: %v ", err)
 	}
 
-	_, err = migrate.New("file://migrations", cfg.DB.DSN)
-	if err != nil {
-		log.Fatalf("Migration failed: %v", err)
-	}
-
+	db.AutoMigrate(&models.User{}, &models.Car{}, &models.Point{}, &models.Good{}, &models.Equipment{})
 	router := gin.Default()
 
 	router = route.RegisterAllRoutes(router, db)
