@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/gin-gonic/gin"
 	"github.com/golang-migrate/migrate/v4"
@@ -11,6 +12,7 @@ import (
 	"log"
 	"travelPlanner/internal/config"
 	_ "travelPlanner/internal/handlers"
+	"travelPlanner/internal/handlers/route"
 	_ "travelPlanner/internal/models"
 )
 
@@ -35,7 +37,9 @@ func main() {
 
 	router := gin.Default()
 
-	router = RegisterAllRoutes(router)
+	router = route.RegisterAllRoutes(router, db)
+
+	router.Use(cors.Default())
 
 	err = router.Run("localhost:8081")
 	if err != nil {

@@ -17,7 +17,7 @@ type EquipmentHandler struct {
 // GetEquip Обработчик для получения снаряжения
 // @Summary Получить снаряжение
 // @Description Получить список всего снаряжения или конкретный экземпляр по ID
-// @Tags Equipment
+// @Tags Снаряжение
 // @Produce json
 // @Param id query int false "ID снаряжения"
 // @Success 200 {object} models.Equipment "Успешный ответ"
@@ -49,7 +49,7 @@ func (h *EquipmentHandler) GetEquip(c *gin.Context) {
 // CreateEquip Обработчик для создания нового снаряжения
 // @Summary Создать снаряжение
 // @Description Создать новое снаряжение
-// @Tags Equipment
+// @Tags Снаряжение
 // @Accept json
 // @Produce json
 // @Param equipment body models.Equipment true "Данные снаряжения"
@@ -75,7 +75,7 @@ func (h *EquipmentHandler) CreateEquip(c *gin.Context) {
 // DeleteEquip Обработчик для удаления снаряжения
 // @Summary Удалить снаряжение
 // @Description Удалить снаряжение по ID
-// @Tags Equipment
+// @Tags Снаряжение
 // @Produce json
 // @Param id query int true "ID снаряжения"
 // @Success 204 "Снаряжение удалено"
@@ -99,7 +99,7 @@ func (h *EquipmentHandler) DeleteEquip(c *gin.Context) {
 // UpdateEquip Обработчик для обновления снаряжения
 // @Summary Обновить снаряжение
 // @Description Частичное обновление данных снаряжения
-// @Tags Equipment
+// @Tags Снаряжение
 // @Accept json
 // @Produce json
 // @Param id query int true "ID снаряжения"
@@ -124,8 +124,10 @@ func (h *EquipmentHandler) UpdateEquip(c *gin.Context) {
 	if err = c.ShouldBindJSON(&equip); err != nil {
 		c.String(http.StatusConflict, err.Error())
 	}
+
 	equip.Name = utils.FirstNonEmptyString(equip.Name, oldEquip.Name)
-	equip.ExpeditionID = utils.FirstNonEmptyInt(equip.ExpeditionID, equip.ExpeditionID)
+	equip.ExpeditionID = utils.FirstNonEmptyInt(equip.ExpeditionID, oldEquip.ExpeditionID)
+
 	equip.ID = id
 	updateEquip, err := h.EquipService.UpdateEquip(&equip)
 	if err != nil {

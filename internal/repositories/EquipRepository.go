@@ -70,7 +70,10 @@ func (r *EquipRepository) PatchEquip(equip *models.Equipment) (*models.Equipment
 		log.Printf("Patch find error: %v", err)
 		return nil, err
 	}
-	_, err = r.DB.Exec("UPDATE equipment SET name = $1, expedition_id = $2 WHERE id = $3",
-		&equip.Name, &equip.ExpeditionID, &equip.ID)
+	if _, err = r.DB.Exec("UPDATE equipment SET name = $1, expedition_id = $2 WHERE id = $3",
+		&equip.Name, &equip.ExpeditionID, &equip.ID); err != nil {
+		log.Printf("Update error: %v", err)
+		return nil, err
+	}
 	return r.FindById(equip.ID)
 }

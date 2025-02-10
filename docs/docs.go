@@ -15,6 +15,171 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/cars": {
+            "get": {
+                "description": "Получить список всех автомобилей или конкретный автомобиль по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Автомобили"
+                ],
+                "summary": "Получить автомобиль(и)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор автомобиля (необязательно)",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение автомобиля",
+                        "schema": {
+                            "$ref": "#/definitions/models.Car"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Автомобиль не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавить новый автомобиль в базу данных",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Автомобили"
+                ],
+                "summary": "Создать автомобиль",
+                "parameters": [
+                    {
+                        "description": "Данные автомобиля",
+                        "name": "car",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Car"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Автомобиль успешно создан",
+                        "schema": {
+                            "$ref": "#/definitions/models.Car"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные входные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление автомобиля по идентификатору",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Автомобили"
+                ],
+                "summary": "Удалить автомобиль",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор автомобиля",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Автомобиль успешно удален"
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частичное обновление данных автомобиля",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Автомобили"
+                ],
+                "summary": "Обновить автомобиль",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор автомобиля",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления",
+                        "name": "car",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Car"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Автомобиль успешно обновлен",
+                        "schema": {
+                            "$ref": "#/definitions/models.Car"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный ID или данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Автомобиль не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/equip": {
             "get": {
                 "description": "Получить список всего снаряжения или конкретный экземпляр по ID",
@@ -22,7 +187,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Equipment"
+                    "Снаряжение"
                 ],
                 "summary": "Получить снаряжение",
                 "parameters": [
@@ -66,7 +231,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Equipment"
+                    "Снаряжение"
                 ],
                 "summary": "Создать снаряжение",
                 "parameters": [
@@ -107,7 +272,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Equipment"
+                    "Снаряжение"
                 ],
                 "summary": "Удалить снаряжение",
                 "parameters": [
@@ -146,7 +311,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Equipment"
+                    "Снаряжение"
                 ],
                 "summary": "Обновить снаряжение",
                 "parameters": [
@@ -195,6 +360,195 @@ const docTemplate = `{
                 }
             }
         },
+        "/goods": {
+            "get": {
+                "description": "Получение списка всех продуктов или конкретной позиции по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Продукты"
+                ],
+                "summary": "Получить список продуктов",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID продукта",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Конкретная позиция",
+                        "schema": {
+                            "$ref": "#/definitions/models.Good"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Создание новой позиции продуктов",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Продукты"
+                ],
+                "summary": "Создать новую позицию",
+                "parameters": [
+                    {
+                        "description": "Данные продукта",
+                        "name": "good",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Good"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданная позиция",
+                        "schema": {
+                            "$ref": "#/definitions/models.Good"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт - позиция уже существует",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление позиции продукта по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Продукты"
+                ],
+                "summary": "Удалить позицию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID продукта",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Успешное удаление"
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Обновление существующей позиции (частичное обновление)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Продукты"
+                ],
+                "summary": "Обновить позицию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID продукта",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления",
+                        "name": "good",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Good"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленная позиция",
+                        "schema": {
+                            "$ref": "#/definitions/models.Good"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Не найдено",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/points": {
             "get": {
                 "description": "Получить все точки или конкретную точку по ID",
@@ -202,7 +556,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Points"
+                    "Контрольные точки"
                 ],
                 "summary": "Получить точку/точки",
                 "parameters": [
@@ -243,7 +597,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Points"
+                    "Контрольные точки"
                 ],
                 "summary": "Создать новую точку",
                 "parameters": [
@@ -284,7 +638,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Points"
+                    "Контрольные точки"
                 ],
                 "summary": "Удалить точку",
                 "parameters": [
@@ -323,7 +677,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Points"
+                    "Контрольные точки"
                 ],
                 "summary": "Обновить точку",
                 "parameters": [
@@ -379,7 +733,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Пользователи"
                 ],
                 "summary": "Получить пользователя/пользователей",
                 "parameters": [
@@ -426,7 +780,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Пользователи"
                 ],
                 "summary": "Создать пользователя",
                 "parameters": [
@@ -473,7 +827,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Пользователи"
                 ],
                 "summary": "Удалить пользователя",
                 "parameters": [
@@ -512,7 +866,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Пользователи"
                 ],
                 "summary": "Обновить пользователя",
                 "parameters": [
@@ -563,6 +917,23 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.Car": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Toyota Land Cruiser 100"
+                },
+                "owner_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "models.Equipment": {
             "type": "object",
             "properties": {
@@ -577,6 +948,23 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "example": "GPS Navigator"
+                }
+            }
+        },
+        "models.Good": {
+            "type": "object",
+            "properties": {
+                "expedition_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "First Aid Kit"
                 }
             }
         },

@@ -76,7 +76,7 @@ func (h *GoodsHandler) CreateGood(c *gin.Context) {
 // DeleteGood Обработчик для удаления продукта из списка
 // @Summary Удалить позицию
 // @Description Удаление позиции продукта по ID
-// @Tags Снаряжение
+// @Tags Продукты
 // @Produce json
 // @Param id query int true "ID продукта"
 // @Success 204 "Успешное удаление"
@@ -101,7 +101,7 @@ func (h *GoodsHandler) DeleteGood(c *gin.Context) {
 // UpdateGood Обработчик для измененния данных продукта
 // @Summary Обновить позицию
 // @Description Обновление существующей позиции (частичное обновление)
-// @Tags Снаряжение
+// @Tags Продукты
 // @Accept json
 // @Produce json
 // @Param id query int true "ID продукта"
@@ -127,7 +127,7 @@ func (h *GoodsHandler) UpdateGood(c *gin.Context) {
 		c.String(http.StatusConflict, err.Error())
 	}
 	good.Name = utils.FirstNonEmptyString(good.Name, oldGood.Name)
-	good.ExpeditionID = utils.FirstNonEmptyInt(good.ExpeditionID, good.ExpeditionID)
+	good.ExpeditionID = utils.FirstNonEmptyInt(good.ExpeditionID, oldGood.ExpeditionID)
 	good.ID = id
 	updateGood, err := h.GoodsService.UpdateGood(&good)
 	if err != nil {

@@ -8,18 +8,20 @@ type User struct {
 	Password string `json:"password" example:"password"`
 }
 
+// Done
 type Car struct {
-	ID          int    `json:"id" example:"1"`
-	Name        string `json:"name" example:"Toyota Land Cruiser 100"`
-	EquipmentID []int  `json:"equipmentID" example:"1,2,3"`
-	GoodsID     []int  `json:"goodsID" example:"4,5"`
+	ID      int    `json:"id" example:"1"`
+	Name    string `json:"name" example:"Toyota Land Cruiser 100"`
+	OwnerID int    `json:"owner_id" example:"1"`
 }
 
+// Done
 type Expedition struct {
-	ID       int    `json:"id" example:"1"`
-	Name     string `json:"name" example:"Karjala"`
-	PointsID []int  `json:"pointsID" example:"1,2"`
-	CrewID   []int  `json:"crewID" example:"3,4"`
+	ID          int     `json:"id" example:"1"`
+	Name        string  `json:"name" example:"Karjala"`
+	Description string  `json:"description" example:"Good vibes only"`
+	PointsID    []int32 `json:"points_id" example:"1,2"`
+	CrewID      []int32 `json:"crew_id" example:"3,4"`
 }
 
 // Done
@@ -30,13 +32,13 @@ type Point struct {
 }
 
 type Crew struct {
-	ID           int   `json:"id" example:"1"`
-	CarID        int   `json:"carID" example:"13"`
-	ExpeditionID int   `json:"expeditionID" example:"1"`
-	DriverID     int   `json:"driverID" example:"1"`
-	MembersID    []int `json:"membersID" example:"1,2"`
-	EquipmentID  []int `json:"equipmentID" example:"1,2"`
-	GoodID       []int `json:"goodID" example:"1,2"`
+	ID           int     `json:"id" example:"1"`
+	CarID        int     `json:"car_id" example:"13"`
+	ExpeditionID int     `json:"expedition_id" example:"1"`
+	DriverID     int     `json:"driver_id" example:"1"`
+	MembersID    []int32 `json:"members_id" example:"1,2"`
+	EquipmentID  []int32 `json:"equipment_id" example:"1,2"`
+	GoodID       []int32 `json:"good_id" example:"1,2"`
 }
 
 // Done

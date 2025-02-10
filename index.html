@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="rus">
+<head>
+    <title>Управление оборудованием</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin-bottom: 30px; border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        input[type="text"], input[type="number"] { width: 250px; padding: 5px; }
+        button { padding: 8px 15px; margin: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .error { color: red; margin: 10px 0; }
+    </style>
+</head>
+<body>
+<h1>Управление экспедиционным оборудованием</h1>
+
+<!-- Секция добавления нового оборудования -->
+<div class="section">
+    <h2>Добавить новое оборудование</h2>
+    <div class="form-group">
+        <input type="text" id="name" placeholder="Название оборудования">
+        <input type="number" id="expedition_id" placeholder="ID экспедиции">
+        <button onclick="createEquipment()">Добавить</button>
+    </div>
+</div>
+
+<!-- Секция поиска и обновления -->
+<div class="section">
+    <h2>Поиск/Обновление оборудования</h2>
+    <div class="form-group">
+        <input type="number" id="searchId" placeholder="Введите ID">
+        <button onclick="getEquipment()">Найти</button>
+        <button onclick="getAllEquipment()">Показать всё</button>
+    </div>
+    <div id="updateForm" style="display: none;">
+        <input type="text" id="updateName" placeholder="Новое название">
+        <input type="number" id="updateExpedition" placeholder="Новый ID экспедиции">
+        <button onclick="updateEquipment()">Обновить</button>
+        <button onclick="deleteEquipment()">Удалить</button>
+    </div>
+</div>
+
+<!-- Отображение результатов -->
+<div class="section">
+    <h2>Список оборудования</h2>
+    <div id="result" class="error"></div>
+    <table id="equipmentTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>ID экспедиции</th>
+        </tr>
+        </thead>
+        <tbody id="equipmentList"></tbody>
+    </table>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8081/equip';
+
+    // Общие функции
+    async function fetchData(url, options = {}) {
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch(error) {
+            showError(error.message);
+            return null;
+        }
+    }
+
+    function displayEquipment(data) {
+        const tbody = document.getElementById('equipmentList');
+        tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${item.expeditionId}</td>
+                </tr>
+            `).join('');
+    }
+
+    function showError(message) {
+        document.getElementById('result').textContent = `Ошибка: ${message}`;
+    }
+
+    // Операции CRUD
+    async function createEquipment() {
+        const equipment = {
+            name: document.getElementById('name').value,
+            expedition_id: parseInt(document.getElementById('expedition_id').value)
+        };
+
+        const response = await fetchData(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(equipment)
+        });
+
+        if (response) {
+            document.getElementById('name').value = '';
+            document.getElementById('expedition_id').value = '';
+            await getAllEquipment();
+        }
+    }
+
+    async function getEquipment() {
+        const id = document.getElementById('searchId').value;
+        const data = await fetchData(`${API_URL}?id=${id}`);
+        if (data) {
+            document.getElementsByName('id').style.display = 'block';
+            document.getElementsByName('name').value = data.name;
+            document.getElementsByName('expedition_id').value = data.expeditionId;
+        }
+    }
+
+    async function getAllEquipment() {
+        const data = await fetchData(API_URL);
+        if (data) displayEquipment(data);
+    }
+
+    async function updateEquipment() {
+        const id = document.getElementById('searchId').value;
+        const equipment = {
+            id: parseInt(id),
+            name: document.getElementById('updateName').value,
+            expeditionId: parseInt(document.getElementById('updateExpedition').value)
+        };
+
+        const response = await fetchData(`${API_URL}?id=${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(equipment)
+        });
+
+        if (response) {
+            await getAllEquipment();
+            document.getElementById('searchId').value = '';
+            document.getElementById('updateForm').style.display = 'none';
+        }
+    }
+
+    async function deleteEquipment() {
+        const id = document.getElementById('searchId').value;
+        const response = await fetchData(`${API_URL}?id=${id}`, {
+            method: 'DELETE'
+        });
+
+        if (response === null) return;
+
+        document.getElementById('updateForm').style.display = 'none';
+        document.getElementById('searchId').value = '';
+        await getAllEquipment();
+    }
+
+    // Инициализация
+    window.onload = getAllEquipment;
+</script>
+</body>
+</html>

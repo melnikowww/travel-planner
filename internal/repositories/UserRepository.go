@@ -40,15 +40,13 @@ func (repo *UserRepository) GetAllUsers() ([]*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close() // Закрываем rows после завершения работы
-
 	for rows.Next() {
-		user := &models.User{} // Создаем новый экземпляр User
+		user := &models.User{}
 		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, user) // Добавляем указатель на нового пользователя в список
+		users = append(users, user)
 	}
 
 	if err := rows.Err(); err != nil {

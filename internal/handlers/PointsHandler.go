@@ -17,7 +17,7 @@ type PointsHandler struct {
 // GetPoint Обработчик для получения точек
 // @Summary Получить точку/точки
 // @Description Получить все точки или конкретную точку по ID
-// @Tags Points
+// @Tags Контрольные точки
 // @Produce json
 // @Param id query int false "ID точки"
 // @Success 200 {object} []models.Point "Успешный ответ"
@@ -49,7 +49,7 @@ func (h *PointsHandler) GetPoint(c *gin.Context) {
 // CreatePoint Создание новой точки
 // @Summary Создать новую точку
 // @Description Добавление новой географической точки
-// @Tags Points
+// @Tags Контрольные точки
 // @Accept json
 // @Produce json
 // @Param point body models.Point true "Данные точки"
@@ -75,7 +75,7 @@ func (h *PointsHandler) CreatePoint(c *gin.Context) {
 // DeletePoint Удаление точки
 // @Summary Удалить точку
 // @Description Удаление точки по ID
-// @Tags Points
+// @Tags Контрольные точки
 // @Produce json
 // @Param id query int true "ID точки"
 // @Success 204 "Точка удалена"
@@ -99,7 +99,7 @@ func (h *PointsHandler) DeletePoint(c *gin.Context) {
 // UpdatePoint Обновление точки
 // @Summary Обновить точку
 // @Description Частичное или полное обновление данных точки
-// @Tags Points
+// @Tags Контрольные точки
 // @Accept json
 // @Produce json
 // @Param id query int true "ID точки"

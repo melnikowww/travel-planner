@@ -19,7 +19,7 @@ type UserHandler struct {
 // GetUserHandler Получение информации о пользователе(ях)
 // @Summary Получить пользователя/пользователей
 // @Description Возвращает конкретного пользователя по ID или всех пользователей, если ID не указан
-// @Tags Users
+// @Tags Пользователи
 // @Produce json
 // @Param id query int false "ID пользователя"
 // @Success 200 {object} []models.User "Список пользователей"
@@ -56,7 +56,7 @@ func (h *UserHandler) GetUserHandler(c *gin.Context) {
 // CreateUserHandler Создание нового пользователя
 // @Summary Создать пользователя
 // @Description Регистрация нового пользователя в системе
-// @Tags Users
+// @Tags Пользователи
 // @Accept json
 // @Produce json
 // @Param user body models.User true "Данные пользователя"
@@ -88,7 +88,7 @@ func (h *UserHandler) CreateUserHandler(c *gin.Context) {
 // DeleteUserHandler Удаление пользователя
 // @Summary Удалить пользователя
 // @Description Удаление пользователя по ID
-// @Tags Users
+// @Tags Пользователи
 // @Produce json
 // @Param id query int true "ID пользователя"
 // @Success 204 "Пользователь удален"
@@ -114,7 +114,7 @@ func (h *UserHandler) DeleteUserHandler(c *gin.Context) {
 // PatchUserHandler Обновление данных пользователя
 // @Summary Обновить пользователя
 // @Description Частичное обновление данных пользователя. Пароль будет автоматически хеширован.
-// @Tags Users
+// @Tags Пользователи
 // @Accept json
 // @Produce json
 // @Param id query int true "ID пользователя"

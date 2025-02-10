@@ -1,5 +1,17 @@
 basePath: /
 definitions:
+  models.Car:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Toyota Land Cruiser 100
+        type: string
+      owner_id:
+        example: 1
+        type: integer
+    type: object
   models.Equipment:
     properties:
       expedition_id:
@@ -10,6 +22,18 @@ definitions:
         type: integer
       name:
         example: GPS Navigator
+        type: string
+    type: object
+  models.Good:
+    properties:
+      expedition_id:
+        example: 1
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: First Aid Kit
         type: string
     type: object
   models.Point:
@@ -45,6 +69,115 @@ info:
   title: Travel Planner
   version: "1.0"
 paths:
+  /cars:
+    delete:
+      description: Удаление автомобиля по идентификатору
+      parameters:
+      - description: Идентификатор автомобиля
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Автомобиль успешно удален
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+      summary: Удалить автомобиль
+      tags:
+      - Автомобили
+    get:
+      description: Получить список всех автомобилей или конкретный автомобиль по ID
+      parameters:
+      - description: Идентификатор автомобиля (необязательно)
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное получение автомобиля
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "404":
+          description: Автомобиль не найден
+          schema:
+            type: string
+      summary: Получить автомобиль(и)
+      tags:
+      - Автомобили
+    patch:
+      consumes:
+      - application/json
+      description: Частичное обновление данных автомобиля
+      parameters:
+      - description: Идентификатор автомобиля
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: car
+        required: true
+        schema:
+          $ref: '#/definitions/models.Car'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Автомобиль успешно обновлен
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: Некорректный ID или данные
+          schema:
+            type: string
+        "404":
+          description: Автомобиль не найден
+          schema:
+            type: string
+      summary: Обновить автомобиль
+      tags:
+      - Автомобили
+    post:
+      consumes:
+      - application/json
+      description: Добавить новый автомобиль в базу данных
+      parameters:
+      - description: Данные автомобиля
+        in: body
+        name: car
+        required: true
+        schema:
+          $ref: '#/definitions/models.Car'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Автомобиль успешно создан
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: Некорректные входные данные
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Создать автомобиль
+      tags:
+      - Автомобили
   /equip:
     delete:
       description: Удалить снаряжение по ID
@@ -69,7 +202,7 @@ paths:
             type: string
       summary: Удалить снаряжение
       tags:
-      - Equipment
+      - Снаряжение
     get:
       description: Получить список всего снаряжения или конкретный экземпляр по ID
       parameters:
@@ -96,7 +229,7 @@ paths:
             type: string
       summary: Получить снаряжение
       tags:
-      - Equipment
+      - Снаряжение
     patch:
       consumes:
       - application/json
@@ -134,7 +267,7 @@ paths:
             type: string
       summary: Обновить снаряжение
       tags:
-      - Equipment
+      - Снаряжение
     post:
       consumes:
       - application/json
@@ -163,7 +296,132 @@ paths:
             type: string
       summary: Создать снаряжение
       tags:
-      - Equipment
+      - Снаряжение
+  /goods:
+    delete:
+      description: Удаление позиции продукта по ID
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Успешное удаление
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Не найдено
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Удалить позицию
+      tags:
+      - Продукты
+    get:
+      description: Получение списка всех продуктов или конкретной позиции по ID
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Конкретная позиция
+          schema:
+            $ref: '#/definitions/models.Good'
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "404":
+          description: Не найдено
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить список продуктов
+      tags:
+      - Продукты
+    patch:
+      consumes:
+      - application/json
+      description: Обновление существующей позиции (частичное обновление)
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/models.Good'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная позиция
+          schema:
+            $ref: '#/definitions/models.Good'
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "404":
+          description: Не найдено
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Обновить позицию
+      tags:
+      - Продукты
+    post:
+      consumes:
+      - application/json
+      description: Создание новой позиции продуктов
+      parameters:
+      - description: Данные продукта
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/models.Good'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданная позиция
+          schema:
+            $ref: '#/definitions/models.Good'
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "409":
+          description: Конфликт - позиция уже существует
+          schema:
+            type: string
+      summary: Создать новую позицию
+      tags:
+      - Продукты
   /points:
     delete:
       description: Удаление точки по ID
@@ -188,7 +446,7 @@ paths:
             type: string
       summary: Удалить точку
       tags:
-      - Points
+      - Контрольные точки
     get:
       description: Получить все точки или конкретную точку по ID
       parameters:
@@ -213,7 +471,7 @@ paths:
             type: string
       summary: Получить точку/точки
       tags:
-      - Points
+      - Контрольные точки
     patch:
       consumes:
       - application/json
@@ -251,7 +509,7 @@ paths:
             type: string
       summary: Обновить точку
       tags:
-      - Points
+      - Контрольные точки
     post:
       consumes:
       - application/json
@@ -280,7 +538,7 @@ paths:
             type: string
       summary: Создать новую точку
       tags:
-      - Points
+      - Контрольные точки
   /users:
     delete:
       description: Удаление пользователя по ID
@@ -305,7 +563,7 @@ paths:
             type: string
       summary: Удалить пользователя
       tags:
-      - Users
+      - Пользователи
     get:
       description: Возвращает конкретного пользователя по ID или всех пользователей,
         если ID не указан
@@ -335,7 +593,7 @@ paths:
             type: string
       summary: Получить пользователя/пользователей
       tags:
-      - Users
+      - Пользователи
     patch:
       consumes:
       - application/json
@@ -374,7 +632,7 @@ paths:
             type: string
       summary: Обновить пользователя
       tags:
-      - Users
+      - Пользователи
     post:
       consumes:
       - application/json
@@ -407,5 +665,5 @@ paths:
             type: string
       summary: Создать пользователя
       tags:
-      - Users
+      - Пользователи
 swagger: "2.0"
