@@ -2,23 +2,18 @@ package repositories
 
 import (
 	"database/sql"
+	"gorm.io/gorm"
 	"log"
 	"travelPlanner/internal/models"
 )
 
 type UserRepository struct {
-	DB *sql.DB
+	DB *gorm.DB
 }
 
 func (repo *UserRepository) FindById(id int) (*models.User, error) {
 	var person models.User
-	err := repo.DB.QueryRow(
-		"SELECT * FROM persons WHERE id = $1",
-		id,
-	).Scan(&person.ID, &person.Name, &person.Email, &person.Password)
-	if err != nil {
-		return nil, err
-	}
+	repo.DB.First(&person, id)
 	return &person, nil
 }
 

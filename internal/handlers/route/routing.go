@@ -5,12 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 	"travelPlanner/internal/handlers"
 	"travelPlanner/internal/repositories"
 	"travelPlanner/internal/services"
 )
 
-func RegisterAllRoutes(router *gin.Engine, db *sql.DB) *gin.Engine {
+func RegisterAllRoutes(router *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	userHandler := handlers.UserHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
 	pointsHandler := handlers.PointsHandler{PointsService: &services.PointsService{PointRepo: &repositories.PointsRepository{DB: db}}}
