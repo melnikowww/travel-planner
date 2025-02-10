@@ -77,7 +77,7 @@ func (h *UserHandler) CreateUserHandler(c *gin.Context) {
 		c.JSON(http.StatusConflict, "Password hash error")
 	}
 	id := h.UserService.CreateUser(&user)
-	if id != -1 {
+	if id != 1 {
 		user.ID = id
 		c.JSON(http.StatusCreated, gin.H{"id": user.ID, "name": user.Name, "email": user.Email})
 	} else {
@@ -150,7 +150,7 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 	} else {
 		user.Password, err = security.HashPassword(user.Password)
 	}
-	user.ID = id
+	user.ID = uint(id)
 	updateUser, err := h.UserService.UpdateUser(&user)
 	if err != nil {
 		log.Printf("Update error: %v", err)

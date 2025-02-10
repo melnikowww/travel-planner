@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"database/sql"
 	"gorm.io/gorm"
 	"log"
 	"travelPlanner/internal/models"
@@ -19,65 +18,34 @@ func (repo *UserRepository) FindById(id int) (*models.User, error) {
 
 func (repo *UserRepository) FindByEmail(email string) (*models.User, error) {
 	var person models.User
-	err := repo.DB.QueryRow(
-		"SELECT * FROM persons WHERE email = $1",
-		&email,
-	).Scan(&person.ID, &person.Name, &person.Email, &person.Password)
-	if err != nil {
-		return nil, err
-	}
+	repo.DB.First(&person).Where("email = $1", email)
 	return &person, nil
 }
 
 func (repo *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
-	rows, err := repo.DB.Query("SELECT * FROM persons")
-	if err != nil {
-		return nil, err
+	result := repo.DB.Find(&users)
+	if result.Error != nil {
+		log.Printf("Ошибка при извлечении всех записей: %v", result.Error)
+		return nil, result.Error
 	}
-	for rows.Next() {
-		user := &models.User{}
-		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, user)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return users, nil
 }
 
-func (repo *UserRepository) CreateUser(person *models.User) int {
-	var id int
-	err := repo.DB.QueryRow("INSERT INTO persons (name, email, password) VALUES ($1, $2, $3) RETURNING id",
-		person.Name, person.Email, person.Password).Scan(&id)
-	if err != nil {
-		log.Printf("Database error: %v", err)
-		return -1
+func (repo *UserRepository) CreateUser(person *models.User) uint {
+	var newUser *models.User
+	result := repo.DB.Create(&person).Scan(&newUser)
+	if result.Error != nil {
+		log.Printf("Ошибка при создании записи: %v", result.Error)
 	}
-	person.ID = id
-	return id
+	return newUser.ID
 }
 
 func (repo *UserRepository) DeleteUser(id int) error {
-	_, err := repo.FindById(id)
-	if err != nil {
-		return err
-	}
-	_, err = repo.DB.Exec("DELETE FROM persons WHERE ID = $1;", id)
-	return nil
+	return repo.DB.Delete(&models.User{}, id).Error
 }
 
 func (repo *UserRepository) UpdateUser(user *models.User) (*models.User, error) {
-	_, err := repo.FindById(user.ID)
-	if err != nil {
-		return nil, err
-	}
-	_, err = repo.DB.Exec("UPDATE persons SET name = $1, email = $2, password = $3 WHERE id = $4;",
-		user.Name, user.Email, user.Password, user.ID)
+	repo.DB.Save(&user)
 	return repo.FindByEmail(user.Email)
 }

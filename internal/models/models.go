@@ -2,10 +2,10 @@ package models
 
 // Done
 type User struct {
-	ID       int    `json:"id" example:"1"`
-	Name     string `json:"name" example:"Alex"`
-	Email    string `json:"email" example:"alex@example.com"`
-	Password string `json:"password" example:"password"`
+	ID       uint   `gorm:"primarykey"`
+	Name     string `gorm:"type:varchar(100);not null" json:"name" example:"Alex"`
+	Email    string `gorm:"type:varchar(100);uniqueIndex;not null" json:"email" example:"alex@example.com"`
+	Password string `gorm:"type:varchar(100);not null" example:"password"`
 }
 
 // Done

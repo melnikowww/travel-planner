@@ -32,7 +32,7 @@ func main() {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
-			SlowThreshold:             2,           // Время, после которого запрос считается медленным
+			SlowThreshold:             2e6,         // Время, после которого запрос считается медленным
 			LogLevel:                  logger.Info, // Уровень логирования (Info, Warn, Error, Silent)
 			IgnoreRecordNotFoundError: true,        // Игнорировать ошибку "record not found"
 			Colorful:                  true,        // Включить цветной вывод
