@@ -60,7 +60,10 @@ func main() {
 		log.Fatalf("Ошибка подключения к БД: %v ", err)
 	}
 
-	db.AutoMigrate(&models.User{}, &models.Car{}, &models.Point{}, &models.Good{}, &models.Equipment{})
+	err = db.AutoMigrate(&models.User{}, &models.Car{}, &models.Expedition{}, &models.Point{}, &models.Good{}, &models.Equipment{}, &models.Crew{})
+	if err != nil {
+		log.Fatalf("Не удалось совершить миграцию БД %v", err)
+	}
 	router := gin.Default()
 
 	router = route.RegisterAllRoutes(router, db)

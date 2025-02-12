@@ -46,7 +46,7 @@ func (s *EquipmentService) DeleteEquip(id int) error {
 func (s *EquipmentService) UpdateEquip(equipment *models.Equipment) (*models.Equipment, error) {
 	oldEquip, err := s.GetEquip(equipment.ID)
 	equipment.Name = utils.FirstNonEmptyString(equipment.Name, oldEquip.Name)
-	equipment.ExpeditionID = utils.FirstNonEmptyInt(equipment.ExpeditionID, oldEquip.ExpeditionID)
+	equipment.CrewID = utils.FirstNonEmptyInt(equipment.CrewID, oldEquip.CrewID)
 	updEquip, err := s.EquipRepo.PatchEquip(equipment)
 	if err != nil {
 		log.Printf("Ошибка при обновлении снаряжения: %v", err)

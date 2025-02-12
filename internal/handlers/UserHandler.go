@@ -48,7 +48,7 @@ func (h *UserHandler) GetUserHandler(c *gin.Context) {
 			log.Printf("Error DB: %v", err)
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"id": person.ID, "name": person.Name, "email": person.Email})
+		c.JSON(http.StatusOK, &person)
 	}
 }
 

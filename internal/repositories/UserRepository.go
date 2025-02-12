@@ -21,6 +21,23 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	return &person, err.Error
 }
 
+func (r *UserRepository) FindCarsByUserId(id int) ([]*models.Car, error) {
+	var cars []*models.Car
+	err := r.DB.Where("user_id = ?", id).Find(&cars).Error
+	return cars, err
+}
+
+func (r *UserRepository) FindCrewsByUserId(id int) ([]*models.Crew, error) {
+	var crews []*models.Crew
+	if err := r.DB.Joins("JOIN crews_users ON crews.id = crews_users.crew_id").
+		Where("crews_users.user_id = ?", id).
+		Find(&crews).Error; err != nil {
+		return nil, err
+	}
+
+	return crews, nil
+}
+
 func (r *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
 	err := r.DB.Find(&users)

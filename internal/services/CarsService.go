@@ -33,6 +33,10 @@ func (s *CarsService) CreateCar(car *models.Car) (int, error) {
 		log.Printf("Ошибка при создании автомобиля: %v", err)
 		return id, err
 	}
+	var owner models.User
+	s.CarsRepo.DB.First(&owner).Where("id = $1", car.UserID)
+	owner.Cars = append(owner.Cars, *car)
+	s.CarsRepo.DB.Save(&owner)
 	return id, nil
 }
 func (s *CarsService) UpdateCar(car *models.Car) (*models.Car, error) {

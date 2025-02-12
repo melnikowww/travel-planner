@@ -27,6 +27,7 @@ func (s *PointsService) GetAllPoints() ([]*models.Point, error) {
 	}
 	return points, nil
 }
+
 func (s *PointsService) CreatePoint(point *models.Point) (int, error) {
 	id, err := s.PointRepo.CreatePoint(point)
 	if err != nil {

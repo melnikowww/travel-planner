@@ -1,5 +1,7 @@
 package utils
 
+import "github.com/lib/pq"
+
 func FirstNonEmptyString(f string, s string) string {
 	if f != "" {
 		return f
@@ -14,7 +16,7 @@ func FirstNonEmptyInt(f int, s int) int {
 	return s
 }
 
-func FirstNonEmptySlice(f []int32, s []int32) []int32 {
+func FirstNonEmptySlice(f pq.Int32Array, s pq.Int32Array) pq.Int32Array {
 	if len(f) == 0 && len(s) == 0 {
 		return f
 	}

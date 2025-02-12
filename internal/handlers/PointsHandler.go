@@ -43,6 +43,7 @@ func (h *PointsHandler) GetPoint(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, point)
 	}
+
 }
 
 // CreatePoint Создание новой точки

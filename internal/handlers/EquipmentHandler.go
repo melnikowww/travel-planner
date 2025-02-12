@@ -27,11 +27,11 @@ type EquipmentHandler struct {
 func (h *EquipmentHandler) GetEquip(c *gin.Context) {
 	key := c.Query("id")
 	if key == "" {
-		points, err := h.EquipService.GetAllEquips()
+		equips, err := h.EquipService.GetAllEquips()
 		if err != nil {
 			c.JSON(http.StatusConflict, err)
 		}
-		c.JSON(http.StatusOK, points)
+		c.JSON(http.StatusOK, equips)
 	} else {
 		id, err := strconv.Atoi(key)
 		if err != nil {

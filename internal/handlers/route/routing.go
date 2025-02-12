@@ -17,16 +17,16 @@ func RegisterAllRoutes(router *gin.Engine, db *gorm.DB) *gin.Engine {
 	equipHandler := handlers.EquipmentHandler{EquipService: &services.EquipmentService{EquipRepo: &repositories.EquipRepository{DB: db}}}
 	goodsHandler := handlers.GoodsHandler{GoodsService: &services.GoodsService{GoodsRepo: &repositories.GoodsRepository{DB: db}}}
 	carsHandler := handlers.CarsHandler{CarsService: &services.CarsService{CarsRepo: &repositories.CarsRepository{DB: db}}}
-	//expHandler := handlers.ExpeditionHandler{ExpService: &services.ExpeditionService{ExpRepo: &repositories.ExpeditionRepository{DB: db}}}
-	//crewHandler := handlers.CrewHandler{CrewService: &services.CrewService{CrewRepo: &repositories.CrewRepository{DB: db}}}
+	expHandler := handlers.ExpeditionHandler{ExpService: &services.ExpeditionService{ExpRepo: &repositories.ExpeditionRepository{DB: db}}}
+	crewHandler := handlers.CrewHandler{CrewService: &services.CrewService{CrewRepo: &repositories.CrewRepository{DB: db}}}
 
 	router = userHandler.RegisterRoutes(router)
 	router = pointsHandler.RegisterRoutes(router)
 	router = equipHandler.RegisterRoutes(router)
 	router = goodsHandler.RegisterRoutes(router)
 	router = carsHandler.RegisterRoutes(router)
-	//router = expHandler.RegisterRoutes(router)
-	//router = crewHandler.RegisterRoutes(router)
+	router = expHandler.RegisterRoutes(router)
+	router = crewHandler.RegisterRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return router
 }

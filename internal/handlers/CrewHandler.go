@@ -42,9 +42,9 @@ func (h *CrewHandler) Create(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	id := h.CrewService.Create(crew)
-	if id == -1 {
-		c.Status(http.StatusConflict)
+	id, err := h.CrewService.Create(crew)
+	if id == 0 {
+		c.String(http.StatusConflict, err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, &crew)

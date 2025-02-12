@@ -46,7 +46,7 @@ func (s *GoodsService) DeleteGood(id int) error {
 func (s *GoodsService) UpdateGood(good *models.Good) (*models.Good, error) {
 	oldGood, err := s.GetGood(good.ID)
 	good.Name = utils.FirstNonEmptyString(good.Name, oldGood.Name)
-	good.ExpeditionID = utils.FirstNonEmptyInt(good.ExpeditionID, oldGood.ExpeditionID)
+	good.CrewID = utils.FirstNonEmptyInt(good.CrewID, oldGood.CrewID)
 	updGood, err := s.GoodsRepo.PatchGood(good)
 	if err != nil {
 		log.Printf("Ошибка при обновлении продукта: %v", err)
