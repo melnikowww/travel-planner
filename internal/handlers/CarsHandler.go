@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/services"
-	"travelPlanner/internal/utils"
 )
 
 type CarsHandler struct {
@@ -61,12 +60,12 @@ func (h *CarsHandler) Create(c *gin.Context) {
 	if err := c.ShouldBindJSON(&car); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
-	id := h.CarsService.CreateCar(&car)
-	if id != -1 {
+	id, err := h.CarsService.CreateCar(&car)
+	if id != 0 {
 		car.ID = id
 		c.JSON(http.StatusCreated, &car)
 	} else {
-		c.Status(http.StatusConflict)
+		c.String(http.StatusConflict, err.Error())
 	}
 }
 
@@ -92,15 +91,6 @@ func (h *CarsHandler) Update(c *gin.Context) {
 	if err := c.ShouldBindJSON(&newCar); err != nil {
 		c.Status(http.StatusBadRequest)
 	}
-	oldCar, err := h.CarsService.GetCar(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
-	}
-	newCar.Name = utils.FirstNonEmptyString(newCar.Name, oldCar.Name)
-	newCar.OwnerID = utils.FirstNonEmptyInt(newCar.OwnerID, oldCar.OwnerID)
-
-	newCar.OwnerID = oldCar.OwnerID
-
 	newCar.ID = id
 	updateCar, err := h.CarsService.UpdateCar(&newCar)
 	if err != nil {

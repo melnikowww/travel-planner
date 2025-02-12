@@ -1,88 +1,59 @@
 package repositories
 
 import (
-	"database/sql"
-	"log"
+	"gorm.io/gorm"
 	"travelPlanner/internal/models"
 )
 
 type UserRepository struct {
-	DB *sql.DB
+	DB *gorm.DB
 }
 
-func (repo *UserRepository) FindById(id int) (*models.User, error) {
+func (r *UserRepository) FindById(id int) (*models.User, error) {
 	var person models.User
-	err := repo.DB.QueryRow(
-		"SELECT * FROM persons WHERE id = $1",
-		id,
-	).Scan(&person.ID, &person.Name, &person.Email, &person.Password)
-	if err != nil {
+	err := r.DB.First(&person, id)
+	return &person, err.Error
+}
+
+func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
+	var person models.User
+	err := r.DB.First(&person).Where("email = $1", email)
+	return &person, err.Error
+}
+
+func (r *UserRepository) FindCarsByUserId(id int) ([]*models.Car, error) {
+	var cars []*models.Car
+	err := r.DB.Where("user_id = ?", id).Find(&cars).Error
+	return cars, err
+}
+
+func (r *UserRepository) FindCrewsByUserId(id int) ([]*models.Crew, error) {
+	var crews []*models.Crew
+	if err := r.DB.Joins("JOIN crews_users ON crews.id = crews_users.crew_id").
+		Where("crews_users.user_id = ?", id).
+		Find(&crews).Error; err != nil {
 		return nil, err
 	}
-	return &person, nil
+
+	return crews, nil
 }
 
-func (repo *UserRepository) FindByEmail(email string) (*models.User, error) {
-	var person models.User
-	err := repo.DB.QueryRow(
-		"SELECT * FROM persons WHERE email = $1",
-		&email,
-	).Scan(&person.ID, &person.Name, &person.Email, &person.Password)
-	if err != nil {
-		return nil, err
-	}
-	return &person, nil
-}
-
-func (repo *UserRepository) GetAllUsers() ([]*models.User, error) {
+func (r *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
-	rows, err := repo.DB.Query("SELECT * FROM persons")
-	if err != nil {
-		return nil, err
-	}
-	for rows.Next() {
-		user := &models.User{}
-		err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, user)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return users, nil
+	err := r.DB.Find(&users)
+	return users, err.Error
 }
 
-func (repo *UserRepository) CreateUser(person *models.User) int {
-	var id int
-	err := repo.DB.QueryRow("INSERT INTO persons (name, email, password) VALUES ($1, $2, $3) RETURNING id",
-		person.Name, person.Email, person.Password).Scan(&id)
-	if err != nil {
-		log.Printf("Database error: %v", err)
-		return -1
-	}
-	person.ID = id
-	return id
+func (r *UserRepository) CreateUser(person *models.User) (int, error) {
+	result := r.DB.Create(&person)
+	return person.ID, result.Error
 }
 
-func (repo *UserRepository) DeleteUser(id int) error {
-	_, err := repo.FindById(id)
-	if err != nil {
-		return err
-	}
-	_, err = repo.DB.Exec("DELETE FROM persons WHERE ID = $1;", id)
-	return nil
+func (r *UserRepository) DeleteUser(id int) error {
+	return r.DB.Delete(&models.User{}, id).Error
 }
 
-func (repo *UserRepository) UpdateUser(user *models.User) (*models.User, error) {
-	_, err := repo.FindById(user.ID)
-	if err != nil {
-		return nil, err
-	}
-	_, err = repo.DB.Exec("UPDATE persons SET name = $1, email = $2, password = $3 WHERE id = $4;",
-		user.Name, user.Email, user.Password, user.ID)
-	return repo.FindByEmail(user.Email)
+func (r *UserRepository) UpdateUser(user *models.User) (*models.User, error) {
+	err := r.DB.Save(&user)
+	return user, err.Error
 }
