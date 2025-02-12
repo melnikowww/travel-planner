@@ -7,7 +7,6 @@ import (
 	_ "travelPlanner/docs"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/services"
-	"travelPlanner/internal/utils"
 )
 
 type GoodsHandler struct {
@@ -64,12 +63,12 @@ func (h *GoodsHandler) CreateGood(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	id := h.GoodsService.CreateGood(&good)
-	if id != -1 {
+	id, err := h.GoodsService.CreateGood(&good)
+	if id != 0 {
 		good.ID = id
 		c.JSON(http.StatusCreated, &good)
 	} else {
-		c.String(http.StatusConflict, "Good already exists")
+		c.String(http.StatusConflict, err.Error())
 	}
 }
 
@@ -119,15 +118,9 @@ func (h *GoodsHandler) UpdateGood(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	oldGood, err := h.GoodsService.GetGood(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
-	}
 	if err = c.ShouldBindJSON(&good); err != nil {
 		c.String(http.StatusConflict, err.Error())
 	}
-	good.Name = utils.FirstNonEmptyString(good.Name, oldGood.Name)
-	good.ExpeditionID = utils.FirstNonEmptyInt(good.ExpeditionID, oldGood.ExpeditionID)
 	good.ID = id
 	updateGood, err := h.GoodsService.UpdateGood(&good)
 	if err != nil {

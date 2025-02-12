@@ -13,7 +13,7 @@ type ExpeditionHandler struct {
 }
 
 func (h *ExpeditionHandler) GetExpedition(c *gin.Context) {
-	key := c.Query("key")
+	key := c.Query("id")
 	if key == "" {
 		expeditions, err := h.ExpService.GetAllExpeditions()
 		if err != nil {
@@ -42,9 +42,9 @@ func (h *ExpeditionHandler) CreateExpedition(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	id := h.ExpService.CreateExpedition(&expedition)
-	if id == -1 {
-		c.Status(http.StatusConflict)
+	id, err := h.ExpService.CreateExpedition(&expedition)
+	if id == 0 {
+		c.String(http.StatusConflict, err.Error())
 		return
 	}
 	c.JSON(http.StatusCreated, &expedition)
