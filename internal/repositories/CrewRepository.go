@@ -11,7 +11,7 @@ type CrewRepository struct {
 
 func (r *CrewRepository) FindByID(id int) (*models.Crew, error) {
 	var crew *models.Crew
-	err := r.DB.First(&crew, id)
+	err := r.DB.Preload("Members").Preload("Goods").Preload("Equipment").First(&crew, id)
 	return crew, err.Error
 }
 

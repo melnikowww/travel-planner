@@ -13,19 +13,9 @@ type ExpeditionService struct {
 
 func (s *ExpeditionService) GetExpedition(id int) (*models.Expedition, error) {
 	var expedition *models.Expedition
-
 	expedition, err := s.ExpRepo.FindById(id)
 	if err != nil {
 		log.Printf("Ошибка при получении записи об экспедиции: %v", err)
-	}
-	points, err := s.ExpRepo.FindPointsByExpeditionId(expedition.ID)
-	for _, point := range points {
-		expedition.Points = append(expedition.Points, *point)
-	}
-	crews, err := s.ExpRepo.FindCrewsByExpeditionId(expedition.ID)
-	for _, crew := range crews {
-
-		expedition.Crews = append(expedition.Crews, *crew)
 	}
 	return expedition, err
 }
@@ -33,12 +23,6 @@ func (s *ExpeditionService) GetExpedition(id int) (*models.Expedition, error) {
 func (s *ExpeditionService) GetAllExpeditions() ([]*models.Expedition, error) {
 	var expeditions []*models.Expedition
 	expeditions, err := s.ExpRepo.GetAllExpeditions()
-	for _, expedition := range expeditions {
-		points, _ := s.ExpRepo.FindPointsByExpeditionId(expedition.ID)
-		for _, point := range points {
-			expedition.Points = append(expedition.Points, *point)
-		}
-	}
 	return expeditions, err
 }
 
