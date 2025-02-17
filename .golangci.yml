@@ -1,0 +1,19 @@
+linters:
+  enable:
+    - gofmt
+    - goimports
+    - govet
+    - staticcheck
+    - errcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - typecheck
+
+run:
+  skip-dirs:
+    - vendor
+  tests: false
+
+issues:
+  exclude-use-default: false

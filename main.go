@@ -66,9 +66,18 @@ func main() {
 	}
 	router := gin.Default()
 
-	router = route.RegisterAllRoutes(router, db)
-
 	router.Use(cors.Default())
+
+	//router.Use(cors.New(cors.Config{
+	//		AllowAllOrigins:  false,
+	//		AllowOrigins:     []string{"http://localhost:3000", "https://your-production-domain.com"},
+	//		AllowWildcard:    true,
+	//		AllowBrowserExtensions: false,
+	//		AllowWebSockets:  true,
+	//		AllowFiles:       false,
+	//}))
+
+	router = route.RegisterAllRoutes(router, db)
 
 	err = router.Run("localhost:8081")
 	if err != nil {

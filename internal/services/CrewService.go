@@ -1,6 +1,7 @@
 package services
 
 import (
+	"log"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/repositories"
 	"travelPlanner/internal/utils"
@@ -30,9 +31,18 @@ func (s *CrewService) Delete(id int) error {
 }
 
 func (s *CrewService) GetCrew(id int) (*models.Crew, error) {
-	return s.CrewRepo.FindByID(id)
+	crew, err := s.CrewRepo.FindByID(id)
+	if err != nil {
+		log.Printf("Ошибка при извлечении пользователя: %v", err)
+		return nil, err
+	}
+	return crew, nil
 }
 
 func (s *CrewService) GetAllCrews() ([]*models.Crew, error) {
-	return s.CrewRepo.GetAllCrews()
+	crews, err := s.CrewRepo.GetAllCrews()
+	if err != nil {
+		log.Printf("Ошибка при получении списка экипажей: %v", err)
+	}
+	return crews, nil
 }
