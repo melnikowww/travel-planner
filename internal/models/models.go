@@ -4,7 +4,7 @@ type User struct {
 	ID       int    `gorm:"primarykey" json:"id" example:"1"`
 	Name     string `gorm:"type:varchar(100);not null" json:"name" example:"Alex"`
 	Email    string `gorm:"type:varchar(100);uniqueIndex;not null" json:"email" example:"alex@example.com"`
-	Password string `gorm:"type:varchar(100);not null" example:"password" json:"-"`
+	Password string `gorm:"type:varchar(100);not null" example:"password" json:"password"`
 	Cars     []Car  `gorm:"foreignKey:user_id;constraint:OnDelete:CASCADE;" json:"cars"`
 	Crews    []Crew `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"crews"`
 }

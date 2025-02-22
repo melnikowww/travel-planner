@@ -3,7 +3,7 @@ import axios from 'axios';
 // import {useNavigate} from "react-router-dom";
 import {User} from "../../types.ts";
 
-const UserList = () => {
+const Users = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -34,9 +34,9 @@ const UserList = () => {
                 {users.map((user) => (
                     <div key={user.id} className="user-card">
                         <h3>{user.name}</h3>
-                        <p>Автомобили: {user.cars?.map((car)=> (
-                            <li key={car.id}>{car.name}</li>
-                        )) || 0}</p>
+                            <p>Автомобили: {user.cars?.map((car)=> (
+                                <li key={car.id}>{car.name}</li>
+                            )) || 0}</p>
                         <p>Участвует в командах: {user.crews?.length || 0}</p>
                     </div>
                 ))}
@@ -45,4 +45,4 @@ const UserList = () => {
     );
 };
 
-export default UserList;
+export default Users;

@@ -13,24 +13,34 @@ var jwtSecret = []byte("your_secret_key_here")
 
 // Claims — данные, хранимые в токене
 type Claims struct {
-	UserID uint `json:"user_id"`
+	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(userID uint) (string, error) {
+func GenerateToken(email string) (string, error) {
 	claims := Claims{
-		UserID: userID,
+		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)), // Срок действия
-			Issuer:    "your_app_name",
+			Issuer:    "travel_planner",
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
 }
 
-func JwtMiddleware() gin.HandlerFunc {
+func ValidateJWT(tokenString string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+	if err != nil || !token.Valid {
+		return nil, err
+	}
+	return claims, nil
+}
+
+func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -38,14 +48,12 @@ func JwtMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Формат: "Bearer {token}"
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
 			return
 		}
 
-		// Парсинг токена
 		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 			return jwtSecret, nil
 		})
@@ -55,14 +63,12 @@ func JwtMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Добавляем данные из токена в контекст
 		if claims, ok := token.Claims.(*Claims); ok {
-			c.Set("user_id", claims.UserID)
+			c.Set("email", claims.Email)
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Failed to parse claims"})
 			return
 		}
-
 		c.Next()
 	}
 }

@@ -130,7 +130,7 @@ func (h *GoodsHandler) UpdateGood(c *gin.Context) {
 	c.JSON(http.StatusOK, updateGood)
 }
 
-func (h *GoodsHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *GoodsHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/goods", h.GetGoods)
 	router.POST("/goods", h.CreateGood)
 	router.PATCH("/goods", h.UpdateGood)

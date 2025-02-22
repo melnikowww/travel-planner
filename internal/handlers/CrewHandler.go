@@ -85,7 +85,7 @@ func (h *CrewHandler) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (h *CrewHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *CrewHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/crew", h.Get)
 	router.POST("/crew", h.Create)
 	router.PATCH("/crew", h.Update)

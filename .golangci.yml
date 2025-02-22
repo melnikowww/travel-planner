@@ -11,9 +11,9 @@ linters:
     - typecheck
 
 run:
-  skip-dirs:
-    - vendor
   tests: false
 
 issues:
   exclude-use-default: false
+  exclude-dirs:
+    - vendor

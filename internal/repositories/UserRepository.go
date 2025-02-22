@@ -11,19 +11,31 @@ type UserRepository struct {
 
 func (r *UserRepository) FindById(id int) (*models.User, error) {
 	var person models.User
-	err := r.DB.Preload("Cars").Preload("Crews").First(&person, id)
+	err := r.DB.
+		Preload("Cars").
+		Preload("Crews").
+		//Select("id", "name", "email").
+		First(&person, id)
 	return &person, err.Error
 }
 
 func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	var person models.User
-	err := r.DB.Preload("Cars").First(&person).Where("email = $1", email)
+	err := r.DB.
+		Preload("Crews").
+		Preload("Cars").
+		Where("email = ?", email).
+		First(&person)
 	return &person, err.Error
 }
 
 func (r *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
-	err := r.DB.Preload("Cars").Preload("Crews").Find(&users)
+	err := r.DB.
+		Preload("Cars").
+		Preload("Crews").
+		Select("id", "name", "email").
+		Find(&users)
 	return users, err.Error
 }
 

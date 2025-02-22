@@ -13,10 +13,14 @@ import (
 	"log"
 	"os"
 	"travelPlanner/internal/config"
+	"travelPlanner/internal/handlers"
 	_ "travelPlanner/internal/handlers"
 	"travelPlanner/internal/handlers/route"
 	"travelPlanner/internal/models"
 	_ "travelPlanner/internal/models"
+	"travelPlanner/internal/repositories"
+	"travelPlanner/internal/security"
+	"travelPlanner/internal/services"
 )
 
 var db *gorm.DB
@@ -65,19 +69,30 @@ func main() {
 		log.Fatalf("Не удалось совершить миграцию БД %v", err)
 	}
 	router := gin.Default()
+	auth := router.Group("/")
 
-	router.Use(cors.Default())
+	corsConfig := cors.Config{
+		AllowAllOrigins:        false,
+		AllowHeaders:           []string{"Origin", "Content-Type", "Authorization"},
+		AllowOrigins:           []string{"http://localhost:5173"},
+		AllowMethods:           []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowCredentials:       true,
+		AllowWildcard:          true,
+		AllowBrowserExtensions: false,
+		AllowWebSockets:        true,
+		AllowFiles:             false,
+	}
+	router.Use(cors.New(corsConfig))
+	auth.Use(cors.New(corsConfig))
 
-	//router.Use(cors.New(cors.Config{
-	//		AllowAllOrigins:  false,
-	//		AllowOrigins:     []string{"http://localhost:3000", "https://your-production-domain.com"},
-	//		AllowWildcard:    true,
-	//		AllowBrowserExtensions: false,
-	//		AllowWebSockets:  true,
-	//		AllowFiles:       false,
-	//}))
+	auth.Use(security.AuthMiddleware())
+	{
+		auth = route.RegisterAllRoutes(auth, db)
+	}
 
-	router = route.RegisterAllRoutes(router, db)
+	loginHandler := handlers.LoginHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
+	router.POST("/login", loginHandler.LogIn)
+	router.POST("/register", loginHandler.Register)
 
 	err = router.Run("localhost:8081")
 	if err != nil {

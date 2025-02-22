@@ -129,7 +129,7 @@ func (h *PointsHandler) UpdatePoint(c *gin.Context) {
 	c.JSON(http.StatusOK, updatePoint)
 }
 
-func (h *PointsHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *PointsHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/points", h.GetPoint)
 	router.POST("/points", h.CreatePoint)
 	router.PATCH("/points", h.UpdatePoint)

@@ -80,7 +80,7 @@ func (h *ExpeditionHandler) DeleteExpedition(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (h *ExpeditionHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *ExpeditionHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/expeditions", h.GetExpedition)
 	router.POST("/expeditions", h.CreateExpedition)
 	router.PATCH("/expeditions", h.UpdateExpedition)
