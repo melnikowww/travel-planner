@@ -10,7 +10,7 @@ import (
 	"travelPlanner/internal/services"
 )
 
-func RegisterAllRoutes(router *gin.Engine, db *gorm.DB) *gin.Engine {
+func RegisterAllRoutes(router *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 	userHandler := handlers.UserHandler{UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
 	pointsHandler := handlers.PointsHandler{PointsService: &services.PointsService{PointRepo: &repositories.PointsRepository{DB: db}}}

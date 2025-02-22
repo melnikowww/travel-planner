@@ -16,7 +16,7 @@ interface ApiResponse {
     email: string;
 }
 
-const Home: React.FC = () => {
+const Register: React.FC = () => {
 
     const [formData, setFormData] = useState<FormState>({
         name: '',
@@ -42,7 +42,7 @@ const Home: React.FC = () => {
         }
         try {
             const response = await axios.post<ApiResponse>(
-                'http://localhost:8081/users',
+                'http://localhost:8081/register',
                 formData,
                 {
                     headers: {
@@ -76,11 +76,10 @@ const Home: React.FC = () => {
     return (
         <Container className="mt-5">
             <Row className="justify-content-md-center">
-                <Col md={100}>
+                <Col className="col-12 col-md-6">
                     <h2 className="mb-5 text-center">Вас приветствует Travel Planner!</h2>
                     <h4 className="mb-3">Давайте познакомимся?</h4>
 
-                    {/* Блок ошибок */}
                     {error && (
                         <Alert variant="danger" className="mb-3">
                             {"Кажется Вы уже регистрировались..."}
@@ -94,7 +93,6 @@ const Home: React.FC = () => {
                         </Alert>
                     )}
 
-                    {/* Форма */}
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="name" className="mb-3">
                             <Form.Label>Как Вас зовут?</Form.Label>
@@ -160,4 +158,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default Register;

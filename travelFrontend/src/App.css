@@ -1,8 +1,8 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  /*max-width: 1280px;*/
+  /*margin: 0 auto;*/
+  /*padding: 10px;*/
+  /*text-align: center;*/
 }
 
 .logo {
@@ -40,3 +40,57 @@
 .read-the-docs {
   color: #888;
 }
+
+.avatar {
+  width: 150px;
+  height: 150px;
+}
+
+.name {
+  width: fit-content;
+}
+
+.russo {
+  font-family: 'Russo One', sans-serif;
+}
+
+.bebas {
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.black-ops {
+  font-family: 'Black Ops One', sans-serif;;
+}
+
+.bg-image {
+  background-size: auto;
+  background-position:  center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-width: 100vw;
+  z-index: 0;
+  overflow-x: hidden;
+}
+
+.login {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-size: cover;
+  background-position: center;
+}
+
+.submit-btn {
+  --bs-btn-bg: #F5DEB3;
+  --bs-btn-border-color: #F5DEB3;
+  --bs-btn-hover-bg: #4682B4;
+  --bs-btn-hover-border-color: #4682B4;
+  --bs-btn-active-bg: #4682B4;
+  --bs-btn-disabled-bg: #4682B4;
+  --bs-btn-disabled-border-color: #4682B4;
+  color: #000000;
+}
+
+.form {
+  opacity: 80%;
+}
+

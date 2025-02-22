@@ -5,9 +5,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home.tsx';
+import Register from './pages/Register.tsx';
 import Users from './pages/Users.tsx';
-
+import Login from './pages/Login.tsx';
+import User from "./pages/User.tsx";
 
 function App() {
 
@@ -15,7 +16,9 @@ function App() {
   return (
         <Router>
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/profile" element={<User />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/users" element={<Users />} />
             </Routes>
         </Router>

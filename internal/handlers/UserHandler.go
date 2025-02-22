@@ -7,7 +7,6 @@ import (
 	"strconv"
 	_ "travelPlanner/docs"
 	"travelPlanner/internal/models"
-	"travelPlanner/internal/security"
 	"travelPlanner/internal/services"
 )
 
@@ -52,36 +51,23 @@ func (h *UserHandler) GetUserHandler(c *gin.Context) {
 	}
 }
 
-// CreateUserHandler Создание нового пользователя
-// @Summary Создать пользователя
-// @Description Регистрация нового пользователя в системе
+// GetUserByEmail Поиск пользователя по email
+// @Summary Найти пользователя по email
+// @Description Поиск пользователя по email
 // @Tags Пользователи
-// @Accept json
 // @Produce json
-// @Param user body models.User true "Данные пользователя"
-// @Success 201 {object} models.User "Созданный пользователь"
-// @Failure 400 {string} string "Некорректные входные данные"
-// @Failure 409 {string} string "Пользователь уже существует"
-// @Failure 500 {string} string "Ошибка хеширования пароля"
-// @Router /users [post]
-func (h *UserHandler) CreateUserHandler(c *gin.Context) {
-	var user models.User
-	var err error
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
-	}
-	user.Password, err = security.HashPassword(user.Password)
+// @Param id query int true "ID пользователя"
+// @Success 200 "Пользователь удален"
+// @Failure 401 {string} string "Ошибка поиска"
+// @Router /user [get]
+func (h *UserHandler) GetUserByEmail(c *gin.Context) {
+	email := c.MustGet("email").(string)
+	user, err := h.UserService.GetUserByEmail(email)
 	if err != nil {
-		c.JSON(http.StatusConflict, "Password hash error")
+		c.Status(http.StatusBadGateway)
 	}
-	id, err := h.UserService.CreateUser(&user)
-	if id != 0 {
-		user.ID = id
-		c.JSON(http.StatusCreated, gin.H{"id": user.ID, "name": user.Name, "email": user.Email})
-	} else {
-		c.JSON(http.StatusConflict, err)
-	}
+	c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.Name, "email": user.Email, "cars": user.Cars, "crews": user.Crews})
+	c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
 }
 
 // DeleteUserHandler Удаление пользователя
@@ -143,12 +129,13 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"id": updateUser.ID, "name": updateUser.Name, "email": updateUser.Email})
+	c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
 }
 
 // RegisterRoutes registers all routes for the UserHandler
-func (h *UserHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *UserHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/users", h.GetUserHandler)
-	router.POST("/users", h.CreateUserHandler)
+	router.GET("/user", h.GetUserByEmail)
 	router.DELETE("/users", h.DeleteUserHandler)
 	router.PATCH("/users", h.PatchUserHandler)
 	return router

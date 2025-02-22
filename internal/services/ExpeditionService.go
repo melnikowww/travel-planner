@@ -15,7 +15,7 @@ func (s *ExpeditionService) GetExpedition(id int) (*models.Expedition, error) {
 	var expedition *models.Expedition
 	expedition, err := s.ExpRepo.FindById(id)
 	if err != nil {
-		log.Printf("Ошибка при получении записи об экспедиции: %v", err)
+		log.Printf("Get expedition error: %v", err)
 	}
 	return expedition, err
 }
@@ -23,23 +23,41 @@ func (s *ExpeditionService) GetExpedition(id int) (*models.Expedition, error) {
 func (s *ExpeditionService) GetAllExpeditions() ([]*models.Expedition, error) {
 	var expeditions []*models.Expedition
 	expeditions, err := s.ExpRepo.GetAllExpeditions()
+	if err != nil {
+		log.Printf("Get all expeditions error: %v", err)
+		return nil, err
+	}
 	return expeditions, err
 }
 
 func (s *ExpeditionService) CreateExpedition(expedition *models.Expedition) (int, error) {
-	return s.ExpRepo.CreateExpedition(expedition)
+	id, err := s.ExpRepo.CreateExpedition(expedition)
+	if err != nil {
+		log.Printf("Create expedition error: %v", err)
+		return 0, err
+	}
+	return id, err
 }
 
 func (s *ExpeditionService) UpdateExpedition(expedition *models.Expedition) (*models.Expedition, error) {
-	//Проверка на существование вложенных сущностей
 	oldExpedition, err := s.GetExpedition(expedition.ID)
 	if err != nil {
+		log.Printf("Get expedition while update error: %v", err)
 		return nil, err
 	}
 	expedition.Name = utils.FirstNonEmptyString(expedition.Name, oldExpedition.Name)
 	expedition.Description = utils.FirstNonEmptyString(expedition.Description, oldExpedition.Description)
-	return s.ExpRepo.UpdateExpedition(expedition)
+	exp, err := s.ExpRepo.UpdateExpedition(expedition)
+	if err != nil {
+		log.Printf("Update expedition error: %v", err)
+		return nil, err
+	}
+	return exp, err
 }
 func (s *ExpeditionService) DeleteExpedition(id int) error {
-	return s.ExpRepo.DeleteExpedition(id)
+	err := s.ExpRepo.DeleteExpedition(id)
+	if err != nil {
+		log.Printf("Delete expedition error: %v", err)
+	}
+	return err
 }

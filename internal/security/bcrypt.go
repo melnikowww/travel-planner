@@ -5,14 +5,14 @@ import (
 )
 
 func HashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		return "", err
 	}
 	return string(hashedPassword), nil
 }
 
-func CheckPasswordHash(password, hash string) bool {
+func CheckPasswordHash(hash string, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }

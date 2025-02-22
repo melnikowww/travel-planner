@@ -119,7 +119,7 @@ func (h *CarsHandler) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (h *CarsHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *CarsHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/cars", h.Get)
 	router.POST("/cars", h.Create)
 	router.PATCH("/cars", h.Update)

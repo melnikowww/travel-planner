@@ -14,48 +14,42 @@ type CarsService struct {
 func (s *CarsService) GetAllCars() ([]*models.Car, error) {
 	cars, err := s.CarsRepo.GetAllCars()
 	if err != nil {
-		log.Printf("Ошибка при получении списка автомобилей: %v", err)
+		log.Printf("Get cars list error: %v", err)
 		return nil, err
 	}
-	return cars, nil
+	return cars, err
 }
 func (s *CarsService) GetCar(id int) (*models.Car, error) {
 	car, err := s.CarsRepo.GetCar(id)
 	if err != nil {
-		log.Printf("Ошибка при получении автомобиля: %v", err)
+		log.Printf("Get car error: %v", err)
 		return nil, err
 	}
-	return car, nil
+	return car, err
 }
 func (s *CarsService) CreateCar(car *models.Car) (int, error) {
 	id, err := s.CarsRepo.CreateCar(car)
 	if err != nil {
-		log.Printf("Ошибка при создании автомобиля: %v", err)
+		log.Printf("Create car error: %v", err)
 		return id, err
 	}
-	var owner models.User
-	s.CarsRepo.DB.First(&owner).Where("id = $1", car.UserID)
-	owner.Cars = append(owner.Cars, *car)
-	s.CarsRepo.DB.Save(&owner)
-	return id, nil
+	return id, err
 }
 func (s *CarsService) UpdateCar(car *models.Car) (*models.Car, error) {
 	oldCar, err := s.GetCar(car.ID)
 	car.Name = utils.FirstNonEmptyString(car.Name, oldCar.Name)
 	car.UserID = utils.FirstNonEmptyInt(car.UserID, oldCar.UserID)
-
 	updCar, err := s.CarsRepo.UpdateCar(car)
 	if err != nil {
-		log.Printf("Ошибка при обновлении автомобиля: %v", err)
+		log.Printf("Update car error: %v", err)
 		return nil, err
 	}
-	return updCar, nil
+	return updCar, err
 }
 func (s *CarsService) DeleteCar(id int) error {
 	err := s.CarsRepo.DeleteCar(id)
 	if err != nil {
-		log.Printf("Ошибка при удалении пользователя: %v", err)
-		return err
+		log.Printf("Delete car error: %v", err)
 	}
-	return nil
+	return err
 }

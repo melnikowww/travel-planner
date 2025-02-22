@@ -14,7 +14,7 @@ type GoodsService struct {
 func (s *GoodsService) GetGood(id int) (*models.Good, error) {
 	good, err := s.GoodsRepo.FindById(id)
 	if err != nil {
-		log.Printf("Ошибка при получении записи продукта: %v", err)
+		log.Printf("Get good error: %v", err)
 		return nil, err
 	}
 	return good, nil
@@ -22,7 +22,7 @@ func (s *GoodsService) GetGood(id int) (*models.Good, error) {
 func (s *GoodsService) GetAllGoods() ([]*models.Good, error) {
 	goods, err := s.GoodsRepo.GetAllGoods()
 	if err != nil {
-		log.Printf("Ошибка при получении списка продуктов: %v", err)
+		log.Printf("Get all goods error: %v", err)
 		return nil, err
 	}
 	return goods, nil
@@ -30,7 +30,7 @@ func (s *GoodsService) GetAllGoods() ([]*models.Good, error) {
 func (s *GoodsService) CreateGood(good *models.Good) (int, error) {
 	id, err := s.GoodsRepo.CreateGood(good)
 	if err != nil {
-		log.Printf("Ошибка при создании продукта: %v", err)
+		log.Printf("Create good error: %v", err)
 		return id, err
 	}
 	return id, nil
@@ -38,10 +38,9 @@ func (s *GoodsService) CreateGood(good *models.Good) (int, error) {
 func (s *GoodsService) DeleteGood(id int) error {
 	err := s.GoodsRepo.DeleteGood(id)
 	if err != nil {
-		log.Printf("Ошибка при удалении продукта: %v", err)
-		return err
+		log.Printf("Delete good error: %v", err)
 	}
-	return nil
+	return err
 }
 func (s *GoodsService) UpdateGood(good *models.Good) (*models.Good, error) {
 	oldGood, err := s.GetGood(good.ID)
@@ -49,8 +48,8 @@ func (s *GoodsService) UpdateGood(good *models.Good) (*models.Good, error) {
 	good.CrewID = utils.FirstNonEmptyInt(good.CrewID, oldGood.CrewID)
 	updGood, err := s.GoodsRepo.PatchGood(good)
 	if err != nil {
-		log.Printf("Ошибка при обновлении продукта: %v", err)
+		log.Printf("Update good error: %v", err)
 		return nil, err
 	}
-	return updGood, nil
+	return updGood, err
 }

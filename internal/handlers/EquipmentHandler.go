@@ -128,7 +128,7 @@ func (h *EquipmentHandler) UpdateEquip(c *gin.Context) {
 	c.JSON(http.StatusOK, updateEquip)
 }
 
-func (h *EquipmentHandler) RegisterRoutes(router *gin.Engine) *gin.Engine {
+func (h *EquipmentHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/equip", h.GetEquip)
 	router.POST("/equip", h.CreateEquip)
 	router.PATCH("/equip", h.UpdateEquip)
