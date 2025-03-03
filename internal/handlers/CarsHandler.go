@@ -10,6 +10,7 @@ import (
 
 type CarsHandler struct {
 	CarsService *services.CarsService
+	UserService *services.UserService
 }
 
 // Get godoc
@@ -57,6 +58,8 @@ func (h *CarsHandler) Get(c *gin.Context) {
 // @Router /cars [post]
 func (h *CarsHandler) Create(c *gin.Context) {
 	var car models.Car
+	userId := c.MustGet("id").(int)
+	car.UserID = userId
 	if err := c.ShouldBindJSON(&car); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
@@ -82,21 +85,26 @@ func (h *CarsHandler) Create(c *gin.Context) {
 // @Failure 404 {string} string "Автомобиль не найден"
 // @Router /cars [patch]
 func (h *CarsHandler) Update(c *gin.Context) {
+	userId := c.MustGet("id").(int)
 	var newCar models.Car
 	key := c.Query("id")
 	id, err := strconv.Atoi(key)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
+		return
 	}
 	if err := c.ShouldBindJSON(&newCar); err != nil {
 		c.Status(http.StatusBadRequest)
+		return
 	}
 	newCar.ID = id
-	updateCar, err := h.CarsService.UpdateCar(&newCar)
+	updateCar, err := h.CarsService.UpdateCar(&newCar, userId)
 	if err != nil {
-		c.JSON(http.StatusConflict, err)
+		c.String(http.StatusConflict, err.Error())
+		return
 	}
 	c.JSON(http.StatusOK, &updateCar)
+	return
 }
 
 // Delete godoc
@@ -109,12 +117,15 @@ func (h *CarsHandler) Update(c *gin.Context) {
 // @Failure 400 {string} string "Некорректный ID"
 // @Router /cars [delete]
 func (h *CarsHandler) Delete(c *gin.Context) {
+	userId := c.MustGet("id").(int)
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.Status(http.StatusBadRequest)
+		return
 	}
-	if err = h.CarsService.DeleteCar(id); err != nil {
-		c.Status(http.StatusConflict)
+	if err = h.CarsService.DeleteCar(id, userId); err != nil {
+		c.String(http.StatusConflict, err.Error())
+		return
 	}
 	c.Status(http.StatusNoContent)
 }

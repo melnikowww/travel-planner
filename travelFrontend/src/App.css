@@ -42,8 +42,11 @@
 }
 
 .avatar {
-  width: 150px;
-  height: 150px;
+  background-position:  center;
+  background-repeat: no-repeat;
+  /*min-height: 100vh;*/
+  /*min-width: 100vw;*/
+  overflow-x: hidden;
 }
 
 .name {
@@ -62,14 +65,61 @@
   font-family: 'Black Ops One', sans-serif;;
 }
 
-.bg-image {
-  background-size: auto;
+.bg-image-login {
+  background-image: url('src/assets/onega.jpg');
+  background-size: 100vh 100vw;
   background-position:  center;
   background-repeat: no-repeat;
-  min-height: 100vh;
-  min-width: 100vw;
+  /*min-height: 100vh;*/
+  /*min-width: 100vw;*/
   z-index: 0;
   overflow-x: hidden;
+}
+
+.bg-image-reg {
+  background-image: url('src/assets/register.jpg');
+  background-size: 90vh;
+  background-position:  center;
+  background-repeat: no-repeat;
+  /*min-height: 100vh;*/
+  /*min-width: 100vw;*/
+  z-index: 0;
+  overflow-x: hidden;
+}
+
+@media (max-width: 915px) {
+  .bg-image-login {
+    background-image: url("/src/assets/mobile_login.jpg");
+    background-size: 100vh 100vw;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 915px) {
+  .bg-image-reg {
+    background-image: url("/src/assets/mobile_login1.jpg");
+    background-size: 100vh 100vw;
+    overflow: hidden;
+  }
+}
+
+.bg-image-profile {
+  background-image: url('src/assets/back1.jpg');
+  background-size: 100vh;
+  background-position:  center;
+  background-repeat: no-repeat;
+  /*min-height: 100vh;*/
+  /*min-width: 100vw;*/
+  z-index: 0;
+  overflow-x: hidden;
+}
+
+@media (max-width: 915px) {
+  .bg-image-profile {
+    background-image: url("/src/assets/back1.jpg");
+    background-size: 100vh 100vw;
+    overflow: hidden;
+  }
 }
 
 .login {
@@ -80,17 +130,30 @@
 }
 
 .submit-btn {
-  --bs-btn-bg: #F5DEB3;
-  --bs-btn-border-color: #F5DEB3;
+  --bs-btn-bg: rgba(212, 163, 115, 0.8);
+  --bs-btn-border-color: rgba(5, 4, 3, 0.7);
   --bs-btn-hover-bg: #4682B4;
   --bs-btn-hover-border-color: #4682B4;
   --bs-btn-active-bg: #4682B4;
   --bs-btn-disabled-bg: #4682B4;
   --bs-btn-disabled-border-color: #4682B4;
-  color: #000000;
+  color: honeydew;
+  width: 75px;
 }
 
 .form {
   opacity: 80%;
+}
+
+.stroke-1 {-webkit-text-stroke: 1px black;}
+
+.flex-text {
+  font-size: 24px;
+}
+
+@media (max-width: 915px) {
+  .flex-text {
+    font-size: 16px;
+  }
 }
 

@@ -1,7 +1,5 @@
 package utils
 
-import "github.com/lib/pq"
-
 func FirstNonEmptyString(f string, s string) string {
 	if f != "" {
 		return f
@@ -10,18 +8,13 @@ func FirstNonEmptyString(f string, s string) string {
 }
 
 func FirstNonEmptyInt(f int, s int) int {
-	if &f != nil {
+	if &f != nil && f != 0 {
 		return f
 	}
 	return s
 }
 
-func FirstNonEmptySlice(f pq.Int32Array, s pq.Int32Array) pq.Int32Array {
-	if len(f) == 0 && len(s) == 0 {
-		return f
-	}
-	if len(f) != 0 {
-		return f
-	}
-	return s
+type Credentials struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }

@@ -110,23 +110,23 @@ const Profile = () => {
     return (
         <Container
             fluid
-            className="px-0 bg-image"
+            className="d-flex flex-column px-10 vw-100"
             style={{
-                fontFamily: "Montserrat",
-                backgroundImage: "url('/src/assets/back1.jpg')",
-                filter: "brightness(120%)",
-                textAlign: 'center'
+                fontFamily: "Montserrat"
             }}
         >
             <Row className="mx-2 my-2 rounded-4 border border-3 border-black ">
-                <Col className="px-0">
-                    <div className="d-flex align-self-center p-3 text-start">
-                        <img src="/src/assets/avatar.png" className="me-5 avatar" />
-                        <p className="fs-1 name mb-0 align-self-center">{user?.name}</p>
-                    </div>
-                </Col>
-                <Col className="align-self-center text-end px-5">
 
+                <Col className="justify-content-center col-3 col-sm-2 py-2 avatar" style={{
+                    backgroundImage: "url(/src/assets/avatar1.JPG)",
+                    borderRadius: "50%"}}>
+                </Col>
+
+                <Col className="px-0 col-8 col-sm-3 my-auto">
+                    <p className="fs-1 name">{user?.name}</p>
+                </Col>
+
+                <Col className="align-self-center text-end px-5 col-2 col-1">
                     <Button variant="light" className="p-0 border-0" onClick={handleShow}>
                         <img
                             src="/src/assets/settings.png"
@@ -134,8 +134,8 @@ const Profile = () => {
                             style={{ width: "50px", height: "auto" }}
                         />
                     </Button>
-
                 </Col>
+
             </Row>
             <Row className="mt-5">
                 <Col className="fs-3">
