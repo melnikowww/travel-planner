@@ -38,6 +38,7 @@ func (h *ExpeditionHandler) GetExpedition(c *gin.Context) {
 
 func (h *ExpeditionHandler) CreateExpedition(c *gin.Context) {
 	var expedition models.Expedition
+	expedition.CreatorID = c.MustGet("id").(int)
 	if err := c.ShouldBindJSON(&expedition); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
@@ -52,6 +53,7 @@ func (h *ExpeditionHandler) CreateExpedition(c *gin.Context) {
 
 func (h *ExpeditionHandler) UpdateExpedition(c *gin.Context) {
 	var newExpedition models.Expedition
+	userId := c.MustGet("id").(int)
 	if err := c.ShouldBindJSON(&newExpedition); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
@@ -59,7 +61,7 @@ func (h *ExpeditionHandler) UpdateExpedition(c *gin.Context) {
 	key := c.Query("id")
 	id, err := strconv.Atoi(key)
 	newExpedition.ID = id
-	updatedExpedition, err := h.ExpService.UpdateExpedition(&newExpedition)
+	updatedExpedition, err := h.ExpService.UpdateExpedition(&newExpedition, userId)
 	if err != nil {
 		c.String(http.StatusConflict, err.Error())
 		return
@@ -69,11 +71,13 @@ func (h *ExpeditionHandler) UpdateExpedition(c *gin.Context) {
 
 func (h *ExpeditionHandler) DeleteExpedition(c *gin.Context) {
 	key := c.Query("id")
+	userId := c.MustGet("id").(int)
 	id, err := strconv.Atoi(key)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
+		return
 	}
-	if err := h.ExpService.DeleteExpedition(id); err != nil {
+	if err := h.ExpService.DeleteExpedition(id, userId); err != nil {
 		c.String(http.StatusConflict, err.Error())
 		return
 	}

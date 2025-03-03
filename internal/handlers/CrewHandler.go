@@ -42,6 +42,7 @@ func (h *CrewHandler) Create(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
+	crew.DriverID = c.MustGet("id").(int)
 	id, err := h.CrewService.Create(crew)
 	if id == 0 {
 		c.String(http.StatusConflict, err.Error())
@@ -62,10 +63,11 @@ func (h *CrewHandler) Update(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
+	userId := c.MustGet("id").(int)
 	crew.ID = id
-	updatedCrew, err := h.CrewService.Update(crew)
+	updatedCrew, err := h.CrewService.Update(crew, userId)
 	if err != nil {
-		c.Status(http.StatusConflict)
+		c.String(http.StatusConflict, err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, updatedCrew)
@@ -78,7 +80,8 @@ func (h *CrewHandler) Delete(c *gin.Context) {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	if err = h.CrewService.Delete(id); err != nil {
+	userId := c.MustGet("id").(int)
+	if err = h.CrewService.Delete(id, userId); err != nil {
 		c.Status(http.StatusConflict)
 		return
 	}

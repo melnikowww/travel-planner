@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"log"
 	"travelPlanner/internal/models"
 	"travelPlanner/internal/repositories"
@@ -39,25 +40,37 @@ func (s *ExpeditionService) CreateExpedition(expedition *models.Expedition) (int
 	return id, err
 }
 
-func (s *ExpeditionService) UpdateExpedition(expedition *models.Expedition) (*models.Expedition, error) {
+func (s *ExpeditionService) UpdateExpedition(expedition *models.Expedition, userId int) (*models.Expedition, error) {
 	oldExpedition, err := s.GetExpedition(expedition.ID)
 	if err != nil {
 		log.Printf("Get expedition while update error: %v", err)
 		return nil, err
 	}
-	expedition.Name = utils.FirstNonEmptyString(expedition.Name, oldExpedition.Name)
-	expedition.Description = utils.FirstNonEmptyString(expedition.Description, oldExpedition.Description)
-	exp, err := s.ExpRepo.UpdateExpedition(expedition)
-	if err != nil {
-		log.Printf("Update expedition error: %v", err)
-		return nil, err
+	if oldExpedition.CreatorID == userId {
+		expedition.Name = utils.FirstNonEmptyString(expedition.Name, oldExpedition.Name)
+		expedition.Description = utils.FirstNonEmptyString(expedition.Description, oldExpedition.Description)
+		expedition.CreatorID = utils.FirstNonEmptyInt(expedition.CreatorID, oldExpedition.CreatorID)
+		exp, err := s.ExpRepo.UpdateExpedition(expedition)
+		if err != nil {
+			log.Printf("Update expedition error: %v", err)
+			return nil, err
+		}
+		return exp, err
 	}
-	return exp, err
+	return nil, errors.New("you are not expeditions creator")
 }
-func (s *ExpeditionService) DeleteExpedition(id int) error {
-	err := s.ExpRepo.DeleteExpedition(id)
+func (s *ExpeditionService) DeleteExpedition(id int, userId int) error {
+	expedition, err := s.GetExpedition(id)
 	if err != nil {
-		log.Printf("Delete expedition error: %v", err)
+		log.Printf("Expedition not found")
+		return err
 	}
-	return err
+	if expedition.CreatorID == userId {
+		err = s.ExpRepo.DeleteExpedition(id)
+		if err != nil {
+			log.Printf("Delete expedition error: %v", err)
+		}
+		return err
+	}
+	return errors.New("you are not expeditions owner")
 }

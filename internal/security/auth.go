@@ -14,12 +14,14 @@ var jwtSecret = []byte("your_secret_key_here")
 // Claims — данные, хранимые в токене
 type Claims struct {
 	Email string `json:"email"`
+	ID    int    `json:"id"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(email string) (string, error) {
+func GenerateToken(email string, id int) (string, error) {
 	claims := Claims{
 		Email: email,
+		ID:    id,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)), // Срок действия
 			Issuer:    "travel_planner",
@@ -65,6 +67,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(*Claims); ok {
 			c.Set("email", claims.Email)
+			c.Set("id", claims.ID)
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Failed to parse claims"})
 			return

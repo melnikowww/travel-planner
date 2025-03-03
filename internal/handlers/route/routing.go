@@ -16,7 +16,8 @@ func RegisterAllRoutes(router *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	pointsHandler := handlers.PointsHandler{PointsService: &services.PointsService{PointRepo: &repositories.PointsRepository{DB: db}}}
 	equipHandler := handlers.EquipmentHandler{EquipService: &services.EquipmentService{EquipRepo: &repositories.EquipRepository{DB: db}}}
 	goodsHandler := handlers.GoodsHandler{GoodsService: &services.GoodsService{GoodsRepo: &repositories.GoodsRepository{DB: db}}}
-	carsHandler := handlers.CarsHandler{CarsService: &services.CarsService{CarsRepo: &repositories.CarsRepository{DB: db}}}
+	carsHandler := handlers.CarsHandler{CarsService: &services.CarsService{CarsRepo: &repositories.CarsRepository{DB: db}},
+		UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
 	expHandler := handlers.ExpeditionHandler{ExpService: &services.ExpeditionService{ExpRepo: &repositories.ExpeditionRepository{DB: db}}}
 	crewHandler := handlers.CrewHandler{CrewService: &services.CrewService{CrewRepo: &repositories.CrewRepository{DB: db}}}
 

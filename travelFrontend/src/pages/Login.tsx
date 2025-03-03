@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import React, {useState} from 'react';
 import axios, { AxiosError } from 'axios';
+import '/src/fonts/fonts.css';
 import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
 interface FormState {
@@ -35,7 +36,7 @@ const Register: React.FC = () => {
         e.preventDefault();
         setError(null)
         setIsLoading(true)
-        if (!formData.email || !formData.password || !formData.name) {
+        if (!formData.email || !formData.password) {
             setFormData({...formData, error: 'Заполните все поля!'})
         }
         try {
@@ -74,18 +75,9 @@ const Register: React.FC = () => {
     };
 
     return (
-        <Container fluid className="d-grid justify-content-center align-items-center vh-100 login bg-image" style={{
-            backgroundImage: "url('src/assets/onega.jpg')"
-        }}>
-            {/*<Row className="text-center my-0" style={{maxHeight:"fit-content"}}>*/}
-            {/*    <Col>*/}
-            {/*        /!*<p className="text-center russo" style={{fontSize: "4rem", color:"whitesmoke"}}>Скучали по приключениям?</p>*!/*/}
-            {/*    </Col>*/}
-            {/*</Row>*/}
-            <Row className="justify-content-md-center w-100 justify-content-center">
-                <Col className="col-12 col-md-12" style={{flexGrow:"0", flexShrink:"0"}}>
-                    {/*<h2 className="mb-5 text-center russo">Скучали по приключениям?</h2>*/}
-                    {/* Блок ошибок */}
+        <Container fluid className="d-flex justify-content-center align-items-center login bg-image-login flex-column">
+            <Row className="justify-content-md-center m-0">
+                <Col className="col-md-12 col-sm-12 col-12">
                     {error && (
                         <Alert variant="danger" className="mb-3">
                             {"Что-то пошло не так..."}
@@ -102,7 +94,8 @@ const Register: React.FC = () => {
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="email" className="mb-3">
                             <Form.Label>
-                                <p className="my-0 russo">Email</p>
+                                {/*<p className="my-0 russo stroke" style={{opacity: "95%", color: 'honeydew'}}>Email</p>*/}
+                                <p className="my-0" style={{opacity: "95%", color: 'honeydew', fontFamily:"Scumbria"}}>Почта</p>
                             </Form.Label>
                             <Form.Control
                                 type="email"
@@ -117,7 +110,7 @@ const Register: React.FC = () => {
 
                         <Form.Group controlId="password" className="mb-3">
                             <Form.Label>
-                                <p className="my-0 russo">Пароль</p>
+                                <p className="my-0" style={{opacity:"95%", color:'honeydew', fontFamily:"Scumbria"}}>Пароль</p>
                             </Form.Label>
                             <Form.Control
                                 type="password"
@@ -148,7 +141,7 @@ const Register: React.FC = () => {
                                         <span className="ms-2">Ищем Вас...</span>
                                     </>
                                 ) : (
-                                    <p className="my-0 russo">Войти</p>
+                                    <p className="my-0" style={{fontFamily:"Scumbria"}} >Войти</p>
                                 )}
                             </Button>
                         </div>

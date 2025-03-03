@@ -30,12 +30,12 @@ func (h *LoginHandler) LogIn(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
-	token, err := security.GenerateToken(user.Email)
+	token, err := security.GenerateToken(user.Email, user.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
-	//c.Set("Authorization", "Bearer "+token)
+	c.Set("Authorization", "Bearer "+token)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 	c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
 }
