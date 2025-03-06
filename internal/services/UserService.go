@@ -29,7 +29,14 @@ func (s *UserService) GetUser(id int) (*models.User, error) {
 	}
 	return user, err
 }
-
+func (s *UserService) GetUsersExpeditions(id int) ([]*models.Expedition, error) {
+	expeditions, err := s.UserRepo.GetUsersExpeditions(id)
+	if err != nil {
+		log.Printf("Get users expeditions error: %v", err)
+		return nil, err
+	}
+	return expeditions, err
+}
 func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	user, err := s.UserRepo.FindByEmail(email)
 	if err != nil {
@@ -39,6 +46,7 @@ func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 	return user, err
 }
 func (s *UserService) CreateUser(user *models.User) (int, error) {
+	user.ImageSrc = "/src/assets/avatar.png"
 	id, err := s.UserRepo.CreateUser(user)
 	if err != nil {
 		log.Printf("Create user error: %v", err)

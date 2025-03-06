@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'Scumbria';
+    src: url('/src/fonts/Scumbria1.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Scumbria';
+    src: url('/src/fonts/Scumbria2.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'G8-Bold';
+    src: url('/src/fonts/G8Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'G8';
+    src: url('/src/fonts/G8.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}

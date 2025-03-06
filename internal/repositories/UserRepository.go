@@ -29,6 +29,15 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	return &person, err.Error
 }
 
+func (r *UserRepository) GetUsersExpeditions(id int) ([]*models.Expedition, error) {
+	var expeditions []*models.Expedition
+	sql := `select * from expeditions where id in
+			(select expedition_id from crews c where c.id in 
+			(select cu.crew_id from crews_users cu where cu.user_id = ?))`
+	err := r.DB.Raw(sql, id).Scan(&expeditions).Error
+	return expeditions, err
+}
+
 func (r *UserRepository) GetAllUsers() ([]*models.User, error) {
 	var users []*models.User
 	err := r.DB.

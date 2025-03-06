@@ -20,6 +20,7 @@ func RegisterAllRoutes(router *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		UserService: &services.UserService{UserRepo: &repositories.UserRepository{DB: db}}}
 	expHandler := handlers.ExpeditionHandler{ExpService: &services.ExpeditionService{ExpRepo: &repositories.ExpeditionRepository{DB: db}}}
 	crewHandler := handlers.CrewHandler{CrewService: &services.CrewService{CrewRepo: &repositories.CrewRepository{DB: db}}}
+	fileHandler := handlers.FileHandler{}
 
 	router = userHandler.RegisterRoutes(router)
 	router = pointsHandler.RegisterRoutes(router)
@@ -28,6 +29,7 @@ func RegisterAllRoutes(router *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	router = carsHandler.RegisterRoutes(router)
 	router = expHandler.RegisterRoutes(router)
 	router = crewHandler.RegisterRoutes(router)
+	router = fileHandler.RegisterRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return router
 }

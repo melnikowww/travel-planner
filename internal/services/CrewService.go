@@ -13,6 +13,13 @@ type CrewService struct {
 }
 
 func (s *CrewService) Create(crew *models.Crew) (int, error) {
+	var user models.User
+	err := s.CrewRepo.DB.First(&user, crew.DriverID).Error
+	if err != nil {
+		log.Printf("User not found")
+		return 0, err
+	}
+	crew.Members = append(crew.Members, user)
 	id, err := s.CrewRepo.CreateCrew(crew)
 	if err != nil {
 		log.Printf("Ошибка при создании экипажа: %v", err)
