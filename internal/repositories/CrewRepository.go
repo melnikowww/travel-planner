@@ -17,7 +17,11 @@ func (r *CrewRepository) FindByID(id int) (*models.Crew, error) {
 
 func (r *CrewRepository) GetAllCrews() ([]*models.Crew, error) {
 	var crews []*models.Crew
-	err := r.DB.Find(&crews)
+	err := r.DB.
+		Preload("Members").
+		Preload("Equipment").
+		Preload("Goods").
+		Find(&crews)
 	return crews, err.Error
 }
 

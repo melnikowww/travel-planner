@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"strconv"
 	_ "travelPlanner/docs"
@@ -37,14 +36,12 @@ func (h *UserHandler) GetUserHandler(c *gin.Context) {
 	} else {
 		id, err := strconv.Atoi(key)
 		if err != nil {
-			log.Printf("Error: %v", err)
 			c.String(http.StatusBadRequest, "Invalid user ID")
 			return
 		}
 		person, err := h.UserService.GetUser(id)
 		if err != nil {
 			c.String(http.StatusNotFound, err.Error())
-			log.Printf("Error DB: %v", err)
 			return
 		}
 		c.JSON(http.StatusOK, &person)
@@ -66,7 +63,7 @@ func (h *UserHandler) GetUserByEmail(c *gin.Context) {
 	if err != nil {
 		c.Status(http.StatusBadGateway)
 	}
-	c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.Name, "email": user.Email, "cars": user.Cars, "crews": user.Crews})
+	c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.Name, "email": user.Email, "cars": user.Cars, "crews": user.Crews, "imgSrc": user.ImageSrc})
 	c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
 }
 
@@ -89,7 +86,6 @@ func (h *UserHandler) DeleteUserHandler(c *gin.Context) {
 	}
 	err = h.UserService.DeleteUser(id)
 	if err != nil {
-		log.Printf("Delete error: %v", err)
 		c.String(http.StatusNotFound, "User not found")
 		return // Завершение функции
 	}
@@ -124,7 +120,6 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 	user.ID = id
 	updateUser, err := h.UserService.UpdateUser(&user)
 	if err != nil {
-		log.Printf("Update error: %v", err)
 		c.JSON(http.StatusConflict, err)
 		return
 	}
@@ -132,11 +127,22 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
 }
 
-// RegisterRoutes registers all routes for the UserHandler
+func (h *UserHandler) GetExpeditionsByUser(c *gin.Context) {
+	id := c.MustGet("id").(int)
+	expeditions, err := h.UserService.GetUsersExpeditions(id)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, expeditions)
+	return
+}
+
 func (h *UserHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/users", h.GetUserHandler)
 	router.GET("/user", h.GetUserByEmail)
 	router.DELETE("/users", h.DeleteUserHandler)
 	router.PATCH("/users", h.PatchUserHandler)
+	router.GET("/user&exp", h.GetExpeditionsByUser)
 	return router
 }

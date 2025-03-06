@@ -6,6 +6,7 @@ import (
 	_ "github.com/gin-gonic/gin"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -31,6 +32,9 @@ var db *gorm.DB
 // @BasePath /
 func main() {
 	cfg := config.Load()
+	if os.Getenv("PROD") == "" {
+		godotenv.Load()
+	}
 	var err error
 
 	newLogger := logger.New(
@@ -42,7 +46,7 @@ func main() {
 			Colorful:                  true,        // Включить цветной вывод
 		},
 	)
-	db, err = gorm.Open(postgres.Open(cfg.DB.DSN), &gorm.Config{
+	db, err = gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
 		Logger:                                   newLogger,
 		DryRun:                                   false,
 		PrepareStmt:                              false,
@@ -74,13 +78,13 @@ func main() {
 	corsConfig := cors.Config{
 		AllowAllOrigins:        false,
 		AllowHeaders:           []string{"Origin", "Content-Type", "Authorization"},
-		AllowOrigins:           []string{"http://localhost:5173"},
+		AllowOrigins:           []string{os.Getenv("FRONTEND")},
 		AllowMethods:           []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowCredentials:       true,
 		AllowWildcard:          true,
 		AllowBrowserExtensions: false,
 		AllowWebSockets:        true,
-		AllowFiles:             false,
+		AllowFiles:             true,
 	}
 	router.Use(cors.New(corsConfig))
 	auth.Use(cors.New(corsConfig))
@@ -94,7 +98,7 @@ func main() {
 	router.POST("/login", loginHandler.LogIn)
 	router.POST("/register", loginHandler.Register)
 
-	err = router.Run("localhost:8081")
+	err = router.Run(":" + os.Getenv("PORT"))
 	if err != nil {
 		log.Fatalf("Не удалось запустить сервер! %v", err)
 	}
