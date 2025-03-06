@@ -13,7 +13,6 @@ import (
 	"gorm.io/gorm/logger"
 	"log"
 	"os"
-	"travelPlanner/internal/config"
 	"travelPlanner/internal/handlers"
 	_ "travelPlanner/internal/handlers"
 	"travelPlanner/internal/handlers/route"
@@ -31,7 +30,7 @@ var db *gorm.DB
 // @host localhost:8081
 // @BasePath /
 func main() {
-	cfg := config.Load()
+	//cfg := config.Load()
 	if os.Getenv("PROD") == "" {
 		godotenv.Load()
 	}
@@ -40,10 +39,10 @@ func main() {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
-			SlowThreshold:             2e6,         // Время, после которого запрос считается медленным
-			LogLevel:                  logger.Info, // Уровень логирования (Info, Warn, Error, Silent)
-			IgnoreRecordNotFoundError: true,        // Игнорировать ошибку "record not found"
-			Colorful:                  true,        // Включить цветной вывод
+			SlowThreshold:             2e6,
+			LogLevel:                  logger.Info,
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  true,
 		},
 	)
 	db, err = gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
@@ -75,10 +74,12 @@ func main() {
 	router := gin.Default()
 	auth := router.Group("/")
 
+	log.Printf(os.Getenv("FRONTEND"))
+
 	corsConfig := cors.Config{
 		AllowAllOrigins:        false,
 		AllowHeaders:           []string{"Origin", "Content-Type", "Authorization"},
-		AllowOrigins:           []string{os.Getenv("FRONTEND")},
+		AllowOrigins:           []string{"*"},
 		AllowMethods:           []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowCredentials:       true,
 		AllowWildcard:          true,
@@ -102,6 +103,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("Не удалось запустить сервер! %v", err)
 	}
-
-	log.Printf("Сервер запущен на http://localhost:%s\n", cfg.Port)
+	log.Printf("Сервер запущен на http://localhost:%s\n", os.Getenv("PORT"))
 }
