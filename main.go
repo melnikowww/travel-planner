@@ -99,8 +99,6 @@ func main() {
 	router.POST("/login", loginHandler.LogIn)
 	router.POST("/register", loginHandler.Register)
 
-	gin.SetMode(gin.ReleaseMode)
-
 	err = router.Run(":" + os.Getenv("PORT"))
 	if err != nil {
 		log.Fatalf("Не удалось запустить сервер! %v", err)
