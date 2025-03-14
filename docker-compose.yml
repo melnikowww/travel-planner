@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=travelDB
+      - DB_USER=melnik
+      - DB_PASSWORD=pswrd
+      - DB_NAME=travelDB
+      - GIN_MODE=release
+      - PROD=Y
+      - DATABASE_URL=host=db port=5432 user=melnik password=pswrd dbname=travelDB sslmode=disable
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: melnik
+      POSTGRES_PASSWORD: pswrd
+      POSTGRES_DB: travelDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/12/main
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U melnik -d travelDB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

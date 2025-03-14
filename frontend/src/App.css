@@ -246,3 +246,23 @@
 .form-control {
   background-color: #F0EAD6 !important;
 }
+
+.expedition {
+  flex-direction: row;
+}
+
+@media (max-width: 990px) {
+  .expedition {
+    flex-direction: column;
+  }
+}
+
+.scroll {
+  padding-right: 18px;
+}
+
+@media (max-width: 990px) {
+  .scroll {
+    padding-right: 0;
+  }
+}

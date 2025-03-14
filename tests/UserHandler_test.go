@@ -10,7 +10,7 @@ package tests
 //	"net/http"
 //	"net/http/httptest"
 //	"testing"
-//	"travelPlanner/internal/models"
+//	"travelPlanner/backend/models"
 //	"travelPlanner/mocks"
 //)
 //
