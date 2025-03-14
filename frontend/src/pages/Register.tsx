@@ -2,7 +2,8 @@ import {useNavigate} from "react-router-dom";
 import {useState} from 'react';
 import axios, { AxiosError } from 'axios';
 import '/src/fonts/fonts.css';
-import {Container, Row, Col, Form, Button, Alert, Spinner, Navbar, Nav} from 'react-bootstrap';
+import {Container, Row, Col, Form, Button, Alert, Spinner} from 'react-bootstrap';
+import Navbar from "../elements/Navbar.tsx"
 
 interface FormState {
     name: string;
@@ -92,51 +93,7 @@ const Register: React.FC = () => {
     return (
 
             <Container fluid className="d-flex justify-content-center align-items-center flex-column bg-image-reg login w-100 px-0">
-                <Navbar expand="lg" className="w-100 border-bottom border-2 border-black rounded-bottom-2"
-                        style={{
-                            backgroundColor: "rgba(54, 69, 79, 0.7)",
-                        }}>
-                    <Container fluid className="px-0" style={{ fontFamily: "Scumbria" }}>
-                        <Row className="w-100 mx-0">
-                            <Col className="d-flex justify-content-start align-items-center col-md-8">
-                                <Navbar.Brand href="#home" className="">
-                                    <text className="flex-text">
-                                        Outdoor Exploration
-                                    </text>
-                                </Navbar.Brand>
-                                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                                <Navbar.Collapse role="hamburger" id="basic-navbar-nav">
-                                    <Nav className="me-auto h-auto">
-                                        <Nav.Link href="#login" onClick={() => navigate("/")}>Главная</Nav.Link>
-                                        {/*<Nav.Link href="#about">О нас</Nav.Link>*/}
-                                        {/*<Nav.Link href="#services">Услуги</Nav.Link>*/}
-                                        {/*<Nav.Link href="#contact">Контакты</Nav.Link>*/}
-                                    </Nav>
-                                </Navbar.Collapse>
-                            </Col>
-
-                            <Col className="d-flex justify-content-end align-items-center col-md-4">
-                                <Button
-                                    variant="primary"
-                                    type="submit"
-                                    className="submit-btn"
-                                    disabled={isLoading}
-                                    style={{ fontFamily: "Scumbria",}}
-                                    onClick={() => navigate("/")}
-                                >
-                                    Войти
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Navbar>
-                {/*<Row className="justify-content-end" style={{*/}
-                {/*    width:"100vw"*/}
-                {/*}}>*/}
-                {/*    <Col className="col-2 mx-0 my-0 d-flex justify-content-end py-2">*/}
-
-                {/*    </Col>*/}
-                {/*</Row>*/}
+                <Navbar/>
                 <Row className="mt-auto ">
 
                 </Row>

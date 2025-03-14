@@ -3,11 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import React, {useState, useEffect} from "react";
 import {Expedition, User} from "../../types.ts";
-import {Button, Col, Container, Form, Modal, Nav, Navbar, Row, Spinner} from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
+import {Button, Col, Container, Form, Modal, Row, Spinner} from "react-bootstrap";
 import UploadButton from "../elements/UploadButton.tsx";
 import AddCarModal from "../elements/AddCar.tsx";
 import UpdateCar from "../elements/UpdateCar.tsx";
+import Navbar from "../elements/Navbar.tsx"
+import ExpeditionCrew from "../elements/ExpeditionCrewChoice.tsx"
 
 
 const Profile = () => {
@@ -15,7 +16,6 @@ const Profile = () => {
     const [expeditions, setExpeditions] = useState<Expedition[]>([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('')
-    const navigate = useNavigate()
 
     interface FormState {
         id: bigint | null;
@@ -119,8 +119,15 @@ const Profile = () => {
         });
     };
 
+    const [showExpChoice, setExpChoice] = useState(false)
+    const [expId, setExpId] = useState(0)
+    const [canUpdateCrew, setCanUpdateCrew] = useState(false)
+
     if (loading) return (
-        <Container>
+        <Container className="d-flex flex-column align-items-center justify-content-center" style={{
+            minWidth:"100vw",
+            minHeight:"100vh"
+        }}>
             <Row className="justify-content-md-center">
                 <Spinner
                     as="span"
@@ -132,7 +139,24 @@ const Profile = () => {
             </Row>
         </Container>
     );
-    if (error) return <div>{error}</div>
+    if (error) return (
+        <Container className="d-flex flex-column align-items-center" style={{
+            minWidth:"100vw",
+            minHeight:"100vh"
+        }}>
+            <Row className="d-flex w-100 mx-0 px-0 h-100">
+                <Col className="d-flex justify-content-center align-items-start">
+                    <Navbar />
+                </Col>
+            </Row>
+            <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
+                minWidth:"100vw",
+                minHeight:"100vh"
+            }}>
+                {error}😒
+            </Container>
+        </Container>
+    )
 
     return (
         <Container
@@ -144,55 +168,12 @@ const Profile = () => {
                 minHeight: "100vh",
             }}
         >
-            <Navbar expand="lg" className="w-100 border-bottom border-2 border-black rounded-bottom-2"
-                    style={{
-                        backgroundColor: "rgba(54, 69, 79, 0.7)",
-                    }}>
-                <Container fluid className="d-flex flex-column px-0 " style={{ fontFamily: "Scumbria" }}>
-                    <Row className="w-100 mx-0">
-                        <Col className="d-flex justify-content-start align-items-center z-3">
-                            <Button
-                                variant="primary"
-                                type="submit"
-                                className="submit-btn"
-                                style={{ fontFamily: "Scumbria", color:"darkred"}}
-                                onClick={() => {
-                                    navigate("/")
-                                    localStorage.removeItem("authToken")
-                                }}
-                            >
-                                Выйти
-                            </Button>
-                        </Col>
+            <Navbar/>
 
-                        <Col className="d-flex position-absolute justify-content-center">
-                            <Navbar.Brand href="/profile" className="mx-1">
-                                <p className="mb-0">
-                                    Outdoor Exploration
-                                </p>
-                            </Navbar.Brand>
-                        </Col>
-
-                        <Col className="d-flex justify-content-end h-auto z-3">
-                            <Navbar.Toggle aria-controls="basic-navbar-nav" className="me-2" style={{zIndex:"11"}}/>
-                            <Navbar.Collapse id="basic-navbar-nav" role="navigation" style={{
-                                position:"absolute",
-                                zIndex:"10"
-                            }}>
-                                <Nav className="hamburger h-auto">
-                                    <Nav.Link onClick={()=>{navigate("/")}}>Главная</Nav.Link>
-                                    <Nav.Link href="">О нас</Nav.Link>
-                                    <Nav.Link href="">Услуги</Nav.Link>
-                                    <Nav.Link href="">Контакты</Nav.Link>
-                                </Nav>
-                            </Navbar.Collapse>
-                        </Col>
-                    </Row>
-                </Container>
-            </Navbar>
-
-
-            <Row className="d-flex rounded-4 border border-3 border-black mx-2 mt-1 py-3" style={{fontFamily: "G8-Bold"}}>
+            <Row className="d-flex rounded-4 border border-3 border-black mx-2 py-3" style={{
+                fontFamily: "G8-Bold",
+                marginTop: "60px"
+            }}>
                 <Col className="d-flex object-fit-contain justify-content-start align-items-center col-auto ">
                     <UploadButton/>
                 </Col>
@@ -212,13 +193,27 @@ const Profile = () => {
             </Row>
 
             <Row className="mt-3 mx-0 w-100 row-column stroke-1" style={{fontFamily: "G8-Bold"}}>
-                <Col className="d-flex fs-4 align-items-center justify-content-start flex-column">
-                    <p className="fs-1" >Экспедиции: </p>
+                <Col className="d-flex fs-4 align-items-center justify-content-center flex-column">
+                    <p className="fs-1">Экспедиции: </p>
                     <ol className="">
-                        {expeditions.map((exp) => (
-                            <li key={exp.id}>{exp.name}</li>
+                        {expeditions?.map((exp) => (
+                            <li key={exp.id}>
+                                <Button variant="outline-dark" className="my-1" style={{border:"hidden"}}
+                                        onClick={()=> {
+                                            setExpChoice(true);
+                                            setExpId(exp.id)
+                                            setCanUpdateCrew(user?.id != exp.creator_id)
+                                        }}>
+                                    <p className="fs-4 my-auto py-0">
+                                        {exp.name}
+                                    </p>
+                                </Button>
+                            </li>
                         )) || 0}
                     </ol>
+                    <ExpeditionCrew className=""
+                                    show={showExpChoice} disabled={canUpdateCrew} driverId={user?.id}
+                                    onHide={()=>setExpChoice(false)} expeditionId={expId}/>
                 </Col>
                 <Col className="d-flex fs-4 align-items-center justify-content-start flex-column">
                     <p className="fs-1">Автомобили: </p>

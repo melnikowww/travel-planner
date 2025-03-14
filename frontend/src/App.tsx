@@ -9,6 +9,7 @@ import Register from './pages/Register.tsx';
 import Users from './pages/Users.tsx';
 import Login from './pages/Login.tsx';
 import User from "./pages/User.tsx";
+import Expedition from "./pages/Expedition.tsx";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/profile" element={<User />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/users" element={<Users />} />
+                <Route path="/expeditions" element={<Expedition/>}/>
             </Routes>
         </Router>
   )

@@ -13,14 +13,14 @@ import (
 	"gorm.io/gorm/logger"
 	"log"
 	"os"
-	"travelPlanner/internal/handlers"
-	_ "travelPlanner/internal/handlers"
-	"travelPlanner/internal/handlers/route"
-	"travelPlanner/internal/models"
-	_ "travelPlanner/internal/models"
-	"travelPlanner/internal/repositories"
-	"travelPlanner/internal/security"
-	"travelPlanner/internal/services"
+	"travelPlanner/backend/handlers"
+	_ "travelPlanner/backend/handlers"
+	"travelPlanner/backend/handlers/route"
+	"travelPlanner/backend/models"
+	_ "travelPlanner/backend/models"
+	"travelPlanner/backend/repositories"
+	"travelPlanner/backend/security"
+	"travelPlanner/backend/services"
 )
 
 var db *gorm.DB
@@ -79,7 +79,7 @@ func main() {
 	corsConfig := cors.Config{
 		AllowAllOrigins:        false,
 		AllowHeaders:           []string{"Origin", "Content-Type", "Authorization"},
-		AllowOrigins:           []string{"*"},
+		AllowOrigins:           []string{os.Getenv("FRONTEND")},
 		AllowMethods:           []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowCredentials:       true,
 		AllowWildcard:          true,
