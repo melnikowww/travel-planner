@@ -73,13 +73,13 @@ func (h *CrewHandler) GetByDriverAndExpedition(c *gin.Context) {
 func (h *CrewHandler) Update(c *gin.Context) {
 	var crew *models.Crew
 	if err := c.ShouldBindJSON(&crew); err != nil {
-		c.Status(http.StatusBadRequest)
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 	key := c.Query("id")
 	id, err := strconv.Atoi(key)
 	if err != nil {
-		c.Status(http.StatusBadRequest)
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 	userId := c.MustGet("id").(int)

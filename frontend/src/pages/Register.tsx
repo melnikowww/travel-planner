@@ -92,12 +92,9 @@ const Register: React.FC = () => {
 
     return (
 
-            <Container fluid className="d-flex justify-content-center align-items-center flex-column bg-image-reg login w-100 px-0">
-                <Navbar/>
-                <Row className="mt-auto ">
-
-                </Row>
-                <Row className="d-flex text-center mb-auto flex-column justify-content-center align-items-center">
+            <Container fluid className="d-flex flex-column bg-image-reg login w-100 px-0">
+                <Navbar hide={true}/>
+                <Row className="d-flex text-center my-auto flex-column justify-content-center align-items-center">
                     <Col className="">
                         <h1 className="mb-3 stroke-1 rounded-2" style={{
                             color:"whitesmoke",
@@ -106,7 +103,7 @@ const Register: React.FC = () => {
                             Давайте познакомимся?
                         </h1>
                     </Col>
-                    <Col className="col-12 col-md-12 col-8 col-lg-8">
+                    <Col className="col-10 col-md-10 col-8 col-lg-4">
                         {/*<h2 className="mb-5 text-center">Вас приветствует Travel Planner!</h2>*/}
                         {error && (
                             <Alert variant="danger" className="mb-3">

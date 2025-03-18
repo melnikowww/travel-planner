@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type User struct {
 	ID       int    `gorm:"primarykey" json:"id" example:"1"`
 	Name     string `gorm:"type:varchar(100);not null" json:"name" example:"Alex"`
@@ -17,12 +19,14 @@ type Car struct {
 }
 
 type Expedition struct {
-	ID          int     `gorm:"primaryKey" json:"id" example:"1"`
-	Name        string  `gorm:"type:varchar(100);not null" json:"name" example:"Karjala"`
-	Description string  `gorm:"type:text" json:"description" example:"Good vibes only"`
-	CreatorID   int     `json:"creator_id"`
-	Points      []Point `gorm:"foreignKey:expedition_id;constraint:OnDelete:CASCADE;" json:"points"`
-	Crews       []Crew  `gorm:"foreignKey:expedition_id;constraint:OnDelete:CASCADE;" json:"crews"`
+	ID          int       `gorm:"primaryKey" json:"id" example:"1"`
+	Name        string    `gorm:"type:varchar(100);not null" json:"name" example:"Karjala"`
+	Description string    `gorm:"type:text" json:"description" example:"Good vibes only"`
+	CreatorID   int       `json:"creator_id"`
+	StartsAt    time.Time `json:"starts_at"`
+	EndsAt      time.Time `json:"ends_at"`
+	Points      []Point   `gorm:"foreignKey:expedition_id;constraint:OnDelete:CASCADE;" json:"points"`
+	Crews       []Crew    `gorm:"foreignKey:expedition_id;constraint:OnDelete:CASCADE;" json:"crews"`
 }
 
 type Point struct {

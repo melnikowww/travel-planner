@@ -2,18 +2,21 @@ import React, {useState} from "react";
 import {Button, Container, Modal, Row} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import UpdateCrew from "./UpdateCrew.tsx";
+import ShowCrew from "./ShowCrew.tsx";
 
 interface ModalProps {
     show: boolean;
     onHide: () => void;
     driverId: number;
     expeditionId: number;
-    disabled: boolean;
+    disabledExp: boolean;
+    disabledCrew: boolean;
 }
 
-const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, driverId, disabled}) => {
+const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, driverId, disabledExp, disabledCrew}) => {
     const navigate = useNavigate()
     const [showCrewUpdate, setShowCrewUpdate] = useState(false)
+    const [showCrew, setShowCrew] = useState(false)
     return (
         <div>
             <Modal show={show} onHide={onHide} centered>
@@ -37,23 +40,34 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
                             </Button>
                         </Row>
                         <Row className="w-100 justify-content-center">
-                            <Button disabled={disabled} variant="primary" className="submit-btn w-75">
+                            <Button disabled={disabledExp} variant="primary" className="submit-btn w-75">
                                 Отредактируем экспедицию
                             </Button>
                         </Row>
                         <Row className="w-100 justify-content-center">
-                            <Button variant="primary" className="submit-btn w-75" onClick={()=> {onHide(); setShowCrewUpdate(true)}}>
+                            <Button variant="primary" className="submit-btn w-75"
+                                    onClick={()=> {onHide(); setShowCrew(true)}}>
+                                Посмотрим экипаж
+                            </Button>
+                        </Row>
+                        <Row className="w-100 justify-content-center">
+                            <Button disabled={disabledCrew} variant="primary" className="submit-btn w-75" onClick={()=> {onHide(); setShowCrewUpdate(true)}}>
                                 Отредактируем экипаж
                             </Button>
                         </Row>
                     </Container>
                 </Modal.Body>
             </Modal>
-            <UpdateCrew
+            {showCrewUpdate ? <UpdateCrew
                 show={showCrewUpdate}
                 onHide={()=>setShowCrewUpdate(false)}
                 driverId={driverId}
-                expeditionId={expeditionId}/>
+                expeditionId={expeditionId}/> : null}
+            {showCrew ? <ShowCrew
+                show={showCrew}
+                onHide={()=>setShowCrew(false)}
+                driverId={driverId}
+                expeditionId={expeditionId}/> : null}
         </div>
     );
 };

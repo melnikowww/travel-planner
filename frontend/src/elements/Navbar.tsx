@@ -2,7 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar, Container, Row, Col, Button, Nav } from 'react-bootstrap';
 
-const CustomNavbar: React.FC = () => {
+interface Props {
+    hide: boolean;
+}
+
+const CustomNavbar: React.FC<Props> = ({hide}) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -19,10 +23,11 @@ const CustomNavbar: React.FC = () => {
                 position:"fixed"
             }}
         >
-            <Container fluid className="d-flex flex-column px-0" style={{ fontFamily: 'Scumbria' }}>
-                <Row className="w-100 mx-0">
+            <Container fluid className="d-flex flex-column px-0" style={{ fontFamily: 'Scumbria'}}>
+                <Row className="d-flex w-100 mx-0" style={{height:"40px"}}>
                     <Col className="d-flex justify-content-start align-items-center z-3">
                         <Button
+                            hidden={hide}
                             variant="primary"
                             type="submit"
                             className="submit-btn"
@@ -35,11 +40,11 @@ const CustomNavbar: React.FC = () => {
 
                     <Col className="d-flex position-absolute justify-content-center">
                         <Navbar.Brand href="/profile" className="mx-1">
-                            <p className="mb-0">Outdoor Exploration</p>
+                            <p className="mb-0 stroke-1">Outdoor Exploration</p>
                         </Navbar.Brand>
                     </Col>
 
-                    <Col className="d-flex justify-content-end h-auto z-3">
+                    <Col className="d-flex justify-content-end h-auto z-3 stroke-1">
                         <Navbar.Toggle
                             aria-controls="basic-navbar-nav"
                             className="me-2"
@@ -55,7 +60,7 @@ const CustomNavbar: React.FC = () => {
                         >
                             <Nav className="hamburger h-auto">
                                 <Nav.Link onClick={() => navigate('/profile')}>Профиль</Nav.Link>
-                                <Nav.Link href="">Экспедиции</Nav.Link>
+                                <Nav.Link onClick={() => navigate('/expeditions_all')}>Экспедиции</Nav.Link>
                                 <Nav.Link href="">О нас</Nav.Link>
                                 <Nav.Link href="">Контакты</Nav.Link>
                             </Nav>

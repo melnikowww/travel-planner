@@ -121,7 +121,21 @@ const Profile = () => {
 
     const [showExpChoice, setExpChoice] = useState(false)
     const [expId, setExpId] = useState(0)
-    const [canUpdateCrew, setCanUpdateCrew] = useState(false)
+    const [canNotUpdateExp, setCanNotUpdateExp] = useState(false)
+    const [canNotUpdateCrew, setCanNotUpdateCrew] = useState(false)
+    const [driverId, setDriverId] = useState(0)
+
+    const handleExpButton = (exp: Expedition) => {
+        if (exp && user) {
+            setExpChoice(true);
+            setExpId(exp.id ?? 0);
+            setCanNotUpdateExp(user.id !== exp.creator_id);
+            const hasCrew = exp?.crews?.some(crew => crew.driver_id === user?.id) ?? false;
+            setCanNotUpdateCrew(!hasCrew);
+            const newDriverId = hasCrew ? user.id : user.crews.find(crew => crew.expedition_id === exp?.id)?.driver_id
+            setDriverId(newDriverId);
+        }
+    };
 
     if (loading) return (
         <Container className="d-flex flex-column align-items-center justify-content-center" style={{
@@ -146,7 +160,7 @@ const Profile = () => {
         }}>
             <Row className="d-flex w-100 mx-0 px-0 h-100">
                 <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar />
+                    <Navbar hide={false}/>
                 </Col>
             </Row>
             <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
@@ -168,7 +182,7 @@ const Profile = () => {
                 minHeight: "100vh",
             }}
         >
-            <Navbar/>
+            <Navbar hide={false}/>
 
             <Row className="d-flex rounded-4 border border-3 border-black mx-2 py-3" style={{
                 fontFamily: "G8-Bold",
@@ -198,12 +212,14 @@ const Profile = () => {
                     <ol className="">
                         {expeditions?.map((exp) => (
                             <li key={exp.id}>
-                                <Button variant="outline-dark" className="my-1" style={{border:"hidden"}}
-                                        onClick={()=> {
-                                            setExpChoice(true);
-                                            setExpId(exp.id)
-                                            setCanUpdateCrew(user?.id != exp.creator_id)
-                                        }}>
+                                <Button
+                                    variant="outline-dark"
+                                    className="my-1"
+                                    style={{ border: 'none' }}
+                                    onClick={()=>{
+                                        handleExpButton(exp)
+                                    }}
+                                >
                                     <p className="fs-4 my-auto py-0">
                                         {exp.name}
                                     </p>
@@ -211,12 +227,11 @@ const Profile = () => {
                             </li>
                         )) || 0}
                     </ol>
-                    <ExpeditionCrew className=""
-                                    show={showExpChoice} disabled={canUpdateCrew} driverId={user?.id}
-                                    onHide={()=>setExpChoice(false)} expeditionId={expId}/>
+                    <ExpeditionCrew show={showExpChoice} disabledExp={canNotUpdateExp} disabledCrew={canNotUpdateCrew}
+                                     driverId={driverId} onHide={()=>setExpChoice(false)} expeditionId={expId}/>
                 </Col>
                 <Col className="d-flex fs-4 align-items-center justify-content-start flex-column">
-                    <p className="fs-1">Автомобили: </p>
+                    <p className="fs-1">Автомобили:</p>
                     <ol className="">
                         {user?.cars?.map((car) => (
                             <li key={car.id}>
