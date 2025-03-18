@@ -115,7 +115,7 @@
 }
 
 .bg-image-profile {
-  background-image: url('src/assets/profile.JPG');
+  background-image: url('src/assets/profile.webp');
   /*background-size: 100vh 100vw;*/
   background-position:  center;
   background-repeat: no-repeat;
@@ -265,4 +265,30 @@
   .scroll {
     padding-right: 0;
   }
+}
+
+.expeditions {
+  background: url('/src/assets/expBack.webp'), linear-gradient(rgba(26, 26, 26, 0.5), rgba(26, 26, 26, 0.5));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: multiply;
+}
+
+.btn-dark{
+  --bs-btn-bg: rgba(1,1,1,0.7) !important;
+  --bs-btn-hover-bg: rgba(54, 69, 79, 1);
+}
+
+.multiline-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.expedition-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(218, 165, 32, 0.4);
 }

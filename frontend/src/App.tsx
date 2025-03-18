@@ -10,6 +10,7 @@ import Users from './pages/Users.tsx';
 import Login from './pages/Login.tsx';
 import User from "./pages/User.tsx";
 import Expedition from "./pages/Expedition.tsx";
+import Expeditions from "./pages/ExpeditionsList.tsx";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/expeditions" element={<Expedition/>}/>
+                <Route path="/expeditions_all" element={<Expeditions/>}/>
             </Routes>
         </Router>
   )

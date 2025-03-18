@@ -31,11 +31,10 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 
 func (r *UserRepository) GetUsersExpeditions(id int) ([]*models.Expedition, error) {
 	var expeditions []*models.Expedition
-	sql := `select * from expeditions where id in
-			(select expedition_id from crews c where c.id in 
-			(select cu.crew_id from crews_users cu where cu.user_id = ?))`
-	err := r.DB.Raw(sql, id).Scan(&expeditions).Error
-	return expeditions, err
+	err := r.DB.Preload("Points").Preload("Crews").
+		Find(&expeditions, "id IN ?", r.DB.Raw(`(select expedition_id from crews c where c.id in 
+				(select cu.crew_id from crews_users cu where cu.user_id = ?))`, id))
+	return expeditions, err.Error
 }
 
 func (r *UserRepository) GetAllUsers() ([]*models.User, error) {

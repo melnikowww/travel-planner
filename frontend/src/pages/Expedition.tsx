@@ -6,11 +6,13 @@ import {Expedition, User} from "../../types.ts";
 import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import Navbar from "../elements/Navbar.tsx"
-import CrewCreate from "../elements/CrewModal.tsx";
+import CrewCreate from "../elements/CreateCrew.tsx";
 
 const ExpeditionProfile = () => {
     const [exp, setExp] = useState<Expedition | null>(null)
     const [drivers, setDrivers] = useState<User[]>([])
+    const [dateStart, setDateStart] = useState('')
+    const [dateEnd, setDateEnd] = useState('')
     const [currentUser, setCurrentUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -39,10 +41,10 @@ const ExpeditionProfile = () => {
                   Authorization: `Bearer ${localStorage.getItem('authToken')}`,
               },
           });
-          setExp(responseExp.data)
-          setDrivers(responseDrivers.data)
-          setCurrentUser(responseUser.data)
-          setError('')
+          setExp(responseExp.data);
+          setDrivers(responseDrivers.data);
+          setCurrentUser(responseUser.data);
+          setError('');
       } catch (err) {
           setError('Ошибка при загрузке экспедиции')
           console.log(error)
@@ -62,6 +64,31 @@ const ExpeditionProfile = () => {
     useEffect(() => {
         fetchExp()
     }, []);
+
+    useEffect(()=> {
+        if (exp) {
+            const start = new Date(exp.starts_at).toLocaleString('ru-RU', {
+                timeZone: 'Europe/Moscow',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                // hour: '2-digit',
+                // minute: '2-digit',
+            });
+            console.log(start)
+            setDateStart(start)
+            const end = new Date(exp.ends_at).toLocaleString('ru-RU', {
+                timeZone: 'Europe/Moscow',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                // hour: '2-digit',
+                // minute: '2-digit',
+            });
+            console.log(end)
+            setDateEnd(end)
+        }
+    }, [exp])
 
     const [showCrewModal, setCrewModal] = useState(false)
     const registerToExpedition = async () => {
@@ -95,7 +122,7 @@ const ExpeditionProfile = () => {
         }}>
             <Row className="d-flex w-100 mx-0 px-0 h-100">
                 <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar />
+                    <Navbar hide={false}/>
                 </Col>
             </Row>
             <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
@@ -118,11 +145,20 @@ const ExpeditionProfile = () => {
             }}
         >
             <Row className="w-100 mx-0 px-0">
-                <Navbar />
+                <Navbar hide={false}/>
             </Row>
             <Row className="w-100 mx-0 px-0 mt-5">
                 <Col className="d-flex justify-content-center py-3">
-                    <p className="mb-0" style={{ fontSize: "50px", fontFamily: "G8-Bold" }}>{exp?.name}</p>
+                    <p className="mb-0" style={{ fontSize: "50px", fontFamily: "G8-Bold" }}>
+                        {exp?.name}
+                    </p>
+                </Col>
+            </Row>
+            <Row className="w-100 mx-0 px-0">
+                <Col className="d-flex justify-content-center py-3">
+                    <p className="mb-0" style={{ fontSize: "25px", fontFamily: "G8-Bold" }}>
+                        {dateStart}-{dateEnd}
+                    </p>
                 </Col>
             </Row>
             <Row className="w-100 mx-0 px-2 mb-3">

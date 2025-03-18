@@ -18,6 +18,8 @@ export interface Expedition {
     name: string;
     description: string;
     creator_id: number;
+    starts_at: string;
+    ends_at: string;
     points: Point[];
     crews: Crew[];
 }

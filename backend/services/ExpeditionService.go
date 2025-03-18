@@ -23,7 +23,7 @@ func (s *ExpeditionService) GetExpedition(id int) (*models.Expedition, error) {
 
 func (s *ExpeditionService) GetAllExpeditions() ([]*models.Expedition, error) {
 	var expeditions []*models.Expedition
-	expeditions, err := s.ExpRepo.GetAllExpeditions()
+	expeditions, err := s.ExpRepo.GetAllFutureExpeditions()
 	if err != nil {
 		log.Printf("Get all expeditions error: %v", err)
 		return nil, err

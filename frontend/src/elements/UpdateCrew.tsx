@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import React, {useEffect, useState} from 'react';
 import {Crew, Equipment, Good, User} from "../../types.ts";
-import {Button, Col, Container, Dropdown, Form, FormGroup, Modal, Row} from "react-bootstrap";
+import {Button, Col, Container, Dropdown, Form, Modal, Row} from "react-bootstrap";
 import axios from "axios";
 
 interface ModalProps {
@@ -25,6 +25,7 @@ interface goodState {
 const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) => {
     const [crew, setCrew] = useState<Crew | null>(null);
     const [user, setUser] = useState<User | null>(null)
+    const [error, setError] = useState('');
     const [equipData, setEquip] = useState<equipState>({
         name: '',
         crew_id: null,
@@ -33,7 +34,6 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
         name: '',
         crew_id: null,
     })
-    const [error, setError] = useState('')
 
     interface CrewForm {
         car_id: number | null;
@@ -75,7 +75,6 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
             setCrew(responseCrew.data);
             setUser(responseUser.data);
             setError('');
-
             const car = responseUser.data.cars.find(c => c.id === responseCrew.data.car_id);
             if (car) {
                 setSelectedItem(car.name);
@@ -88,7 +87,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     useEffect(() => {
         fetchCrew()
-    }, []);
+    }, [driverId, expeditionId]);
 
     const handleSelect = (eventKey: string | null) => {
         setSelectedItem(eventKey || 'Выберите автомобиль');
@@ -103,15 +102,11 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
         }
     };
 
-    const [equipText, setEquipText] = useState('');
-    const [goodText, setGoodText] = useState('');
-
     const handleEquipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEquip({
             ...equipData,
             [e.target.name]: e.target.value,
         });
-        setEquipText(e.target.value)
     };
 
     const addEquip = async (e: React.FormEvent)=>{
@@ -127,7 +122,10 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                         }
                     })
                 setError('')
-                setEquipText('')
+                setEquip({
+                    name: '',
+                    crew_id: null,
+                })
             } catch (err) {
                 setError('Ошибка добавлении снаряжения')
                 console.error(error)
@@ -140,7 +138,6 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
             ...goodData,
             [e.target.name]: e.target.value,
         });
-        setGoodText(e.target.value)
     };
 
     const addGood = async (e: React.FormEvent)=>{
@@ -156,10 +153,34 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                         }
                     })
                 setError('')
-                setGoodText('')
+                setGood({
+                    name: '',
+                    crew_id: null,
+                })
             } catch (err) {
                 setError('Ошибка добавлении продуктов')
                 console.error(error)
+            }
+        }
+    }
+
+    const updateCrew = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (crew) {
+            try {
+                await axios.patch<Crew>(`http://localhost:8081/crews?id=${crew.id}`,
+                    crewForm, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                        }
+                    })
+                setError('')
+            } catch (err) {
+                setError('Ошибка изменения экипажа')
+                console.error(error)
+            } finally {
+                onHide()
             }
         }
     }
@@ -183,7 +204,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                 <Form className="w-100 justify-content-center">
                                     <Row className="mx-auto">
                                         <Col className="d-flex justify-content-center py-2">
-                                            <FormGroup>
+                                            <Form.Group>
                                                 <div className="d-flex justify-content-center">
                                                     <Form.Label>Сменим машину?</Form.Label>
                                                 </div>
@@ -199,22 +220,21 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                                         ))}
                                                     </Dropdown.Menu>
                                                 </Dropdown>
-                                            </FormGroup>
+                                            </Form.Group>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col className="d-flex justify-content-center w-100 flex-row">
-                                            <Form.Group controlId="name" className="">
+                                            <Form.Group id="equip" className="">
                                                 <div className="d-flex justify-content-center align-items-center">
-                                                    <Form.Label>Новый элемент снаряжения?</Form.Label>
+                                                    <Form.Label htmlFor="equip">Новый элемент снаряжения?</Form.Label>
                                                 </div>
                                                 <div className="d-flex pb-3">
                                                     <Form.Control
-                                                        id="equip"
                                                         type="name"
                                                         name="name"
                                                         placeholder="Хайджек"
-                                                        value={equipText}
+                                                        value={equipData.name}
                                                         onChange={handleEquipChange}
                                                     />
                                                     <Button variant="outline-dark" className="mx-2" onClick={addEquip}>
@@ -226,17 +246,16 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                     </Row>
                                     <Row>
                                         <Col className="d-flex justify-content-center w-100 flex-row">
-                                            <Form.Group controlId="name" className="">
+                                            <Form.Group id="good" className="">
                                                 <div className="d-flex justify-content-center align-items-center">
-                                                    <Form.Label>Новый продукт?</Form.Label>
+                                                    <Form.Label htmlFor="good">Новый продукт?</Form.Label>
                                                 </div>
                                                 <div className="d-flex pb-3">
                                                     <Form.Control
-                                                        id="good"
                                                         type="name"
                                                         name="name"
                                                         placeholder="Сгущенка"
-                                                        value={goodText}
+                                                        value={goodData.name}
                                                         onChange={handleGoodChange}
                                                     />
                                                     <Button variant="outline-dark" className="mx-2" onClick={addGood}>
@@ -248,7 +267,9 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                     </Row>
                                 </Form>
                         <Row>
-                            <Button className="m-2">Все верно!</Button>
+                            <Button className="m-2" onClick={updateCrew}>
+                                Все верно!
+                            </Button>
                         </Row>
                     </Container>
                 </Modal.Body>

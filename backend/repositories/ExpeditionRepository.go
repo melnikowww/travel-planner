@@ -3,6 +3,7 @@ package repositories
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"time"
 	"travelPlanner/backend/models"
 )
 
@@ -43,9 +44,25 @@ func (r *ExpeditionRepository) GetDrivers(id int) ([]*models.User, error) {
 	return drivers, nil
 }
 
-func (r *ExpeditionRepository) GetAllExpeditions() ([]*models.Expedition, error) {
+func (r *ExpeditionRepository) GetAllFutureExpeditions() ([]*models.Expedition, error) {
 	var exps []*models.Expedition
-	err := r.DB.Find(&exps)
+	err := r.DB.
+		Preload("Points").
+		Preload("Crews").
+		Order("starts_at ASC").
+		Where("starts_at > ?", time.Now()).
+		Find(&exps)
+	return exps, err.Error
+}
+
+func (r *ExpeditionRepository) GetArchiveExpeditions() ([]*models.Expedition, error) {
+	var exps []*models.Expedition
+	err := r.DB.
+		Preload("Points").
+		Preload("Crews").
+		Order("starts_at ASC").
+		Where("ends_at < ?", time.Now()).
+		Find(&exps)
 	return exps, err.Error
 }
 
