@@ -11,6 +11,18 @@ import (
 
 type FileHandler struct{}
 
+// Upload Загрузка аватарки пользователя
+// @Summary Загрузить аватар пользователя
+// @Description Загрузка изображения аватара пользователя. Файл будет автоматически переименован в формат "avatar_<user_id>.jpg"
+// @Tags Файлы
+// @Accept multipart/form-data
+// @Produce json
+// @Security ApiKeyAuth
+// @Param file formData file true "Файл изображения (jpg, png, gif)"
+// @Success 200 {object} map[string]string "Сообщение об успешной загрузке"
+// @Failure 400 {object} map[string]string "Ошибка при получении файла"
+// @Failure 500 {object} map[string]string "Ошибка при сохранении файла"
+// @Router /upload [post]
 func (h *FileHandler) Upload(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {

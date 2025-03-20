@@ -1,6 +1,3 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './App.css'
@@ -11,6 +8,8 @@ import Login from './pages/Login.tsx';
 import User from "./pages/User.tsx";
 import Expedition from "./pages/Expedition.tsx";
 import Expeditions from "./pages/ExpeditionsList.tsx";
+import About from "./pages/About.tsx"
+
 
 function App() {
 
@@ -24,6 +23,7 @@ function App() {
                 <Route path="/users" element={<Users />} />
                 <Route path="/expeditions" element={<Expedition/>}/>
                 <Route path="/expeditions_all" element={<Expeditions/>}/>
+                <Route path="/about" element={<About/>}/>
             </Routes>
         </Router>
   )

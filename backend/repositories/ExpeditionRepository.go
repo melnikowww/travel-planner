@@ -50,7 +50,7 @@ func (r *ExpeditionRepository) GetAllFutureExpeditions() ([]*models.Expedition, 
 		Preload("Points").
 		Preload("Crews").
 		Order("starts_at ASC").
-		Where("starts_at > ?", time.Now()).
+		//Where("starts_at > ?", time.Now()).
 		Find(&exps)
 	return exps, err.Error
 }

@@ -1,8 +1,9 @@
 import {useNavigate} from "react-router-dom";
-import {useState} from 'react';
+import React, {useState} from 'react';
 import axios, { AxiosError } from 'axios';
 import '/src/fonts/fonts.css';
 import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
+import Navbar from "../elements/Navbar.tsx";
 
 interface FormState {
     name: string;
@@ -76,6 +77,9 @@ const Register: React.FC = () => {
 
     return (
         <Container fluid className="d-flex justify-content-center align-items-center login bg-image-login flex-column">
+            <Navbar hide={true} expeditionsShadow={false}
+                    aboutShadow={false} profileShadow={false}
+                    contactsShadow={false}/>
             <Row className="justify-content-md-center m-0">
                 <Col className="col-md-12 col-sm-12 col-12">
                     {error && (

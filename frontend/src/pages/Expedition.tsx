@@ -181,7 +181,7 @@ const ExpeditionProfile = () => {
                             }
                             return (
                                 <li key={c.id}>
-                                    {driver && car ? `${driver.name}, ${car.name}` : "Неизвестный водитель"}
+                                    {driver && car ? `${driver.name}, ${car.name}` : null}
                                 </li>
                             );
                         })}
