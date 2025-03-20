@@ -133,7 +133,9 @@ const Profile = () => {
             const hasCrew = exp?.crews?.some(crew => crew.driver_id === user?.id) ?? false;
             setCanNotUpdateCrew(!hasCrew);
             const newDriverId = hasCrew ? user.id : user.crews.find(crew => crew.expedition_id === exp?.id)?.driver_id
-            setDriverId(newDriverId);
+            if (newDriverId) {
+                setDriverId(newDriverId);
+            }
         }
     };
 
@@ -160,7 +162,9 @@ const Profile = () => {
         }}>
             <Row className="d-flex w-100 mx-0 px-0 h-100">
                 <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar hide={false}/>
+                    <Navbar hide={false} expeditionsShadow={false}
+                            aboutShadow={false} profileShadow={false}
+                            contactsShadow={false}/>
                 </Col>
             </Row>
             <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
@@ -175,85 +179,172 @@ const Profile = () => {
     return (
         <Container
             fluid
-            className="d-flex flex-column px-0 bg-image-profile"
+            className="d-flex flex-column px-0 bg-image-profile mb-0 "
             style={{
-                fontFamily: "Montserrat",
+                fontFamily: "'Rubik', sans-serif",
                 minWidth: "100vw",
                 minHeight: "100vh",
+                backgroundColor: "#1A1A1A",
+                color: "#FFFFFF",
+                paddingTop: "80px"
             }}
         >
-            <Navbar hide={false}/>
+            <Navbar hide={false} expeditionsShadow={false}
+                    aboutShadow={false} profileShadow={true}
+                    contactsShadow={false}/>
 
-            <Row className="d-flex rounded-4 border border-3 border-black mx-2 py-3" style={{
-                fontFamily: "G8-Bold",
-                marginTop: "60px"
+            {/* Блок профиля */}
+            <Row className="mx-3 rounded-3 py-4" style={{
+                backgroundColor: "rgba(45,45,45,0.8)",
+                border: "2px solid #DAA520",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
             }}>
-                <Col className="d-flex object-fit-contain justify-content-start align-items-center col-auto ">
+                <Col xs={3} className="d-flex align-items-center justify-content-center px-0">
                     <UploadButton/>
                 </Col>
-                <Col className="justify-content-center align-self-center">
-                    <p className="fs-1 name py-0 mb-0 ms-lg-5">{user?.name}</p>
+
+                <Col xs={6} className="d-flex align-items-center px-0">
+                    <h1 className="mb-0 profile-name" style={{
+                        fontFamily: "'Rubik', sans-serif",
+                        color: "#DAA520",
+                        letterSpacing: "1.5px"
+                    }}>
+                        {user?.name}
+                    </h1>
                 </Col>
-                <Col className="d-flex settings col-auto align-self-center" style={{height:"-webkit-fit-content"}}>
-                    <Button variant="light" className="set-btn" style={{
-                    }} onClick={handleShow}>
+
+                <Col xs={3} className="d-flex align-items-center justify-content-center">
+                    <Button
+                        variant="link"
+                        onClick={handleShow}
+                        className="p-0"
+                    >
                         <img
                             src="/src/assets/settings.png"
-                            alt="Кнопка"
-                            style={{ width: "50px", height: "auto", background:"rgba(0,0,0,0)"}}
+                            alt="Настройки"
+                            style={{
+                                width: "40px",
+                                filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"
+                            }}
                         />
                     </Button>
                 </Col>
             </Row>
 
-            <Row className="mt-3 mx-0 w-100 row-column stroke-1" style={{fontFamily: "G8-Bold"}}>
-                <Col className="d-flex fs-4 align-items-center justify-content-center flex-column">
-                    <p className="fs-1">Экспедиции: </p>
-                    <ol className="">
-                        {expeditions?.map((exp) => (
-                            <li key={exp.id}>
+            <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center">
+                <Col lg={4} className="pe-lg-3">
+                    <div className="p-4 rounded-3" style={{
+                        backgroundColor: "rgba(45,45,45,0.75)",
+                        border: "1px solid #3D3D3D"
+                    }}>
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h2 className="flex-text" style={{
+                                fontFamily: "'Rubik', sans-serif",
+                                color: "#DAA520",
+                            }}>
+                                Экспедиции
+                            </h2>
+                            <Button
+                                variant="outline-warning"
+                                // onClick={}
+                                className='add-car-button'
+                                style={{
+                                    borderColor: "#DAA520",
+                                    color: "#DAA520"
+                                }}
+                            >
+                                Добавить
+                            </Button>
+                        </div>
+
+                        <div className="d-grid gap-2">
+                            {expeditions?.map((exp) => (
                                 <Button
-                                    variant="outline-dark"
-                                    className="my-1"
-                                    style={{ border: 'none' }}
-                                    onClick={()=>{
-                                        handleExpButton(exp)
+                                    key={exp.id}
+                                    variant="dark"
+                                    className="text-start py-3 rounded-2"
+                                    style={{
+                                        border: "1px solid #3D3D3D",
+                                        transition: "all 0.3s ease"
                                     }}
+                                    onClick={() => handleExpButton(exp)}
                                 >
-                                    <p className="fs-4 my-auto py-0">
-                                        {exp.name}
-                                    </p>
+                                    <span className="d-block" style={{ color: "#DAA520" }}>{exp.name}</span>
+                                    <small className="text-muted">Даты: {new Date(exp.starts_at).toLocaleString('ru-RU', {
+                                        timeZone: 'Europe/Moscow',
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}-{new Date(exp.ends_at).toLocaleString('ru-RU', {
+                                        timeZone: 'Europe/Moscow',
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}</small>
                                 </Button>
-                            </li>
-                        )) || 0}
-                    </ol>
+                            ))}
+                        </div>
+                    </div>
                     <ExpeditionCrew show={showExpChoice} disabledExp={canNotUpdateExp} disabledCrew={canNotUpdateCrew}
-                                     driverId={driverId} onHide={()=>setExpChoice(false)} expeditionId={expId}/>
+                                    driverId={driverId} onHide={()=>setExpChoice(false)} expeditionId={expId}/>
                 </Col>
-                <Col className="d-flex fs-4 align-items-center justify-content-start flex-column">
-                    <p className="fs-1">Автомобили:</p>
-                    <ol className="">
-                        {user?.cars?.map((car) => (
-                            <li key={car.id}>
-                                <Button variant="outline-dark" className="my-1"  style={{border:"hidden"}}
-                                        onClick={()=>handleCarUpdate(car.id)}>
-                                    <p className="fs-4 my-auto py-0">
-                                        {car.name}
-                                    </p>
+
+                {/* Секция автомобилей */}
+                <Col lg={4} className="ps-lg-3">
+                    <div className="p-4 rounded-3" style={{
+                        backgroundColor: "rgba(45,45,45,0.75)",
+                        border: "1px solid #3D3D3D"
+                    }}>
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h2 className="flex-text" style={{
+                                fontFamily: "'Rubik', sans-serif",
+                                color: "#DAA520",
+                                margin: 0
+                            }}>
+                                Автомобили
+                            </h2>
+                            <Button
+                                variant="outline-warning"
+                                onClick={handleCarAdd}
+                                className='add-car-button'
+                                style={{
+                                    borderColor: "#DAA520",
+                                    color: "#DAA520"
+                                }}
+                            >
+                                Добавить
+                            </Button>
+                        </div>
+
+                        <div className="d-grid gap-2">
+                            {user?.cars?.map((car) => (
+                                <Button
+                                    key={car.id}
+                                    variant="dark"
+                                    className="text-start py-3 rounded-2"
+                                    style={{
+                                        border: "1px solid #3D3D3D",
+                                        transition: "all 0.3s ease"
+                                    }}
+                                    onClick={() => handleCarUpdate(car.id)}
+                                >
+                                    <span className="d-block" style={{ color: "#B0B0B0" }}>{car.name}</span>
                                 </Button>
-                            </li>
-                        )) || 0}
-                    </ol>
-                    <UpdateCar show={showCarUpdate} onHide={()=>setCarUpdate(false)} id={carId} />
-                    <Button variant="outline-dark" className="" onClick={()=>(handleCarAdd())}>
-                        <p className="fs-4 my-0">Добавить</p>
-                    </Button>
+                            ))}
+                            <UpdateCar show={showCarUpdate} onHide={()=>setCarUpdate(false)} id={carId} />
+                        </div>
+                    </div>
                     <AddCarModal show={showCarCreate} onHide={()=> {setCarCreate(false)}}/>
                 </Col>
             </Row>
 
-
-            <Modal show={showUserSettings} onHide={() => setShowUserSettings(false)} centered style={{fontFamily:"G8"}}>
+            {/* Модальное окно настроек */}
+            <Modal
+                show={showUserSettings}
+                onHide={() => setShowUserSettings(false)}
+                centered
+                contentClassName="bg-dark text-light"
+            >
                 <Modal.Header closeButton>
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
@@ -265,6 +356,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </Modal.Header>
+
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="name" className="mb-3">

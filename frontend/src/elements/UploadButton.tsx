@@ -56,7 +56,8 @@ function Upload() {
                 className="rounded-circle avatar"
                 style={{
                     cursor: "pointer",
-                    backgroundImage: `url(${avatar})`
+                    backgroundImage: `url(${avatar})`,
+                    boxShadow: "0 0px 12px rgba(0,0,0,0.7)",
                 }}
             >
                 <i className="bi bi-upload fs-3"></i>

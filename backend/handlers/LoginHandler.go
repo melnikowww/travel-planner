@@ -12,6 +12,17 @@ type LoginHandler struct {
 	UserService *services.UserService
 }
 
+// LogIn Аутентификация пользователя
+// @Summary Войти в систему
+// @Description Аутентификация пользователя по email и паролю с получением JWT токена
+// @Tags Аутентификация
+// @Accept json
+// @Produce json
+// @Success 200 {object} map[string]string "JWT токен"
+// @Failure 400 {object} map[string]string "Некорректный запрос"
+// @Failure 401 {object} map[string]string "Неверные учетные данные"
+// @Failure 500 {object} map[string]string "Ошибка генерации токена"
+// @Router /login [post]
 func (h *LoginHandler) LogIn(c *gin.Context) {
 	var credentials struct {
 		Email    string `json:"email" binding:"required"`
@@ -42,16 +53,16 @@ func (h *LoginHandler) LogIn(c *gin.Context) {
 
 // Register Создание нового пользователя
 // @Summary Создать пользователя
-// @Description Регистрация нового пользователя в системе
-// @Tags Пользователи
+// @Description Регистрация нового пользователя в системе. Пароль автоматически хешируется.
+// @Tags Аутентификация
 // @Accept json
 // @Produce json
-// @Param user body models.User true "Данные пользователя"
+// @Param user body models.User true "Данные пользователя" example({"name": "Иван Иванов", "email": "user@example.com", "password": "secret"})
 // @Success 201 {object} models.User "Созданный пользователь"
-// @Failure 400 {string} string "Некорректные входные данные"
-// @Failure 409 {string} string "Пользователь уже существует"
-// @Failure 500 {string} string "Ошибка хеширования пароля"
-// @Router /users [post]
+// @Failure 400 {object} map[string]string "Некорректные входные данные"
+// @Failure 409 {object} map[string]string "Конфликт данных (пользователь существует)"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Router /register [post]
 func (h *LoginHandler) Register(c *gin.Context) {
 	var user models.User
 	var err error
