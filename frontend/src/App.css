@@ -305,7 +305,7 @@
 }
 
 
-@media (max-width: 990px) {
+@media (max-width: 1205px) {
   .logout-btn-hamburger {
     content-visibility: visible;
   }
@@ -320,7 +320,7 @@
   justify-content: center;
 }
 
-@media (max-width: 990px) {
+@media (max-width: 1205px) {
   .navbar-logo {
     justify-content: start;
   }
@@ -374,7 +374,7 @@
   content-visibility: visible;
 }
 
-@media (max-width: 990px) {
+@media (max-width: 1205px) {
   .logout-btn {
     content-visibility: hidden;
   }
@@ -385,7 +385,7 @@
   justify-items: start;
 }
 
-@media (max-width: 990px) {
+@media (max-width: 1205px) {
   .profile-name {
     fontSize: "1.5rem";
     justify-items: center;
