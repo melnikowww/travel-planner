@@ -40,7 +40,7 @@ const Profile = () => {
                     Authorization: `Bearer ${localStorage.getItem("authToken")}`
                 }
             })
-            const responseExpeditions = await axios.get<Expedition[]>('http://localhost:8081/user&exp', {
+            const responseExpeditions = await axios.get<Expedition[]>('http://localhost:8081/user-to-exp', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("authToken")}`
                 }

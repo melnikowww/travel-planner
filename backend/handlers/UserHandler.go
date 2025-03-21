@@ -137,7 +137,7 @@ func (h *UserHandler) PatchUserHandler(c *gin.Context) {
 // @Success 200 {array} models.Expedition "Список экспедиций"
 // @Failure 400 {string} string "Ошибка при получении данных"
 // @Failure 401 {string} string "Неавторизованный доступ"
-// @Router /user&exp [get]
+// @Router /user-to-exp [get]
 func (h *UserHandler) GetExpeditionsByUser(c *gin.Context) {
 	id := c.MustGet("id").(int)
 	expeditions, err := h.UserService.GetUsersExpeditions(id)
@@ -152,7 +152,7 @@ func (h *UserHandler) GetExpeditionsByUser(c *gin.Context) {
 func (h *UserHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/users", h.GetUserHandler)
 	router.GET("/user", h.GetUserByEmail)
-	router.GET("/user&exp", h.GetExpeditionsByUser)
+	router.GET("/user-to-exp", h.GetExpeditionsByUser)
 	router.DELETE("/users", h.DeleteUserHandler)
 	router.PATCH("/users", h.PatchUserHandler)
 	return router
