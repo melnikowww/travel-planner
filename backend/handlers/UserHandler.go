@@ -63,7 +63,7 @@ func (h *UserHandler) GetUserByEmail(c *gin.Context) {
 	if err != nil {
 		c.Status(http.StatusBadGateway)
 	}
-	c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.Name, "email": user.Email, "cars": user.Cars, "crews": user.CrewIDs, "imgSrc": user.ImageSrc})
+	c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.Name, "email": user.Email, "cars": user.Cars, "crews": user.Crews, "imgSrc": user.ImageSrc})
 	c.Header("Access-Control-Allow-Origin", "http://localhost:5173")
 }
 

@@ -2,9 +2,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {useEffect, useState} from 'react';
 import {Crew, User} from "../../types.ts";
-import {Col, Container, Modal, Row, Spinner} from "react-bootstrap";
+import {Col, Container, Modal, Row} from "react-bootstrap";
 import axios from "axios";
-import Navbar from "./Navbar.tsx";
 
 interface ModalProps {
     show: boolean;
