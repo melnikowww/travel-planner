@@ -232,7 +232,7 @@ const Profile = () => {
             </Row>
 
             <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center">
-                <Col lg={4} className="pe-lg-3">
+                <Col md={6} lg={5} className="pe-lg-3">
                     <div className="p-4 rounded-3" style={{
                         backgroundColor: "rgba(45,45,45,0.75)",
                         border: "1px solid #3D3D3D"
@@ -290,7 +290,7 @@ const Profile = () => {
                 </Col>
 
                 {/* Секция автомобилей */}
-                <Col lg={4} className="ps-lg-3">
+                <Col md={6} lg={5} className="ps-lg-3">
                     <div className="p-4 rounded-3" style={{
                         backgroundColor: "rgba(45,45,45,0.75)",
                         border: "1px solid #3D3D3D"
