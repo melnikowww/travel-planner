@@ -122,7 +122,9 @@ const ExpeditionProfile = () => {
         }}>
             <Row className="d-flex w-100 mx-0 px-0 h-100">
                 <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar hide={false}/>
+                    <Navbar hide={false} expeditionsShadow={false}
+                            aboutShadow={false} profileShadow={false}
+                            contactsShadow={false}/>
                 </Col>
             </Row>
             <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
@@ -145,7 +147,9 @@ const ExpeditionProfile = () => {
             }}
         >
             <Row className="w-100 mx-0 px-0">
-                <Navbar hide={false}/>
+                <Navbar hide={false} expeditionsShadow={false}
+                        aboutShadow={false} profileShadow={false}
+                        contactsShadow={false}/>
             </Row>
             <Row className="w-100 mx-0 px-0 mt-5">
                 <Col className="d-flex justify-content-center py-3">
