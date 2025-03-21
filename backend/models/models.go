@@ -12,6 +12,16 @@ type User struct {
 	Crews    []Crew `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"crews"`
 }
 
+type Crew struct {
+	ID           int         `gorm:"primaryKey" json:"id" example:"1"`
+	CarID        int         `gorm:"not null" json:"car_id" example:"13"`
+	ExpeditionID int         `gorm:"not null" json:"expedition_id" example:"1"`
+	DriverID     int         `gorm:"not null;constraint:OnDelete:CASCADE;" json:"driver_id" example:"1"`
+	MembersID    []int       `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"members"`
+	Equipment    []Equipment `gorm:"foreignKey:crew_id;constraint:OnDelete:CASCADE;" json:"equipment"`
+	Goods        []Good      `gorm:"foreignKey:crew_id;constraint:OnDelete:CASCADE;" json:"goods"`
+}
+
 type Car struct {
 	ID     int    `gorm:"primaryKey" json:"id" example:"1"`
 	Name   string `gorm:"type:varchar(100);not null" json:"name" example:"Toyota Land Cruiser 100"`
@@ -34,16 +44,6 @@ type Point struct {
 	Name         string `gorm:"type:varchar(100);not null" json:"name" example:"Teriberka"`
 	Location     string `gorm:"type:varchar(100);not null" json:"location" example:"69.164529, 35.138287"`
 	ExpeditionID int    `json:"expedition_id"`
-}
-
-type Crew struct {
-	ID           int         `gorm:"primaryKey" json:"id" example:"1"`
-	CarID        int         `gorm:"not null" json:"car_id" example:"13"`
-	ExpeditionID int         `gorm:"not null" json:"expedition_id" example:"1"`
-	DriverID     int         `gorm:"not null;constraint:OnDelete:CASCADE;" json:"driver_id" example:"1"`
-	Members      []User      `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"members"`
-	Equipment    []Equipment `gorm:"foreignKey:crew_id;constraint:OnDelete:CASCADE;" json:"equipment"`
-	Goods        []Good      `gorm:"foreignKey:crew_id;constraint:OnDelete:CASCADE;" json:"goods"`
 }
 
 type Equipment struct {
