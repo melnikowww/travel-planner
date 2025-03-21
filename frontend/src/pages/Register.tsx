@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {useState} from 'react';
+import React, {useState} from 'react';
 import axios, { AxiosError } from 'axios';
 import '/src/fonts/fonts.css';
 import {Container, Row, Col, Form, Button, Alert, Spinner} from 'react-bootstrap';
@@ -93,7 +93,9 @@ const Register: React.FC = () => {
     return (
 
             <Container fluid className="d-flex flex-column bg-image-reg login w-100 px-0">
-                <Navbar hide={true}/>
+                <Navbar hide={false} expeditionsShadow={false}
+                        aboutShadow={false} profileShadow={true}
+                        contactsShadow={false}/>
                 <Row className="d-flex text-center my-auto flex-column justify-content-center align-items-center">
                     <Col className="">
                         <h1 className="mb-3 stroke-1 rounded-2" style={{
@@ -104,14 +106,12 @@ const Register: React.FC = () => {
                         </h1>
                     </Col>
                     <Col className="col-10 col-md-10 col-8 col-lg-4">
-                        {/*<h2 className="mb-5 text-center">Вас приветствует Travel Planner!</h2>*/}
                         {error && (
                             <Alert variant="danger" className="mb-3">
                                 {"Кажется Вы уже регистрировались..."}
                             </Alert>
                         )}
 
-                        {/* Блок успешного ответа */}
                         {serverResponse && (
                             <Alert variant="success" className="mb-3">
                                 {"Все гуд!"}

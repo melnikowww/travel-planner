@@ -1,7 +1,7 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {useEffect, useState} from 'react';
-import {Crew, User} from "../../types.ts";
+import {Car, Crew, User} from "../../types.ts";
 import {Col, Container, Modal, Row} from "react-bootstrap";
 import axios from "axios";
 
@@ -16,7 +16,7 @@ interface ModalProps {
 const ShowCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) => {
     const [crew, setCrew] = useState<Crew | null>(null);
     const [driver, setDriver] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [crewCar, setCrewCar] = useState<Car | null>(null)
     const [error, setError] = useState('');
 
 
@@ -41,14 +41,22 @@ const ShowCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) 
         } catch (e) {
             setError('Ошибка при поиске экипажа😐');
             console.error(error);
-        } finally {
-            setLoading(false)
         }
     };
 
     useEffect(() => {
         fetchCrew()
     }, [driverId, expeditionId]);
+
+    useEffect(() => {
+        var car;
+        if (driver && crew) {
+            car = driver.cars.find((car) => car.id === crew.car_id)
+        }
+        if (car) {
+            setCrewCar(car)
+        }
+    }, [crew , driver]);
 
     const findUser = async () => {
         if (crew) {
@@ -61,8 +69,6 @@ const ShowCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) 
             } catch (e) {
                 setError('Ошибка при поиске водителя😥')
                 console.log(error)
-            } finally {
-                setLoading(false)
             }
         }
     }
@@ -103,7 +109,7 @@ const ShowCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) 
                                 Автомобиль
                             </Col>
                             <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                    {driver&&crew ? driver.cars.find((car) => car.id === crew.car_id).name || "Машина не найдена" : null}
+                                    {driver&&crew ? crewCar?.name : null}
                             </Col>
                         </Row>
                         <Row className="w-100 m-1 column-gap-1">

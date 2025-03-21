@@ -180,6 +180,264 @@ const docTemplate = `{
                 }
             }
         },
+        "/crew": {
+            "get": {
+                "description": "Поиск экипажа по связке водитель-экспедиция",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экипажи"
+                ],
+                "summary": "Найти экипаж по водителю и экспедиции",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID водителя",
+                        "name": "driver_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID экспедиции",
+                        "name": "expedition_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные экипажа",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crew"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные параметры",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экипаж не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/crews": {
+            "get": {
+                "description": "Возвращает список всех экипажей или конкретный экипаж по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экипажи"
+                ],
+                "summary": "Получить экипажи",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экипажа",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные экипажа",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crew"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экипаж не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Создание нового экипажа. Требуется авторизация водителя.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экипажи"
+                ],
+                "summary": "Создать экипаж",
+                "parameters": [
+                    {
+                        "description": "Данные экипажа",
+                        "name": "crew",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Crew"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданный экипаж",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crew"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Удаление экипажа. Требуются права создателя.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экипажи"
+                ],
+                "summary": "Удалить экипаж",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экипажа",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Экипаж удален"
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экипаж не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Обновление данных экипажа. Требуются права создателя.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экипажи"
+                ],
+                "summary": "Обновить экипаж",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экипажа",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Обновленные данные",
+                        "name": "crew",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Crew"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленный экипаж",
+                        "schema": {
+                            "$ref": "#/definitions/models.Crew"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экипаж не найден",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/equip": {
             "get": {
                 "description": "Получить список всего снаряжения или конкретный экземпляр по ID",
@@ -353,6 +611,260 @@ const docTemplate = `{
                     },
                     "409": {
                         "description": "Ошибка обновления",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/expedition_drivers": {
+            "get": {
+                "description": "Возвращает список водителей для указанной экспедиции",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экспедиции"
+                ],
+                "summary": "Получить водителей экспедиции",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экспедиции",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список водителей",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экспедиция не найдена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/expeditions": {
+            "get": {
+                "description": "Возвращает список всех экспедиций или конкретную экспедицию по ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экспедиции"
+                ],
+                "summary": "Получить экспедиции",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экспедиции",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные экспедиции",
+                        "schema": {
+                            "$ref": "#/definitions/models.Expedition"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экспедиция не найдена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Создание новой экспедиции. Требуются права авторизованного пользователя.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экспедиции"
+                ],
+                "summary": "Создать экспедицию",
+                "parameters": [
+                    {
+                        "description": "Данные экспедиции",
+                        "name": "expedition",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Expedition"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданная экспедиция",
+                        "schema": {
+                            "$ref": "#/definitions/models.Expedition"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Удаление экспедиции. Требуются права создателя.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экспедиции"
+                ],
+                "summary": "Удалить экспедицию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экспедиции",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Экспедиция удалена"
+                    },
+                    "400": {
+                        "description": "Некорректный ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экспедиция не найдена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Обновление данных экспедиции. Требуются права создателя.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экспедиции"
+                ],
+                "summary": "Обновить экспедицию",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID экспедиции",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Обновляемые данные",
+                        "name": "expedition",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Expedition"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленные данные",
+                        "schema": {
+                            "$ref": "#/definitions/models.Expedition"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Доступ запрещен",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Экспедиция не найдена",
                         "schema": {
                             "type": "string"
                         }
@@ -549,6 +1061,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/login": {
+            "post": {
+                "description": "Аутентификация пользователя по email и паролю с получением JWT токена",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Аутентификация"
+                ],
+                "summary": "Войти в систему",
+                "responses": {
+                    "200": {
+                        "description": "JWT токен",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка генерации токена",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/points": {
             "get": {
                 "description": "Получить все точки или конкретную точку по ID",
@@ -726,6 +1291,206 @@ const docTemplate = `{
                 }
             }
         },
+        "/register": {
+            "post": {
+                "description": "Регистрация нового пользователя в системе. Пароль автоматически хешируется.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Аутентификация"
+                ],
+                "summary": "Создать пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданный пользователь",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные входные данные",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Конфликт данных (пользователь существует)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Загрузка изображения аватара пользователя. Файл будет автоматически переименован в формат \"avatar_\u003cuser_id\u003e.jpg\"",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Файлы"
+                ],
+                "summary": "Загрузить аватар пользователя",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Файл изображения (jpg, png, gif)",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Сообщение об успешной загрузке",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка при получении файла",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при сохранении файла",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "description": "Поиск пользователя по email",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Пользователи"
+                ],
+                "summary": "Найти пользователя по email",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Пользователь удален"
+                    },
+                    "401": {
+                        "description": "Ошибка поиска",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-to-exp": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Возвращает список всех экспедиций, связанных с текущим авторизованным пользователем",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Экспедиции"
+                ],
+                "summary": "Получить экспедиции пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен авторизации",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список экспедиций",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Expedition"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка при получении данных",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Возвращает конкретного пользователя по ID или всех пользователей, если ID не указан",
@@ -765,56 +1530,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Регистрация нового пользователя в системе",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Пользователи"
-                ],
-                "summary": "Создать пользователя",
-                "parameters": [
-                    {
-                        "description": "Данные пользователя",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Созданный пользователь",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректные входные данные",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "409": {
-                        "description": "Пользователь уже существует",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка хеширования пароля",
                         "schema": {
                             "type": "string"
                         }
@@ -928,7 +1643,39 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Toyota Land Cruiser 100"
                 },
-                "owner_id": {
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Crew": {
+            "type": "object",
+            "properties": {
+                "car_id": {
+                    "type": "integer",
+                    "example": 13
+                },
+                "driver_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "equipment": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Equipment"
+                    }
+                },
+                "expedition_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "goods": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Good"
+                    }
+                },
+                "id": {
                     "type": "integer",
                     "example": 1
                 }
@@ -937,9 +1684,8 @@ const docTemplate = `{
         "models.Equipment": {
             "type": "object",
             "properties": {
-                "expedition_id": {
-                    "type": "integer",
-                    "example": 1
+                "crew_id": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer",
@@ -951,12 +1697,49 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Expedition": {
+            "type": "object",
+            "properties": {
+                "creator_id": {
+                    "type": "integer"
+                },
+                "crews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Crew"
+                    }
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Good vibes only"
+                },
+                "ends_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Karjala"
+                },
+                "points": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Point"
+                    }
+                },
+                "starts_at": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Good": {
             "type": "object",
             "properties": {
-                "expedition_id": {
-                    "type": "integer",
-                    "example": 1
+                "crew_id": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer",
@@ -971,6 +1754,9 @@ const docTemplate = `{
         "models.Point": {
             "type": "object",
             "properties": {
+                "expedition_id": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer",
                     "example": 1
@@ -988,6 +1774,18 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "properties": {
+                "cars": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Car"
+                    }
+                },
+                "crews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Crew"
+                    }
+                },
                 "email": {
                     "type": "string",
                     "example": "alex@example.com"
@@ -995,6 +1793,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer",
                     "example": 1
+                },
+                "imageSrc": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string",
