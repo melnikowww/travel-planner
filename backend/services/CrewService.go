@@ -19,7 +19,8 @@ func (s *CrewService) Create(crew *models.Crew) (int, error) {
 		log.Printf("User not found")
 		return 0, err
 	}
-	crew.Members = append(crew.Members, user)
+	userDto := models.UserDTO{ID: user.ID, Name: user.Name, Email: user.Email}
+	crew.Members = append(crew.Members, userDto)
 	id, err := s.CrewRepo.CreateCrew(crew)
 	if err != nil {
 		log.Printf("Crew creation error: %v", err)

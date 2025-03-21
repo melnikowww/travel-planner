@@ -92,7 +92,7 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
         } finally {
             setLoad(false)
             setNew(false)
-            window.location.reload()
+            // window.location.reload()
         }
     }
 
