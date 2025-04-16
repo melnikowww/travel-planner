@@ -41,13 +41,12 @@ const CustomNavbar: React.FC<Props> = ({
         >
             <Container fluid className="h-100 d-flex align-items-center px-0">
                 <Row className="w-100 align-items-center justify-content-between">
-                    <Col xs={1} lg={4} className="d-flex justify-content-start logout-btn">
+                    <Col xs={1} lg={4} hidden={hide} className="d-flex justify-content-start">
                         <Button
-                            hidden={hide}
                             variant="primary"
                             type="submit"
-                            className="submit-btn justify-content-center text-center px-0 ms-2"
-                            style={{ fontFamily: "Rubik", color: 'darkred' }}
+                            className="logout-btn justify-content-center text-center px-0 ms-2 d-xs-none"
+                            style={{ fontFamily: "Rubik", color: '#C14545' }}
                             onClick={handleLogout}
                         >
                             ВЫЙТИ
@@ -125,7 +124,7 @@ const CustomNavbar: React.FC<Props> = ({
                                     О нас
                                 </Nav.Link>
                                 <Nav.Link
-                                    className='nav-link-custom'
+                                    className='nav-link-custom d-none'
                                     style={{
                                         color: contactsShadow ? '#DAA520' :  '#FFFFFF',
                                         fontFamily: "'Rubik', sans-serif"
@@ -133,10 +132,10 @@ const CustomNavbar: React.FC<Props> = ({
                                 >
                                     Контакты
                                 </Nav.Link>
-                                <div className='d-lg-none'>
+                                <div className='d-xl-none'>
                                     <Nav.Link
                                         style={{
-                                            color: 'darkred',
+                                            color: '#C14545',
                                             fontFamily: "'Rubik', sans-serif"
                                         }}
                                     >

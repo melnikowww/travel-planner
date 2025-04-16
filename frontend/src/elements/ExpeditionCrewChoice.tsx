@@ -19,7 +19,7 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
     const [showCrew, setShowCrew] = useState(false)
     return (
         <div>
-            <Modal show={show} onHide={onHide} centered>
+            <Modal show={show} onHide={onHide} centered contentClassName='bg-dark text-light'>
                 <Modal.Header closeButton className="p-2">
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
@@ -39,22 +39,26 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
                                 Посмотрим экспедицию
                             </Button>
                         </Row>
-                        <Row className="w-100 justify-content-center">
-                            <Button disabled={disabledExp} variant="primary" className="submit-btn w-75">
-                                Отредактируем экспедицию
-                            </Button>
-                        </Row>
+                        {!disabledExp &&
+                            <Row className="w-100 justify-content-center">
+                                <Button variant="primary" className= "submit-btn w-75">
+                                    Отредактируем экспедицию
+                                </Button>
+                            </Row>
+                        }
                         <Row className="w-100 justify-content-center">
                             <Button variant="primary" className="submit-btn w-75"
                                     onClick={()=> {onHide(); setShowCrew(true)}}>
                                 Посмотрим экипаж
                             </Button>
                         </Row>
-                        <Row className="w-100 justify-content-center">
-                            <Button disabled={disabledCrew} variant="primary" className="submit-btn w-75" onClick={()=> {onHide(); setShowCrewUpdate(true)}}>
-                                Отредактируем экипаж
-                            </Button>
-                        </Row>
+                        {!disabledCrew &&
+                            <Row className="w-100 justify-content-center">
+                                <Button disabled={disabledCrew} variant="primary" className="submit-btn w-75" onClick={()=> {onHide(); setShowCrewUpdate(true)}}>
+                                    Отредактируем экипаж
+                                </Button>
+                            </Row>
+                        }
                     </Container>
                 </Modal.Body>
             </Modal>

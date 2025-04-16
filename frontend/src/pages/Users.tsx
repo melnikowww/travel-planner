@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-// import {useNavigate} from "react-router-dom";
 import {User} from "../../types.ts";
+import ErrorPage from "../elements/Error.tsx";
+import Load from "../elements/Loading.tsx";
 
 const Users = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -24,8 +25,8 @@ const Users = () => {
         fetchUsers();
     }, []);
 
-    if (loading) return <div>Загрузка...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <Load/>
+    if (error) return <ErrorPage error={error}/>
 
     return (
         <div>

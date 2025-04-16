@@ -102,7 +102,7 @@ const UpdateCar: React.FC<ModalProps> = ({show, onHide, id}) => {
     };
 
     return (
-        <Modal show={show} onHide={onHide} centered style={{fontFamily:"G8"}}>
+        <Modal show={show} onHide={onHide} centered style={{fontFamily:"Rubik"}} contentClassName='bg-dark text-light'>
             <Modal.Header closeButton>
                 <div className="d-flex container">
                     <div className="d-flex col justify-content-center">
@@ -130,6 +130,7 @@ const UpdateCar: React.FC<ModalProps> = ({show, onHide, id}) => {
                             <Button
                                 variant="danger"
                                 className="justify-content-start"
+                                style={{background:'#C14545'}}
                                 onClick={handleDelete}
                             >
                                 Удалить
@@ -139,7 +140,7 @@ const UpdateCar: React.FC<ModalProps> = ({show, onHide, id}) => {
                             <Button
                                 variant="primary"
                                 type="submit"
-                                className="justify-content-end"
+                                className="justify-content-end submit-btn"
                                 onClick={()=>{show=false}}
                             >
                                 Изменить
