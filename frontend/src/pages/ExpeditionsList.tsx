@@ -1,9 +1,11 @@
 import {useState, useEffect} from "react";
-import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Container} from "react-bootstrap";
 import Navbar from "../elements/Navbar.tsx";
 import {Expedition} from "../../types.ts";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import Load from "../elements/Loading.tsx";
+import ErrorPage from "../elements/Error.tsx";
 
 const Expeditions = () => {
     const [expeditions, setExpeditions] = useState<Expedition[]>([])
@@ -32,42 +34,8 @@ const Expeditions = () => {
         fetchExpeditions()
     }, []);
 
-    if (loading) return (
-        <Container className="d-flex flex-column align-items-center justify-content-center" style={{
-            minWidth:"100vw",
-            minHeight:"100vh"
-        }}>
-            <Row className="justify-content-md-center">
-                <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                />
-            </Row>
-        </Container>
-    );
-    if (error) return (
-        <Container className="d-flex flex-column align-items-center" style={{
-            minWidth:"100vw",
-            minHeight:"100vh"
-        }}>
-            <Row className="d-flex w-100 mx-0 px-0 h-100">
-                <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar hide={false} expeditionsShadow={false}
-                            aboutShadow={false} profileShadow={false}
-                            contactsShadow={false}/>
-                </Col>
-            </Row>
-            <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
-                minWidth:"100vw",
-                minHeight:"100vh"
-            }}>
-                {error}😒
-            </Container>
-        </Container>
-    )
+    if (loading) return (<Load/>);
+    if (error) return <ErrorPage error={error}/>
 
     return (
         <Container fluid className="d-flex flex-column w-100 h-100 px-0 align-items-start pb-4 expeditions"

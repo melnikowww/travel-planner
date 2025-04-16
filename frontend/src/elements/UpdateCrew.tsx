@@ -111,7 +111,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     const addEquip = async (e: React.FormEvent)=>{
         e.preventDefault();
-        if (crew) {
+        if (crew && equipData.name != "") {
             equipData.crew_id = crew.id
             try {
                 await axios.post<Equipment>(`http://localhost:8081/equip`,
@@ -142,7 +142,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     const addGood = async (e: React.FormEvent)=>{
         e.preventDefault();
-        if (crew) {
+        if (crew && goodData.name != "") {
             goodData.crew_id = crew.id
             try {
                 await axios.post<Equipment>(`http://localhost:8081/goods`,
@@ -187,7 +187,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     return (
         <div>
-            <Modal show={show} onHide={onHide} centered style={{fontFamily:"G8"}}>
+            <Modal show={show} onHide={onHide} centered style={{fontFamily:"Rubik"}} contentClassName='bg-dark text-light'>
                 <Modal.Header closeButton className="p-3">
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
@@ -237,7 +237,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                                         value={equipData.name}
                                                         onChange={handleEquipChange}
                                                     />
-                                                    <Button variant="outline-dark" className="mx-2" onClick={addEquip}>
+                                                    <Button type='submit' className="mx-2 submit-btn" onClick={addEquip}>
                                                         <FontAwesomeIcon icon={faPlus} className="mx-0" />
                                                     </Button>
                                                 </div>
@@ -258,7 +258,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                                         value={goodData.name}
                                                         onChange={handleGoodChange}
                                                     />
-                                                    <Button variant="outline-dark" className="mx-2" onClick={addGood}>
+                                                    <Button className="mx-2 submit-btn" onClick={addGood}>
                                                         <FontAwesomeIcon icon={faPlus} className="mx-0" />
                                                     </Button>
                                                 </div>
@@ -267,7 +267,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                     </Row>
                                 </Form>
                         <Row>
-                            <Button className="m-2" onClick={updateCrew}>
+                            <Button className="m-2 submit-btn" onClick={updateCrew}>
                                 Все верно!
                             </Button>
                         </Row>

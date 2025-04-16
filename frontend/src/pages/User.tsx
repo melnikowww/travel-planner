@@ -3,19 +3,54 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import React, {useState, useEffect} from "react";
 import {Expedition, User} from "../../types.ts";
-import {Button, Col, Container, Form, Modal, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import UploadButton from "../elements/UploadButton.tsx";
 import AddCarModal from "../elements/AddCar.tsx";
 import UpdateCar from "../elements/UpdateCar.tsx";
 import Navbar from "../elements/Navbar.tsx"
 import ExpeditionCrew from "../elements/ExpeditionCrewChoice.tsx"
+import Load from "../elements/Loading.tsx"
+import ErrorPage from "../elements/Error.tsx";
+import AddExpedition from "../elements/AddExpedition.tsx";
+import AddExpeditionMobile from "../elements/AddExpeditionMobile.tsx";
+import ReactPaginate, {ReactPaginateProps} from "react-paginate";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
+
+const useMobile = (breakpoint = 1000) => {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < breakpoint);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [breakpoint]);
+
+    return isMobile;
+};
 
 const Profile = () => {
+    const isMobile = useMobile()
     const [user, setUser] = useState<User | null>(null);
     const [expeditions, setExpeditions] = useState<Expedition[]>([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('')
+
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const itemsPerPage = 2;
+    const pageCount = Math.ceil(expeditions.length / itemsPerPage);
+    const offset = currentPage * itemsPerPage;
+    const currentItems = expeditions.slice(offset, offset + itemsPerPage);
+    const [direction, setDirection] = useState<"left" | "right">("right");
+
+    const handlePage: ReactPaginateProps['onPageChange'] = ({ selected }) => {
+        setDirection(selected > currentPage ? "right" : "left");
+        setCurrentPage(selected)
+    }
 
     interface FormState {
         id: bigint | null;
@@ -63,6 +98,7 @@ const Profile = () => {
     }, []);
 
     const [showUserSettings, setShowUserSettings] = useState(false);
+    const [showExpCreate, setExpCreate] = useState(false);
     const [showCarCreate, setCarCreate] = useState(false);
     const [showCarUpdate, setCarUpdate] = useState(false);
 
@@ -139,42 +175,9 @@ const Profile = () => {
         }
     };
 
-    if (loading) return (
-        <Container className="d-flex flex-column align-items-center justify-content-center" style={{
-            minWidth:"100vw",
-            minHeight:"100vh"
-        }}>
-            <Row className="justify-content-md-center">
-                <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                />
-            </Row>
-        </Container>
-    );
-    if (error) return (
-        <Container className="d-flex flex-column align-items-center" style={{
-            minWidth:"100vw",
-            minHeight:"100vh"
-        }}>
-            <Row className="d-flex w-100 mx-0 px-0 h-100">
-                <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar hide={false} expeditionsShadow={false}
-                            aboutShadow={false} profileShadow={false}
-                            contactsShadow={false}/>
-                </Col>
-            </Row>
-            <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
-                minWidth:"100vw",
-                minHeight:"100vh"
-            }}>
-                {error}😒
-            </Container>
-        </Container>
-    )
+
+    if (loading) return <Load/>
+    if (error) return <ErrorPage error={error}/>
 
     return (
         <Container
@@ -193,7 +196,6 @@ const Profile = () => {
                     aboutShadow={false} profileShadow={true}
                     contactsShadow={false}/>
 
-            {/* Блок профиля */}
             <Row className="mx-3 rounded-3 py-4" style={{
                 backgroundColor: "rgba(45,45,45,0.8)",
                 border: "2px solid #DAA520",
@@ -202,6 +204,7 @@ const Profile = () => {
                 <Col xs={3} className="d-flex align-items-center justify-content-center px-0">
                     <UploadButton/>
                 </Col>
+
 
                 <Col xs={6} className="d-flex align-items-center px-0">
                     <h1 className="mb-0 profile-name" style={{
@@ -217,10 +220,10 @@ const Profile = () => {
                     <Button
                         variant="link"
                         onClick={handleShow}
-                        className="p-0"
+                        className="p-0 rounded-5"
                     >
                         <img
-                            src="/src/assets/settings.png"
+                            src='src/assets/settings.webp'
                             alt="Настройки"
                             style={{
                                 width: "40px",
@@ -246,7 +249,7 @@ const Profile = () => {
                             </h2>
                             <Button
                                 variant="outline-warning"
-                                // onClick={}
+                                onClick={()=>setExpCreate(true)}
                                 className='add-car-button'
                                 style={{
                                     borderColor: "#DAA520",
@@ -258,38 +261,65 @@ const Profile = () => {
                         </div>
 
                         <div className="d-grid gap-2">
-                            {expeditions?.map((exp) => (
-                                <Button
-                                    key={exp.id}
-                                    variant="dark"
-                                    className="text-start py-3 rounded-2"
-                                    style={{
-                                        border: "1px solid #3D3D3D",
-                                        transition: "all 0.3s ease"
-                                    }}
-                                    onClick={() => handleExpButton(exp)}
-                                >
-                                    <span className="d-block" style={{ color: "#DAA520" }}>{exp.name}</span>
-                                    <small className="text-muted">Даты: {new Date(exp.starts_at).toLocaleString('ru-RU', {
-                                        timeZone: 'Europe/Moscow',
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric',
-                                    })}-{new Date(exp.ends_at).toLocaleString('ru-RU', {
-                                        timeZone: 'Europe/Moscow',
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric',
-                                    })}</small>
-                                </Button>
+                            {currentItems?.map((exp) => (
+                                <AnimatePresence mode="wait" key={`presence-${exp.id}`}>
+                                    <motion.ul
+                                        key={expId}
+                                        layoutId={`exp-${exp.id}`}
+                                        initial={{ opacity: 0,  x: direction === "right" ? -25 : 25 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: direction === "right" ? 25 : -25 }}
+                                        transition={{ duration: 0.75 }}
+                                        className="list"
+                                        style={{width:'100%', padding:'0', margin:'0', overflow:'hidden'}}
+                                    >
+                                        <Button
+                                            key={exp.id}
+                                            variant="dark"
+                                            className="text-start py-3 rounded-2 w-100"
+                                            style={{
+                                                border: "1px solid #3D3D3D",
+                                                transition: "all 0.3s ease"
+                                            }}
+                                            onClick={() => handleExpButton(exp)}
+                                        >
+                                            <span className="d-block" style={{ color: "#DAA520" }}>{exp.name}</span>
+                                            <small className="text-muted">Даты: {new Date(exp.starts_at).toLocaleString('ru-RU', {
+                                                timeZone: 'Europe/Moscow',
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}-{new Date(exp.ends_at).toLocaleString('ru-RU', {
+                                                timeZone: 'Europe/Moscow',
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}</small>
+                                        </Button>
+                                    </motion.ul>
+                                </AnimatePresence>
                             ))}
+                        </div>
+                        <div className='d-flex w-100 justify-content-center align-items-center'>
+                            <ReactPaginate
+                                className='pagination'
+                                previousLabel={currentPage > 0 ? <FaChevronLeft
+                                    color='floralwhite' size='15' style={{paddingBottom:'2px'}}/> : null}
+                                nextLabel={currentPage < pageCount - 1 ? <FaChevronRight
+                                    color='floralwhite' size='15' style={{paddingBottom:'2px'}}/> : null}
+                                pageCount={pageCount}
+                                marginPagesDisplayed={0}
+                                pageRangeDisplayed={0}
+                                onPageChange={handlePage}
+                                containerClassName={'pagination'}
+                                activeClassName={'active'}
+                            />
                         </div>
                     </div>
                     <ExpeditionCrew show={showExpChoice} disabledExp={canNotUpdateExp} disabledCrew={canNotUpdateCrew}
                                     driverId={driverId} onHide={()=>setExpChoice(false)} expeditionId={expId}/>
                 </Col>
 
-                {/* Секция автомобилей */}
                 <Col md={6} lg={5} className="ps-lg-3">
                     <div className="p-4 rounded-3" style={{
                         backgroundColor: "rgba(45,45,45,0.75)",
@@ -336,14 +366,17 @@ const Profile = () => {
                     </div>
                     <AddCarModal show={showCarCreate} onHide={()=> {setCarCreate(false)}}/>
                 </Col>
+                {isMobile ?
+                    <AddExpeditionMobile show={showExpCreate} onHide={()=>{setExpCreate(false)}}/> :
+                    <AddExpedition show={showExpCreate} onHide={()=>{setExpCreate(false)}}/>}
             </Row>
 
-            {/* Модальное окно настроек */}
             <Modal
                 show={showUserSettings}
                 onHide={() => setShowUserSettings(false)}
                 centered
                 contentClassName="bg-dark text-light"
+                style={{fontFamily:'Rubik'}}
             >
                 <Modal.Header closeButton>
                     <div className="d-flex container">
@@ -390,7 +423,7 @@ const Profile = () => {
                                 value={formData.password}
                                 onChange={handleChange}
                             />
-                            <p className="my-0 text-center" style={{fontSize:"15px"}}>
+                            <p className="my-0 text-center" style={{fontSize:"10px"}}>
                                 *если не хотите менять пароль, то просто не трогайте это поле...
                             </p>
                         </Form.Group>
@@ -399,7 +432,7 @@ const Profile = () => {
                                 <Button
                                     variant="primary"
                                     type="submit"
-                                    className="w-50"
+                                    className="w-50 submit-btn"
                                 >
                                     Подтвердить
                                 </Button>

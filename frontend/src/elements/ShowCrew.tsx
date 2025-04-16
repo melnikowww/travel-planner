@@ -2,7 +2,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {useEffect, useState} from 'react';
 import {Car, Crew, User} from "../../types.ts";
-import {Col, Container, Modal, Row} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import axios from "axios";
 
 interface ModalProps {
@@ -49,7 +49,7 @@ const ShowCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) 
     }, [driverId, expeditionId]);
 
     useEffect(() => {
-        var car;
+        let car;
         if (driver && crew) {
             car = driver.cars.find((car) => car.id === crew.car_id)
         }
@@ -77,89 +77,96 @@ const ShowCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}) 
         findUser()
     }, [crew]);
 
+    interface CrewProps {
+        title: string;
+        items: Array<{
+            id: number;
+            name: string;
+        }>;
+        emptyText?: string;
+    }
+
+
+    const CrewList: React.FC<CrewProps> = ({ title, items, emptyText = 'Нет данных' }) => (
+        <div className="crew-list text-light info-card">
+            <div className="crew-list-title">
+                <span>{title}</span>
+                <span className="badge bg-primary-soft text-primary rounded-pill">
+                    {items.length}
+                </span>
+            </div>
+            {items.length > 0 ? (
+                <ul className="crew-list-items">
+                    {items.map(item => (
+                        <li key={item.id} className="crew-list-item bg-dark">
+                            {item.name}
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <div className="text-muted small">{emptyText}</div>
+            )}
+        </div>
+    );
 
     return (
         driver && crew ?
-        <div>
-            <Modal show={show} onHide={onHide} centered style={{fontFamily:"G8"}}>
-                <Modal.Header closeButton className="p-3">
-                    <div className="d-flex container">
-                        <div className="d-flex col justify-content-center">
-                            <Modal.Title>
-                                <p className="my-0">Данные об экипаже</p>
-                            </Modal.Title>
-                        </div>
+        <div className='mx-auto' style={{overflowY:'scroll'}}>
+            <Modal
+                show={show}
+                onHide={onHide}
+                centered
+                className="crew-modal"
+                contentClassName="border-0 shadow-lg bg-dark text-light"
+            >
+                <Modal.Header className="p-4 border-bottom-0">
+                    <div className="d-flex w-100 justify-content-between align-items-center">
+                        <Modal.Title className="h4 text-primary">
+                            <span className="badge bg-primary-soft text-light">Экипаж #{crew.id}</span>
+                        </Modal.Title>
+                        <button
+                            type="button"
+                            className="btn-close"
+                            onClick={onHide}
+                            aria-label="Close"
+                        />
                     </div>
                 </Modal.Header>
-                <Modal.Body style={{
-                    padding:0,
-                    paddingBottom: "10px",
-                }}>
-                    <Container className="d-flex w-100 justify-content-center fs-5 flex-column align-items-center">
-                        <Row className="w-100 m-1 column-gap-1">
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                Водитель
-                            </Col>
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                    {driver?.name}
-                            </Col>
-                        </Row>
-                        <Row className="w-100 m-1 column-gap-1">
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                Автомобиль
-                            </Col>
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                    {driver&&crew ? crewCar?.name : null}
-                            </Col>
-                        </Row>
-                        <Row className="w-100 m-1 column-gap-1">
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                Пассажиры
-                            </Col>
-                            <Col className="d-flex justify-content-start align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                {crew.members.length === 0 ?
-                                    <p>Налегке!</p> :
-                                    <ol className="m-0">
-                                    {crew.members.map((m) => (
-                                        m.id != crew.driver_id ?
-                                            <li key={m.id}>
-                                                {m.name}
-                                            </li> :
-                                            null)) || 0}
-                                    </ol>}
-                            </Col>
-                        </Row>
-                        <Row className="w-100 m-1 column-gap-1">
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                Снаряжение
-                            </Col>
-                            <Col
-                                className="d-flex justify-content-start align-items-center border border-black rounded-2"
-                                style={{backgroundColor: "blanchedalmond"}}>
-                                <ol className="m-0">
-                                    {crew.equipment.map((eq) => (
-                                        <li key={eq.id}>
-                                            {eq.name}
-                                        </li>
-                                    )) || 0}
-                                </ol>
-                            </Col>
-                        </Row>
-                        <Row className="w-100 m-1 column-gap-1">
-                            <Col className="d-flex justify-content-center align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                Продукты
-                            </Col>
-                            <Col className="d-flex justify-content-start align-items-center border border-black rounded-2" style={{backgroundColor:"blanchedalmond"}}>
-                                <ol className="m-0">
-                                    {crew.goods.map((g) => (
-                                        <li key={g.id}>
-                                            {g.name}
-                                        </li>
-                                    )) || 0}
-                                </ol>
-                            </Col>
-                        </Row>
-                    </Container>
+
+                <Modal.Body className="p-4 pt-0">
+                    <div className="d-grid gap-3">
+                        <div className="info-card bg-light-soft">
+                            <div className="info-label text-muted">Водитель</div>
+                            <div className="info-value text-light fw-medium">
+                                {driver?.name || <span className="text-muted">Не назначен</span>}
+                            </div>
+                        </div>
+
+                        <div className="info-card bg-light-soft">
+                            <div className="info-label text-muted">Автомобиль</div>
+                            <div className="info-value text-light fw-medium">
+                                {crewCar?.name || <span className="text-muted">Не выбран</span>}
+                            </div>
+                        </div>
+
+                        <div className="d-grid gap-3">
+                            <CrewList
+                                title="Пассажиры"
+                                items={crew.members.filter(m => m.id !== crew.driver_id)}
+                                emptyText="Налегке!"
+                            />
+
+                            <CrewList
+                                title="Снаряжение"
+                                items={crew.equipment}
+                            />
+
+                            <CrewList
+                                title="Продукты"
+                                items={crew.goods}
+                            />
+                        </div>
+                    </div>
                 </Modal.Body>
             </Modal>
         </div> : null

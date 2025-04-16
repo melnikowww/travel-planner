@@ -3,10 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import {useState, useEffect} from "react";
 import {Expedition, User} from "../../types.ts";
-import {Button, Col, Container, Row, Spinner} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import Navbar from "../elements/Navbar.tsx"
 import CrewCreate from "../elements/CreateCrew.tsx";
+import Load from "../elements/Loading.tsx";
+import ErrorPage from "../elements/Error.tsx";
+import {Map, Placemark, YMaps} from "@pbe/react-yandex-maps";
 
 const ExpeditionProfile = () => {
     const [exp, setExp] = useState<Expedition | null>(null)
@@ -19,6 +22,7 @@ const ExpeditionProfile = () => {
     const navigate = useNavigate()
     const [buttonDisabled, setbuttonDisabled] = useState(false)
     const [searchParams, _] = useSearchParams();
+    const [markers] = useState<[number, number][]>([]);
 
     const fetchExp = async () => {
         const expeditionId = searchParams.get('id');
@@ -65,6 +69,17 @@ const ExpeditionProfile = () => {
         fetchExp()
     }, []);
 
+
+    useEffect(() => {
+        exp?.points.map((point) => {
+            let coords = point.location.split(',')
+            let coord1 = parseFloat(coords[0])
+            let coord2 = parseFloat(coords[1])
+            let arr = [coord1, coord2] as [number, number]
+            markers.push(arr)
+        })
+    }, [exp]);
+
     useEffect(()=> {
         if (exp) {
             const start = new Date(exp.starts_at).toLocaleString('ru-RU', {
@@ -93,48 +108,15 @@ const ExpeditionProfile = () => {
         }
     }
 
-    if (loading) return (
-        <Container className="d-flex flex-column align-items-center justify-content-center" style={{
-            minWidth:"100vw",
-            minHeight:"100vh"
-        }}>
-            <Row className="justify-content-md-center">
-                <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                />
-            </Row>
-        </Container>
-    );
-    if (error) return (
-        <Container className="d-flex flex-column align-items-center" style={{
-            minWidth:"100vw",
-            minHeight:"100vh"
-        }}>
-            <Row className="d-flex w-100 mx-0 px-0 h-100">
-                <Col className="d-flex justify-content-center align-items-start">
-                    <Navbar hide={false} expeditionsShadow={false}
-                            aboutShadow={false} profileShadow={false}
-                            contactsShadow={false}/>
-                </Col>
-            </Row>
-            <Container className="d-flex w-100 mx-0 px-0 justify-content-center align-items-center" style={{
-                minWidth:"100vw",
-                minHeight:"100vh"
-            }}>
-                    {error}😒
-            </Container>
-        </Container>
-    )
+    if (loading) return (<Load/>);
+    if (error) return <ErrorPage error={error}/>
 
     return (
         <Container
-            className="d-flex flex-column ps-0 scroll"
+            className="d-flex flex-column ps-0 scroll expedition-page"
             style={{
-                fontFamily: "G8",
+                fontFamily: "Rubik",
+                fontWeight:'lighter',
                 minWidth:"100vw",
                 minHeight: "100vh",
                 boxSizing: "border-box",
@@ -145,7 +127,7 @@ const ExpeditionProfile = () => {
                         aboutShadow={false} profileShadow={false}
                         contactsShadow={false}/>
             </Row>
-            <Row className="w-100 mx-0 px-0 mt-5">
+            <Row className="w-100 mx-0 px-0 mt-5" >
                 <Col className="d-flex justify-content-center py-3">
                     <p className="mb-0" style={{ fontSize: "50px", fontFamily: "G8-Bold" }}>
                         {exp?.name}
@@ -159,44 +141,101 @@ const ExpeditionProfile = () => {
                     </p>
                 </Col>
             </Row>
-            <Row className="w-100 mx-0 px-2 mb-3">
+            <Row className="d-flex mx-2 px-2 py-4 mb-3 rounded-4" style={{
+                backgroundColor: "rgba(45,45,45,0.8)",
+                border: "2px solid #DAA520",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                color:"honeydew"
+            }}>
                 <Col className="mx-0 px-0">
-                    <div className="fs-4 justify-content-center align-items-center " style={{ textAlign: "justify" }}>
+                    <div className="fs-4 justify-content-center align-items-center text-center" style={{ textAlign: "justify" }}>
                         {exp?.description}
                     </div>
                 </Col>
             </Row>
             <Row className="d-flex expedition mt-2 mx-0 px-0">
-                <Col className="d-flex align-items-center flex-column mx-0 px-0">
-                    <h1 style={{fontFamily: "G8-Bold"}}>Экипажи:</h1>
-                    <ol className="fs-4">
-                        {exp?.crews?.map((c) => {
-                            let driver = drivers.find(d => d.id === c.driver_id);
-                            console.log(driver)
-                            let car;
-                            if (driver) {
-                                car = driver.cars.find(car => car.id === c.car_id)
-                            }
-                            return (
-                                <li key={c.id}>
-                                    {driver && car ? `${driver.name}, ${car.name}` : null}
-                                </li>
-                            );
-                        })}
-                    </ol>
+                <Col className="d-flex align-items-center flex-column px-0">
+                    <div className='rounded-4 px-5 py-3 mx-2' style={{
+                        backgroundColor: "rgba(45,45,45,0.8)",
+                        border: "2px solid #DAA520",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                        color:'honeydew'
+                    }}>
+                        <h1 style={{fontFamily: "G8-Bold"}}>Экипажи:</h1>
+                        <ol className="fs-4">
+                            {exp?.crews?.map((c) => {
+                                let driver = drivers.find(d => d.id === c.driver_id);
+                                let car;
+                                if (driver) {
+                                    car = driver.cars.find(car => car.id === c.car_id)
+                                }
+                                return (
+                                    <li key={c.id}>
+                                        {driver && car ? `${driver.name}, ${car.name}` : null}
+                                    </li>
+                                );
+                            })}
+                        </ol>
+                    </div>
                 </Col>
-                <Col className="d-flex align-items-center flex-column mx-0 px-0 mb-4">
-                    <h1 style={{fontFamily: "G8-Bold"}}>Контрольные точки:</h1>
-                    <ol className="fs-4">
-                        {exp?.points.map((e) => (
-                            <li key={e.id}>{e.name} ({e.location})</li>
-                        )) || 0}
-                    </ol>
+                <Col className="d-flex align-items-center flex-column mx-0 px-0 mb-4 mt-4">
+                    <div className='rounded-4 px-5 py-3 mx-2' style={{
+                        backgroundColor: "rgba(45,45,45,0.8)",
+                        border: "2px solid #DAA520",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                        color: 'honeydew'
+                    }}>
+                        <h1 style={{fontFamily: "G8-Bold"}}>Контрольные точки:</h1>
+                        <ol className="fs-4">
+                            {exp?.points.map((e) => (
+                                <li key={e.id}>{e.name} ({e.location})</li>
+                            )) || 0}
+                        </ol>
+                    </div>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <div className='m-4 mt-3 rounded-4' style={{
+                        backgroundColor: "rgba(45,45,45,0.8)",
+                        border: "2px solid #DAA520",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                        color: 'honeydew',
+                        overflow:'hidden',
+                    }}>
+                        <YMaps
+                            query={{
+                                load: "package.full",
+                                apikey: "6896548d-124b-46a2-866d-67213d6c0a46"
+                            }}
+                        >
+                            <Map
+                                defaultState={{ center: markers[0], zoom: 7 }}
+                                style={{height:'500px'}}
+                            >
+                                {markers.map((pnt, index) => (
+                                    <Placemark
+                                        key={`marker-${index}`}
+                                        geometry={pnt}
+                                        options={{
+                                            preset: 'islands#darkBlueCircleDotIcon',
+                                            draggable: false
+
+                                        }}
+                                        properties={{
+                                            hintContent: exp?.points[index].name,
+                                        }}
+                                    />
+                                ))}
+                            </Map>
+                        </YMaps>
+                    </div>
                 </Col>
             </Row>
             <Row className="pb-0" hidden={buttonDisabled}>
                 <Col className="d-flex justify-content-center">
-                    <Button className="submit-btn" style={{width:"fit-content"}} onClick={()=>registerToExpedition()}>
+                    <Button className="submit-btn" style={{width: "fit-content"}}
+                            onClick={() => registerToExpedition()}>
                         <p className="fs-4 my-0">Поехали!</p>
                     </Button>
                     <CrewCreate show={showCrewModal} onHide={()=>{setCrewModal(false)}}/>

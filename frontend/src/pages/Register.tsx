@@ -91,10 +91,9 @@ const Register: React.FC = () => {
     };
 
     return (
-
             <Container fluid className="d-flex flex-column bg-image-reg login w-100 px-0">
-                <Navbar hide={false} expeditionsShadow={false}
-                        aboutShadow={false} profileShadow={true}
+                <Navbar hide={true} expeditionsShadow={false}
+                        aboutShadow={false} profileShadow={false}
                         contactsShadow={false}/>
                 <Row className="d-flex text-center my-auto flex-column justify-content-center align-items-center">
                     <Col className="">
@@ -158,7 +157,7 @@ const Register: React.FC = () => {
                             <Button
                                 variant="primary"
                                 type="submit"
-                                className="w-75 submit-btn mt-3"
+                                className="w-75 logout-btn mt-3"
                                 disabled={isLoading}
                                 style={{fontFamily:"Scumbria"}}
                             >

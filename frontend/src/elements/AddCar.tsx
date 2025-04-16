@@ -53,7 +53,7 @@ const AddCar: React.FC<ModalProps> = ({show, onHide}) => {
     };
 
     return (
-        <Modal show={show} onHide={onHide} centered style={{fontFamily:"G8"}}>
+        <Modal show={show} onHide={onHide} centered contentClassName="bg-dark text-light" style={{fontFamily:'Rubik'}}>
             <Modal.Header closeButton>
                 <div className="d-flex container">
                     <div className="d-flex col justify-content-center">
@@ -85,7 +85,7 @@ const AddCar: React.FC<ModalProps> = ({show, onHide}) => {
                             <Button
                                 variant="primary"
                                 type="submit"
-                                className="w-50"
+                                className="w-50 submit-btn"
                             >
                                 Подтвердить
                             </Button>

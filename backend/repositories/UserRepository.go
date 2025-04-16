@@ -31,7 +31,7 @@ func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 
 func (r *UserRepository) GetUsersExpeditions(id int) ([]*models.Expedition, error) {
 	var expeditions []*models.Expedition
-	err := r.DB.Preload("Points").Preload("Crews").
+	err := r.DB.Preload("Points").Preload("Crews").Order("starts_at ASC").
 		Find(&expeditions, "id IN ?", r.DB.Raw(`(select expedition_id from crews c where c.id in 
 				(select cu.crew_id from crews_users cu where cu.user_id = ?))`, id))
 	return expeditions, err.Error

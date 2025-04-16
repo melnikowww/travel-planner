@@ -18,7 +18,6 @@ const About = () => {
             <Navbar hide={false} expeditionsShadow={false}
                     aboutShadow={true} profileShadow={false}
                     contactsShadow={false}/>
-            {/* Основной контент */}
             <Row className="mx-1 flex-grow-1 px-5" style={{margin: "0 auto"}}>
                 <Col  className="d-flex flex-column gap-4">
                      Заголовок
