@@ -513,7 +513,6 @@
   font-size: 1.1rem;
 }
 
-/* Стили для списков */
 .crew-list {
   background: var(--soft-bg);
   border-radius: 10px;
@@ -565,4 +564,60 @@
   a {
     text-decoration: none;
   }
+}
+
+.telegram-contact {
+  margin: 15px 0;
+}
+
+.telegram-container {
+  z-index: 1000;
+}
+
+.telegram-link {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.telegram-link:hover {
+  transform: scale(1.3);
+}
+
+.telegram-icon {
+  width: 50px;
+  height: 50px;
+  fill: #0088cc;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+@media (max-width: 700px) {
+  .telegram-contact {
+    margin: 15px 0;
+  }
+
+  .telegram-container {
+    z-index: 1000;
+  }
+
+  .telegram-link {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .telegram-link:hover {
+    transform: scale(1.3);
+  }
+
+  .telegram-icon {
+    width: 80px;
+    height: 80px;
+    fill: #0088cc;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+}
+
+.no-scroll {
+  overflow-y: hidden !important;
+  padding-left: 0 !important;
+  width: 100%;
 }

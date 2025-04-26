@@ -2,25 +2,26 @@ import {Container, Modal, ModalBody, ModalHeader, Button as BootstrapButton } fr
 import React, {useEffect, useState} from "react";
 import { Form, Input, DatePicker } from "antd";
 import FormItem from "antd/es/form/FormItem";
-import {Controller, useForm} from "react-hook-form";
+import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {YMaps, Map, Placemark} from '@pbe/react-yandex-maps';
 import axios from "axios";
 import {Expedition, Point} from "../../types.ts";
 import { debounce } from "lodash";
 import {GetPopupContainer} from "antd/es/table/interface";
+import type { Dayjs } from 'dayjs';
 
 interface ExpeditionData {
     name: string,
     description: string,
-    starts_at: string,
-    ends_at: string,
+    starts_at: string | undefined,
+    ends_at: string | undefined,
     points: Point[],
 }
 
 interface ExpDTO {
     name: string,
     description: string,
-    dates: Date[],
+    dates: [Dayjs | undefined, Dayjs | undefined],
     points: Point[],
 }
 
@@ -42,11 +43,11 @@ const createExpedition = async (Expedition: ExpeditionData) => {
 
 
 const AddExpedition: React.FC<Props> = (({show, onHide}) => {
-    const {control, handleSubmit, formState: { errors }, reset} = useForm({
+    const {control, handleSubmit, formState: { errors }, reset} = useForm<ExpDTO>({
         defaultValues: {
             name: '',
             description: '',
-            dates: [],
+            dates: [undefined, undefined],
             points: [],
         }
     });
@@ -64,14 +65,14 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
 
         const validateName = debounce(() => {
             if (show) {
-                form.validateFields(["point"]);
+                form.validateFields(['point']);
             }
         }, 200);
 
         useEffect(validateName,[])
 
         const handleAddPoint = () => {
-            form.validateFields(['name'])
+            form.validateFields(['point'])
                 .then(() => {
                     const nameValue = form.getFieldValue('point');
                     setShow(false);
@@ -149,23 +150,22 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
         setShow(true)
     };
 
-    const addPoint = (coord: [number, number], name: string) => {
+    const addPoint = (loc: [number, number], name: string) => {
         const point = {
             id: undefined,
             name: name,
-            location: coord[0].toFixed(4) + ',' + coord[1].toFixed(4),
+            location: loc[0].toFixed(4) + ',' + loc[1].toFixed(4),
         }
         setPoints([...points, point])
     }
 
-    const onSubmit = async (data: ExpDTO) => {
-        console.log(data)
+    const onSubmit: SubmitHandler<ExpDTO> = async (data) => {
         try {
             const expeditionData: ExpeditionData = {
                 name: data.name,
                 description: data.description,
-                starts_at: data.dates[0].toISOString(),
-                ends_at: data.dates[1].toISOString(),
+                starts_at: data.dates[0]?.toISOString(),
+                ends_at: data.dates[1]?.toISOString(),
                 points: points,
             };
             await createExpedition(expeditionData);
@@ -173,13 +173,13 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
             setMarkers([]);
             setPoints([]);
             onHide();
+
         } catch (error) {
             console.error('Ошибка создания экспедиции:', error);
         }
     };
 
-    const getPopupContainer: GetPopupContainer = (triggerNode) =>
-        triggerNode.parentElement || document.body;
+    const getPopupContainer: GetPopupContainer = (triggerNode) => triggerNode.parentElement || document.body;
 
     return (
         <div>
@@ -216,7 +216,7 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                                     required: 'Обязательно!',
                                     pattern: {
                                         value: /^[A-Za-zА-Яа-яЁё\s]+$/,
-                                        message: 'Только букы и пробелы!'
+                                        message: 'Только буквы и пробелы!'
                                     }
 
                                 }}
@@ -265,12 +265,14 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                                 rules={{
                                     required: 'Обязательно!',
                                 }}
-                                render={({field})=>(
+                                render={({ field: { value, onChange, ...restField } }) => (
                                     <RangePicker
-                                        {...field}
+                                        value={[value[0], value[1]]}
+                                        onChange={onChange}
+                                        {...restField}
                                         status={errors.dates ? 'error' : ''}
                                         picker="date"
-                                        popupStyle={{width:'100vw'}}
+                                        popupStyle={{width: '100vw'}}
                                         getPopupContainer={getPopupContainer}
                                     />
                                 )}
@@ -285,11 +287,16 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                                 name='points'
                                 control={control}
                                 render={({}) => (
-                                    <div>
+                                    <div className='rounded-4' style={{
+                                        backgroundColor: "rgba(45,45,45,0.8)",
+                                        border: "2px solid #DAA520",
+                                        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                                        color: 'honeydew',
+                                        overflow:'hidden',
+                                    }}>
                                         <YMaps
                                             query={{
                                                 load: "package.full",
-                                                apikey: "6896548d-124b-46a2-866d-67213d6c0a46"
                                             }}
                                         >
                                             <Map

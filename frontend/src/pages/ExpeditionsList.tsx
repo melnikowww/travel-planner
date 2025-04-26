@@ -6,6 +6,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import Load from "../elements/Loading.tsx";
 import ErrorPage from "../elements/Error.tsx";
+import Contacts from "../elements/Contacts.tsx";
 
 const Expeditions = () => {
     const [expeditions, setExpeditions] = useState<Expedition[]>([])
@@ -90,6 +91,7 @@ const Expeditions = () => {
                     ))}
                 {/*</Row>*/}
             </Container>
+        <Contacts/>
         </Container>
     )
 }

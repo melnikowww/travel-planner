@@ -3,6 +3,7 @@ import {Button, Container, Modal, Row} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import UpdateCrew from "./UpdateCrew.tsx";
 import ShowCrew from "./ShowCrew.tsx";
+import UpdExp from "../pages/UpdateExpedition.tsx";
 
 interface ModalProps {
     show: boolean;
@@ -17,6 +18,7 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
     const navigate = useNavigate()
     const [showCrewUpdate, setShowCrewUpdate] = useState(false)
     const [showCrew, setShowCrew] = useState(false)
+    const [showExpUpdate, setExpUpdate] = useState(false)
     return (
         <div>
             <Modal show={show} onHide={onHide} centered contentClassName='bg-dark text-light'>
@@ -41,7 +43,7 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
                         </Row>
                         {!disabledExp &&
                             <Row className="w-100 justify-content-center">
-                                <Button variant="primary" className= "submit-btn w-75">
+                                <Button variant="primary" className= "submit-btn w-75" onClick={()=>setExpUpdate(true)}>
                                     Отредактируем экспедицию
                                 </Button>
                             </Row>
@@ -72,6 +74,14 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
                 onHide={()=>setShowCrew(false)}
                 driverId={driverId}
                 expeditionId={expeditionId}/> : null}
+            {showExpUpdate ? <UpdExp
+                    show={showExpUpdate}
+                    onHide={() => setExpUpdate(false)}
+                    expeditionId={expeditionId}/> : null}
+            <UpdExp
+                show={showExpUpdate}
+                onHide={() => setExpUpdate(false)}
+                expeditionId={expeditionId}/>
         </div>
     );
 };

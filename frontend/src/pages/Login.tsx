@@ -54,7 +54,6 @@ const Register: React.FC = () => {
             const token = response.data.token;
             localStorage.setItem("authToken", token);
             navigate('/profile')
-            console.log('Успешный ответ:', response.data);
         } catch (err) {
             const error = err as AxiosError;
             if (error.response) {

@@ -10,6 +10,7 @@ import CrewCreate from "../elements/CreateCrew.tsx";
 import Load from "../elements/Loading.tsx";
 import ErrorPage from "../elements/Error.tsx";
 import {Map, Placemark, YMaps} from "@pbe/react-yandex-maps";
+import Contacts from "../elements/Contacts.tsx";
 
 const ExpeditionProfile = () => {
     const [exp, setExp] = useState<Expedition | null>(null)
@@ -27,27 +28,27 @@ const ExpeditionProfile = () => {
     const fetchExp = async () => {
         const expeditionId = searchParams.get('id');
         try {
-          const responseExp = await axios.get<Expedition>('http://localhost:8081/expeditions?id=' +
-              expeditionId, {
-              headers: {
-                  Authorization: `Bearer ${localStorage.getItem("authToken")}`
-              }
-          })
-          const responseDrivers = await axios.get<User[]>(
-              'http://localhost:8081/expedition_drivers?id='+ expeditionId,
-              {
-              headers: {
-                  Authorization: `Bearer ${localStorage.getItem("authToken")}`
-              }
-          })
-          const responseUser = await axios.get<User>('http://localhost:8081/user', {
-              headers: {
-                  Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-              },
-          });
-          setExp(responseExp.data);
-          setDrivers(responseDrivers.data);
-          setCurrentUser(responseUser.data);
+            const [expeditionResponse, driversResponse, userResponse] = await Promise.all([
+                axios.get<Expedition>(`http://localhost:8081/expeditions?id=${expeditionId}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
+                }),
+                axios.get<User[]>(`http://localhost:8081/expedition_drivers?id=${expeditionId}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
+                }),
+                axios.get<User>('http://localhost:8081/user', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                })
+            ]);
+            setExp(expeditionResponse.data);
+            exp?.points.sort((point) => point.id)
+            setDrivers(driversResponse.data);
+            setCurrentUser(userResponse.data);
           setError('');
       } catch (err) {
           setError('Ошибка при загрузке экспедиции')
@@ -210,7 +211,7 @@ const ExpeditionProfile = () => {
                             }}
                         >
                             <Map
-                                defaultState={{ center: markers[0], zoom: 7 }}
+                                defaultState={{ center: markers.length > 0 ? markers[0] : [59.95, 30.37], zoom: 7 }}
                                 style={{height:'500px'}}
                             >
                                 {markers.map((pnt, index) => (
@@ -241,6 +242,7 @@ const ExpeditionProfile = () => {
                     <CrewCreate show={showCrewModal} onHide={()=>{setCrewModal(false)}}/>
                 </Col>
             </Row>
+            <Contacts/>
         </Container>
     )
 }

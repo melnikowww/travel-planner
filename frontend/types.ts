@@ -28,6 +28,7 @@ export interface Point {
     id: number;
     name: string;
     location: string;
+    position: number;
 }
 
 export interface Crew {
