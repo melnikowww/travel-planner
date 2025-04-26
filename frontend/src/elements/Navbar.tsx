@@ -108,7 +108,7 @@ const CustomNavbar: React.FC<Props> = ({
                                     style={{
                                         color: expeditionsShadow ? '#DAA520' :  '#FFFFFF',
                                         fontFamily: "'Rubik', sans-serif",
-                                        fontWeight: 500
+                                        fontWeight: 500,
                                     }}
                                 >
                                     Экспедиции

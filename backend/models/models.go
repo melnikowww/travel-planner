@@ -45,6 +45,7 @@ type Point struct {
 	ID           int    `gorm:"primaryKey" json:"id" example:"1"`
 	Name         string `gorm:"type:varchar(100);not null" json:"name" example:"Teriberka"`
 	Location     string `gorm:"type:varchar(100);not null" json:"location" example:"69.164529, 35.138287"`
+	Position     int    `gorm:"type:bigint;" json:"position"`
 	ExpeditionID int    `json:"expedition_id"`
 }
 

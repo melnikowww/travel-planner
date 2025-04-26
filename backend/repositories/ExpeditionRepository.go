@@ -72,7 +72,9 @@ func (r *ExpeditionRepository) CreateExpedition(exp *models.Expedition) (int, er
 }
 
 func (r *ExpeditionRepository) UpdateExpedition(exp *models.Expedition) (*models.Expedition, error) {
-	err := r.DB.Save(exp)
+	err := r.DB.Preload("Points").
+		Preload("Crews").Save(exp)
+	err = r.DB.Preload("Points").Preload("Crews").First(&exp, exp.ID)
 	return exp, err.Error
 }
 

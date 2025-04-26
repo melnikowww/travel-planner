@@ -163,7 +163,6 @@ const AddExpeditionMobile: React.FC<Props> = ({show, onHide}) => {
                                     {...field}
                                     query={{
                                         load: "package.full",
-                                        apikey: "6896548d-124b-46a2-866d-67213d6c0a46"
                                     }}
                                 >
                                     <Map

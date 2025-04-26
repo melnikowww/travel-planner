@@ -12,10 +12,11 @@ import ExpeditionCrew from "../elements/ExpeditionCrewChoice.tsx"
 import Load from "../elements/Loading.tsx"
 import ErrorPage from "../elements/Error.tsx";
 import AddExpedition from "../elements/AddExpedition.tsx";
-import AddExpeditionMobile from "../elements/AddExpeditionMobile.tsx";
+// import AddExpeditionMobile from "../elements/AddExpeditionMobile.tsx";
 import ReactPaginate, {ReactPaginateProps} from "react-paginate";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import Contacts from "../elements/Contacts.tsx";
 
 
 const useMobile = (breakpoint = 1000) => {
@@ -317,7 +318,12 @@ const Profile = () => {
                         </div>
                     </div>
                     <ExpeditionCrew show={showExpChoice} disabledExp={canNotUpdateExp} disabledCrew={canNotUpdateCrew}
-                                    driverId={driverId} onHide={()=>setExpChoice(false)} expeditionId={expId}/>
+                                    driverId={driverId}
+                                    onHide={()=> {
+                                        setExpChoice(false);
+                                        fetchUser();
+                                    }}
+                                    expeditionId={expId}/>
                 </Col>
 
                 <Col md={6} lg={5} className="ps-lg-3">
@@ -366,8 +372,9 @@ const Profile = () => {
                     </div>
                     <AddCarModal show={showCarCreate} onHide={()=> {setCarCreate(false)}}/>
                 </Col>
-                {isMobile ?
-                    <AddExpeditionMobile show={showExpCreate} onHide={()=>{setExpCreate(false)}}/> :
+                {isMobile && showExpCreate ?
+                    // <AddExpeditionMobile show={showExpCreate} onHide={()=>{setExpCreate(false)}}/> :
+                    null :
                     <AddExpedition show={showExpCreate} onHide={()=>{setExpCreate(false)}}/>}
             </Row>
 
@@ -441,6 +448,7 @@ const Profile = () => {
                     </Form>
                 </Modal.Body>
             </Modal>
+            <Contacts/>
         </Container>
     )
 
