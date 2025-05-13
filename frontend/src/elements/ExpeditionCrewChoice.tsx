@@ -76,12 +76,11 @@ const ExpeditionCrew: React.FC<ModalProps> = ({show, onHide, expeditionId, drive
                 expeditionId={expeditionId}/> : null}
             {showExpUpdate ? <UpdExp
                     show={showExpUpdate}
-                    onHide={() => setExpUpdate(false)}
+                    onHide={() => {
+                        setExpUpdate(false);
+                        onHide()
+                    }}
                     expeditionId={expeditionId}/> : null}
-            <UpdExp
-                show={showExpUpdate}
-                onHide={() => setExpUpdate(false)}
-                expeditionId={expeditionId}/>
         </div>
     );
 };

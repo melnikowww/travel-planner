@@ -14,6 +14,13 @@ func FirstNonEmptyInt(f int, s int) int {
 	return s
 }
 
+func FirstNonEmptyIntPointer(f *int, s *int) *int {
+	if &f != nil && *f != 0 {
+		return f
+	}
+	return s
+}
+
 type Credentials struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`

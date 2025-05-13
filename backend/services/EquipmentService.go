@@ -45,11 +45,20 @@ func (s *EquipmentService) DeleteEquip(id int) error {
 func (s *EquipmentService) UpdateEquip(equipment *models.Equipment) (*models.Equipment, error) {
 	oldEquip, err := s.GetEquip(equipment.ID)
 	equipment.Name = utils.FirstNonEmptyString(equipment.Name, oldEquip.Name)
-	equipment.CrewID = utils.FirstNonEmptyInt(equipment.CrewID, oldEquip.CrewID)
+	equipment.CrewID = utils.FirstNonEmptyIntPointer(equipment.CrewID, oldEquip.CrewID)
 	updEquip, err := s.EquipRepo.PatchEquip(equipment)
 	if err != nil {
 		log.Printf("Update equipment error: %v", err)
 		return nil, err
 	}
 	return updEquip, err
+}
+
+func (s *EquipmentService) GetNotOwned(expeditionId int) ([]*models.Equipment, error) {
+	equipment, err := s.EquipRepo.GetNotOwned(expeditionId)
+	if err != nil {
+		log.Printf("Expedition equipment get error : %v", err)
+		return nil, err
+	}
+	return equipment, err
 }

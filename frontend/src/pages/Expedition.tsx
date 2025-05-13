@@ -46,7 +46,6 @@ const ExpeditionProfile = () => {
                 })
             ]);
             setExp(expeditionResponse.data);
-            exp?.points.sort((point) => point.id)
             setDrivers(driversResponse.data);
             setCurrentUser(userResponse.data);
           setError('');
@@ -188,7 +187,7 @@ const ExpeditionProfile = () => {
                     }}>
                         <h1 style={{fontFamily: "G8-Bold"}}>Контрольные точки:</h1>
                         <ol className="fs-4">
-                            {exp?.points.map((e) => (
+                            {exp?.points.sort((a, b) => a.position - b.position).map((e) => (
                                 <li key={e.id}>{e.name} ({e.location})</li>
                             )) || 0}
                         </ol>

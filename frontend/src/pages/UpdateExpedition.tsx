@@ -1,8 +1,7 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import React, {useEffect, useState} from "react";
-import {Col, Container, Modal, ModalBody, Row} from "react-bootstrap";
-import Navbar from "../elements/Navbar.tsx"
+import {Accordion, Container, Modal, Row} from "react-bootstrap";
 import {Map, Placemark, YMaps} from "@pbe/react-yandex-maps";
 import Contacts from "../elements/Contacts.tsx";
 import {Expedition, Point } from "../../types.ts";
@@ -29,7 +28,6 @@ interface ExpeditionData {
 	description: string,
 	starts_at: string | undefined,
 	ends_at: string | undefined,
-	// points: Point[],
 }
 
 interface ExpDTO {
@@ -82,10 +80,10 @@ const UpdExp: React.FC<Props> = ({show, onHide, expeditionId}) => {
 	}, [expedition]);
 
 	return (
-		<Modal fullscreen show={show} style={{zIndex:1500, position:'fixed', paddingTop: '60px'}}
+		<Modal fullscreen show={show} style={{zIndex:1500, position:'fixed', paddingTop: '0px'}}
 			   autoFocus={true} keyboard={true} className='no-scroll'
 		>
-			<Navbar hide={true} contactsShadow={false} profileShadow={false} aboutShadow={false} expeditionsShadow={false}/>
+			{/*<Navbar hide={true} contactsShadow={false} profileShadow={false} aboutShadow={false} expeditionsShadow={false}/>*/}
 			<div className='' style={{
 				backgroundColor: "rgba(45,45,45,0.8)",
 				border: "2px solid #DAA520",
@@ -149,18 +147,12 @@ const UpdExp: React.FC<Props> = ({show, onHide, expeditionId}) => {
 				zIndex:2000,
 				fontFamily:'Rubik',
 				width:'100%',
-				pointerEvents: 'none'
+				pointerEvents: 'none',
+				paddingLeft: '0',
+				paddingRight: '0',
 			}}>
-				<Row className="mx-2 px-0 py-5 mb-3 justify-content-end align-items-start w-100 h-75" >
-					<Col xl={4} className="rounded-4 justify-content-center fs-4 p-3" style={{
-						backgroundColor: "rgba(45,45,45,0.8)",
-						border: "2px solid #DAA520",
-						boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-						color:"honeydew",
-						pointerEvents:'auto',
-					}}>
-						{expedition && <FormExp expedition={expedition} points={points} changedPoints={changedPoints} onHide={onHide}/> }
-					</Col>
+				<Row xl={3} className="py-5 mb-3 justify-content-end align-items-start w-100 h-75" >
+					{expedition && <FormExp expedition={expedition} points={points} changedPoints={changedPoints} onHide={onHide}/> }
 				</Row>
 			</Container>
 			<Contacts/>
@@ -170,9 +162,11 @@ const UpdExp: React.FC<Props> = ({show, onHide, expeditionId}) => {
 
 const FormExp = React.memo(({ expedition, points, changedPoints, onHide }: { expedition: Expedition, points: Point[], changedPoints: any[], onHide: ()=> void }) => {
 	const [exp] = useState<Expedition>(expedition)
-	const [showPoints, setShowPoints] = useState(false)
+	// const [showPoints, setShowPoints] = useState(false)
 
-	const {control, handleSubmit, formState: { errors }, reset} = useForm<ExpDTO>({
+	const [showDelete, setShowDelete] = useState(false)
+
+	const {control, handleSubmit, formState: {errors}, reset} = useForm<ExpDTO>({
 		defaultValues: {
 			name: exp?.name || '',
 			description: exp?.description || '',
@@ -184,7 +178,7 @@ const FormExp = React.memo(({ expedition, points, changedPoints, onHide }: { exp
 		}
 	});
 
-	const { RangePicker } = DatePicker;
+	const {RangePicker} = DatePicker;
 
 	const onSubmit: SubmitHandler<ExpDTO> = async (data) => {
 		try {
@@ -231,133 +225,155 @@ const FormExp = React.memo(({ expedition, points, changedPoints, onHide }: { exp
 		reset(response.data)
 	}
 
-	const getPopupContainer: GetPopupContainer = (triggerNode) => triggerNode.parentElement || document.body;
+	const getPopupContainer: GetPopupContainer = (triggerNode) => triggerNode;
 	return (
-		<Form
-			layout={"horizontal"}
-			style={{
-				fontFamily: 'Rubik',
-				width: '100%',
-			}}
-			labelCol={{span: 4}}
-			wrapperCol={{span: 20}}
-		>
-			<FormItem
-				label={<span style={{fontFamily: 'Rubik', color: 'whitesmoke'}}>Название</span>}
-				validateStatus={errors.name ? 'error' : ''}
-				help={errors.name?.message}
-				style={{justifySelf: 'center', width: '100%'}}
-			>
-				<Controller
-					name='name'
-					control={control}
-					rules={{
-						required: 'Обязательно!',
-						pattern: {
-							value: /^[A-Za-zА-Яа-яЁё\s\-]+$/,
-							message: 'Только буквы и пробелы!'
-						}
+		<Accordion defaultActiveKey="0" style={{maxWidth: '95vw'}}>
 
-					}}
-					render={({field}) => (
-						<Input
-							{...field}
-							style={{fontFamily: 'Rubik'}}
-							status={errors.name ? 'error' : ''}
-						/>
-					)}
-				>
-				</Controller>
-			</FormItem>
+			<Accordion.Item eventKey="0" className='custom-accordion-item'>
+				<Accordion.Header className='custom-accordion-header'>
+					Основная информация
+				</Accordion.Header>
+				<Accordion.Body className='custom-accordion-body'>
+					<Form
+						layout={"horizontal"}
+						style={{
+							fontFamily: 'Rubik',
+							maxWidth: '100%',
+						}}
+						labelCol={{span: 4}}
+						wrapperCol={{span: 20}}
+					>
+						<FormItem
+							label={<span style={{fontFamily: 'Rubik', color: 'whitesmoke'}}>Название</span>}
+							validateStatus={errors.name ? 'error' : ''}
+							help={errors.name?.message}
+							style={{justifySelf: 'center', width: '100%'}}
+						>
+							<Controller
+								name='name'
+								control={control}
+								rules={{
+									required: 'Обязательно!',
+									pattern: {
+										value: /^[A-Za-zА-Яа-яЁё\s\-]+$/,
+										message: 'Только буквы и пробелы!'
+									}
 
-			<FormItem
-				label={<span style={{fontFamily: 'Rubik', color: 'whitesmoke'}}>Описание</span>}
-				validateStatus={errors.description ? 'error' : ''}
-				help={errors.description?.message}
-				style={{justifySelf: 'center', width: '100%'}}
-			>
-				<Controller
-					name='description'
-					control={control}
-					rules={{
-						required: 'Обязательно!',
-					}}
-					render={({field}) => (
-						<Input.TextArea
-							{...field}
-							style={{fontFamily: 'Rubik', textAlign: 'center',}}
-							status={errors.description ? 'error' : ''}
-							autoSize={{minRows: 2, maxRows: 10}}
-						/>
-					)}
-				>
+								}}
+								render={({field}) => (
+									<Input
+										{...field}
+										style={{fontFamily: 'Rubik'}}
+										status={errors.name ? 'error' : ''}
+									/>
+								)}
+							>
+							</Controller>
+						</FormItem>
 
-				</Controller>
-			</FormItem>
+						<FormItem
+							label={<span style={{fontFamily: 'Rubik', color: 'whitesmoke'}}>Описание</span>}
+							validateStatus={errors.description ? 'error' : ''}
+							help={errors.description?.message}
+							style={{justifySelf: 'center', width: '100%'}}
+						>
+							<Controller
+								name='description'
+								control={control}
+								rules={{
+									required: 'Обязательно!',
+								}}
+								render={({field}) => (
+									<Input.TextArea
+										{...field}
+										style={{fontFamily: 'Rubik', textAlign: 'center',}}
+										status={errors.description ? 'error' : ''}
+										autoSize={{minRows: 2, maxRows: 10}}
+									/>
+								)}
+							>
 
-			<FormItem
-				label={<span style={{fontFamily: 'Rubik', color: 'whitesmoke'}}>Даты</span>}
-				validateStatus={errors.dates ? 'error' : ''}
-				help={errors.dates?.message}
-			>
-				<Controller
-					name='dates'
-					control={control}
-					rules={{
-						required: 'Обязательно!',
-					}}
-					render={({field: {value, onChange, ...restField}}) => (
-						<RangePicker
-							value={value ? [value[0], value[1]] : [null, null]}
-							onChange={onChange}
-							{...restField}
-							style={{fontFamily: 'Rubik', width: '100%'}}
-							status={errors.dates ? 'error' : ''}
-							picker="date"
-							getPopupContainer={getPopupContainer}
-						/>
-					)}
+							</Controller>
+						</FormItem>
 
-				/>
-			</FormItem>
+						<FormItem
+							label={<span style={{fontFamily: 'Rubik', color: 'whitesmoke'}}>Даты</span>}
+							validateStatus={errors.dates ? 'error' : ''}
+							help={errors.dates?.message}
+						>
+							<Controller
+								name='dates'
+								control={control}
+								rules={{
+									required: 'Обязательно!',
+								}}
+								render={({field: {value, onChange, ...restField}}) => (
+									<RangePicker
+										value={value ? [value[0], value[1]] : [null, null]}
+										onChange={onChange}
+										{...restField}
+										style={{fontFamily: 'Rubik', width: '100%'}}
+										status={errors.dates ? 'error' : ''}
+										picker="date"
+										getPopupContainer={getPopupContainer}
+									/>
+								)}
 
-			<ModalPoints points={points} onHide={()=>setShowPoints(false)} show={true}/>
+							/>
+						</FormItem>
 
-			<Container className='d-flex'
-					   style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
-				<BootstrapButton
-					type='submit'
-					className='submit-btn justify-content-center mx-3'
-					onClick={handleSubmit(onSubmit)}
-				>
-					Применить
-				</BootstrapButton>
-				<BootstrapButton
-					variant='danger'
-					className=' justify-content-center mx-3'
-					style={{background: '#C14545'}}
-					onClick={() => {
-						reset();
-						onHide();
-					}}
-				>
-					Отмена
-				</BootstrapButton>
-				<BootstrapButton
-					variant='outline-info'
-					className=' justify-content-center mx-3'
-					onClick={() => {
-						setShowPoints(true)
-					}}
-				>
-					Точки
-				</BootstrapButton>
+						<Container className='d-flex'
+								   style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
+							<BootstrapButton
+								type='submit'
+								className='submit-btn justify-content-center mx-3'
+								onClick={handleSubmit(onSubmit)}
+							>
+								Применить
+							</BootstrapButton>
+							<BootstrapButton
+								variant='outline-danger'
+								className=' justify-content-center mx-3'
+								onClick={() => {
+									reset();
+									onHide();
+								}}
+							>
+								Отмена
+							</BootstrapButton>
+						</Container>
+						<div className='d-flex mt-3' style={{
+							width: '100%',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}>
+							<BootstrapButton
+								variant='danger'
+								className=' justify-content-center mx-3'
+								style={{background: '#C14545'}}
+								onClick={()=>{
+									setShowDelete(true)
+								}}
+							>
+								Удалить экспедицию
+							</BootstrapButton>
+						</div>
+					</Form>
+				</Accordion.Body>
+			</Accordion.Item>
 
-				<ModalPoints points={points} show={showPoints} onHide={()=>setShowPoints(false)}/>
-			</Container>
-		</Form>
-	)
-});
+			<Accordion.Item eventKey='1' className='custom-accordion-item'>
+				<Accordion.Header className='custom-accordion-header'>
+					 Точки маршрута
+				</Accordion.Header>
+				<Accordion.Body className='custom-accordion-body'>
+					<ModalPoints expedition={expedition} points={points}/>
+				</Accordion.Body>
+			</Accordion.Item>
+			{showDelete && <DeleteModal show={showDelete} onHide={() => {setShowDelete(false); onHide()}} expeditionId={expedition.id}/>}
+		</Accordion>
+	);
+})
 
 const SortablePointItem = ({point, index}: { point: Point; index: number }) => {
 	const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: point.id});
@@ -372,7 +388,7 @@ const SortablePointItem = ({point, index}: { point: Point; index: number }) => {
 		boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
 		color: "honeydew",
 		height: '100%',
-		width: '50%',
+		width: '100%',
 		borderRadius: '15px',
 	};
 
@@ -382,58 +398,183 @@ const SortablePointItem = ({point, index}: { point: Point; index: number }) => {
 			style={style}
 			{...attributes}
 			{...listeners}
-			className="point-item mb-2 p-2"
+			className="point-item mb-2 p-2 text-center"
 		>
 			{index + 1}. {point.name}
 		</div>
 	);
 };
 
-const ModalPoints = ({points, onHide, show}:{points : Point[], onHide: ()=>void, show: boolean}) => {
+interface PointsProps {
+	expedition: Expedition
+	points: Point[],
+	// show: boolean,
+	// onHide: () => void
+}
+
+const ModalPoints: React.FC<PointsProps> = ({expedition, points}) => {
 	const [pnts, setPoints] = useState<Point[]>(points);
 
 	useEffect(() => {
-		setPoints(points)
+		setPoints(points.sort((a, b) => a.position - b.position))
 	}, [points]);
 
 	const handleDragEnd = (event: DragEndEvent) => {
-		const { active, over } = event;
+		const {active, over} = event;
 		if (!over || active.id === over.id) return;
-
 		setPoints((items) => {
 			const oldIndex = items.findIndex(i => i.id === active.id);
 			const newIndex = items.findIndex(i => i.id === over.id);
-
-			// setMarkers(prev => arrayMove(prev, oldIndex, newIndex));
-
 			return arrayMove(items, oldIndex, newIndex);
 		});
 	};
 
+	const pointsSubmit = () => {
+		pnts.forEach((point, index) => {
+			if (index !== points.findIndex(p => p.id === point.id)) {
+
+			}
+			axios.patch(`http://localhost:8081/points?id=${point.id}`, {
+				position: index,
+				expedition_id: expedition.id
+			}, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+				}
+			});
+		})
+		// onHide()
+	}
+
 	return (
-		<Modal onHide={onHide} show={show}>
-			<ModalBody>
-				<DndContext
-					collisionDetection={closestCenter}
-					onDragEnd={handleDragEnd}
-				>
-					<SortableContext
-						items={pnts.map(p => p.id)}
-						strategy={verticalListSortingStrategy}
+		// <Modal
+		// 	onHide={onHide}
+		// 	show={show}
+		// 	className="justify-content-center fs-5 p-3"
+		// 	style={{
+		// 		backgroundColor: "rgba(45,45,45,0.6)",
+		// 		boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+		// 		color: "honeydew",
+		// 		zIndex: '2000',
+		// 	}}
+		// 	centered
+		// 	contentClassName="bg-dark text-light"
+		// 	dialogStyle={{
+		// 		maxHeight: "90vh",
+		// 		margin: 0,
+		// 	}}
+		// >
+			<div
+				style={{
+					overflowY: 'auto',
+					maxHeight: "70vh",
+					padding: '20px',
+				}}
+			>
+				<div style={{minHeight: "100%"}}>
+					<DndContext
+						collisionDetection={closestCenter}
+						onDragEnd={handleDragEnd}
 					>
-						{pnts.map((point, index) => (
-							<SortablePointItem
-								key={point.id}
-								point={point}
-								index={index}
-							/>
-						))}
-					</SortableContext>
-				</DndContext>
-			</ModalBody>
-		</Modal>
+						<SortableContext
+							items={pnts.map(p => p.id)}
+							strategy={verticalListSortingStrategy}
+						>
+							{pnts.map((point, index) => (
+								<SortablePointItem
+									key={point.id}
+									point={point}
+									index={index}
+								/>
+							))}
+						</SortableContext>
+					</DndContext>
+
+					<div className='d-flex justify-content-center mt-4'>
+						<BootstrapButton
+							type='submit'
+							className='submit-btn mx-3'
+							onClick={() => pointsSubmit()}
+						>
+							Подтвердить
+						</BootstrapButton>
+					</div>
+				</div>
+			</div>
+		// </Modal>
 	);
 };
+
+interface DeleteProps {
+	expeditionId: number
+	show: boolean,
+	onHide: () => void
+}
+
+const DeleteModal: React.FC<DeleteProps> = ({expeditionId, show, onHide}) => {
+	const deleteExpedition = async () => {
+		try {
+			await axios.delete<Expedition>(`http://localhost:8081/expeditions?id=${expeditionId}`, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("authToken")}`
+				}
+			});
+			onHide();
+		} catch (err) {
+			console.log(err)
+		}
+	}
+	return (
+		<Modal onHide={onHide} show={show}
+				className="justify-content-center fs-5 p-3"
+				style={{
+					backgroundColor: "rgba(45,45,45,0.6)",
+					boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+					color: "honeydew",
+					zIndex: '2000',
+				}}
+				centered
+				contentClassName="bg-dark text-light"
+				dialogStyle={{
+					maxHeight: "90vh",
+					margin: 0,
+				}}
+			   size='sm'
+		>
+			<Modal.Title className='text-center'
+						 style={{font:'Rubik', padding: '0.5rem 0'}}
+			>
+				<a>
+					Удалить экспедицию?
+				</a>
+			</Modal.Title>
+			<Modal.Body
+				style={{padding: '1.5rem 0'}}
+			>
+				<Container className='d-flex p-0'
+						   style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
+					<BootstrapButton
+						type='submit'
+						className='submit-btn justify-content-center mx-3 fs-5'
+						onClick={()=>onHide()}
+					>
+						Отмена
+					</BootstrapButton>
+					<BootstrapButton
+						variant='danger'
+						className=' justify-content-center mx-3 fs-5'
+						style={{background: '#C14545'}}
+						onClick={()=> {
+							deleteExpedition()
+						}}
+					>
+						Удалить
+					</BootstrapButton>
+				</Container>
+			</Modal.Body>
+		</Modal>
+	);
+}
 
 
 export default UpdExp

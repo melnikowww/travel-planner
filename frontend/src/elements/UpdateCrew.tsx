@@ -15,10 +15,12 @@ interface ModalProps {
 }
 interface equipState {
     name: string;
+    expedition_id: number | null
     crew_id: number | null;
 }
 interface goodState {
     name: string;
+    expedition_id: number | null
     crew_id: number | null;
 }
 
@@ -28,10 +30,12 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
     const [error, setError] = useState('');
     const [equipData, setEquip] = useState<equipState>({
         name: '',
+        expedition_id: expeditionId,
         crew_id: null,
     })
     const [goodData, setGood] = useState<goodState>({
         name: '',
+        expedition_id: expeditionId,
         crew_id: null,
     })
 
@@ -124,6 +128,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                 setError('')
                 setEquip({
                     name: '',
+                    expedition_id: expeditionId,
                     crew_id: null,
                 })
             } catch (err) {
@@ -155,6 +160,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                 setError('')
                 setGood({
                     name: '',
+                    expedition_id: expeditionId,
                     crew_id: null,
                 })
             } catch (err) {

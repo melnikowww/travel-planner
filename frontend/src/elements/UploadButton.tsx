@@ -1,7 +1,8 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import axios from 'axios'
 
-function Upload() {
+
+const Upload = () =>  {
     const [_, setMessage] = useState("");
     const [avatar, setAvatar] = useState(localStorage.getItem("avatar") || "");
 
@@ -44,7 +45,7 @@ function Upload() {
     };
 
     return (
-        <div className="text-center">
+        <div className="text-center mx-2 mt-1" >
             <input
                 type="file"
                 id="fileInput"
@@ -58,9 +59,11 @@ function Upload() {
                     cursor: "pointer",
                     backgroundImage: `url(${avatar})`,
                     boxShadow: "0 0px 12px rgba(0,0,0,0.7)",
+                    margin: '0',
+                    padding: '0',
                 }}
             >
-                <i className="bi bi-upload fs-3"></i>
+                <i className="bi bi-upload fs-3 m-0 p-0"></i>
             </label>
         </div>
     )

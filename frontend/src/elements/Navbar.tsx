@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar, Container, Row, Col, Button, Nav } from 'react-bootstrap';
+import {Navbar, Container, Row, Col, Button, Nav, Modal, Form} from 'react-bootstrap';
+import {User} from "../../types.ts";
+import axios from "axios";
+import UploadButton from "./UploadButton.tsx";
 
 interface Props {
     hide: boolean;
@@ -8,6 +11,14 @@ interface Props {
     expeditionsShadow: boolean;
     aboutShadow: boolean;
     contactsShadow: boolean;
+}
+
+interface FormState {
+    id: bigint | null;
+    name: string;
+    email: string;
+    password: string;
+    error: string | null;
 }
 
 const CustomNavbar: React.FC<Props> = ({
@@ -19,9 +30,84 @@ const CustomNavbar: React.FC<Props> = ({
 }) => {
     const navigate = useNavigate();
 
+    const [showUserSettings, setShowUserSettings] = useState(false);
+
     const handleLogout = () => {
         navigate('/');
         localStorage.removeItem('authToken');
+    };
+
+    const [user, setUser] = useState<User>()
+    const getUser = async () => {
+        try {
+            const responseUser = await axios.get<User>('http://localhost:8081/user', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                }
+            })
+            setUser(responseUser.data)
+            localStorage.setItem("avatar", responseUser.data.imgSrc)
+            localStorage.setItem("id", responseUser.data.id.toString())
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    const [formData, setFormData] = useState<FormState>({
+        id: null,
+        name: '',
+        email: '',
+        password: '',
+        error: null
+    });
+
+    const handleShow = () => {
+        if (user) {
+            setFormData({
+                id: null,
+                name: user.name,
+                email: user.email,
+                password: '',
+                error: null,
+            });
+        }
+        setShowUserSettings(true);
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (user?.id != null) {
+            try {
+                console.log(formData)
+                await axios.patch<User>(`http://localhost:8081/users?id=${user?.id}`,
+                    formData, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                        }
+                    })
+                // setError('')
+                getUser()
+            } catch (err) {
+                // setError('Ошибка при изменении пользователя')
+                console.error(err)
+            } finally {
+                setShowUserSettings(false);
+            }
+        } else {
+            // setError('пользователь не найден!')
+        }
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
     };
 
     return (
@@ -41,19 +127,60 @@ const CustomNavbar: React.FC<Props> = ({
         >
             <Container fluid className="h-100 d-flex align-items-center px-0">
                 <Row className="w-100 align-items-center justify-content-between">
-                    <Col xs={1} lg={4} hidden={hide} className="d-flex justify-content-start">
-                        <Button
+                    <Col xs={1} lg={4} hidden={hide} className="d-flex justify-content-start align-items-center">
+                        {user && <Button
                             variant="primary"
                             type="submit"
-                            className="logout-btn justify-content-center text-center px-0 ms-2 d-xs-none"
+                            className="logout-btn justify-content-center text-center px-0 mx-2 d-xs-none"
                             style={{ fontFamily: "Rubik", color: '#C14545' }}
                             onClick={handleLogout}
                         >
-                            ВЫЙТИ
-                        </Button>
+                            <img src='src/assets/logout.png' style={{maxWidth: '100%'}} className='p-1'/>
+                        </Button>}
+
+                        {user && <Button
+                            variant="link"
+                            type='button'
+                            onClick={handleShow}
+                            className="p-0 rounded-5"
+                        >
+                            <img
+                                src='src/assets/settings.webp'
+                                alt="Настройки"
+                                style={{
+                                    width: "30px",
+                                    filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"
+                                }}
+                            />
+                        </Button>}
+
+                        {user && <h1 className="mb-0 profile-name mx-3 fs-5 p-0" style={{
+                            fontFamily: "'Rubik', sans-serif",
+                            color: "#DAA520",
+                            letterSpacing: "0.5px"
+                        }}>
+                            {user?.name}
+                        </h1>}
+
+                        {user && <label
+                            htmlFor="fileInput"
+                            className="rounded-circle avatar"
+                            style={{
+                                cursor: "pointer",
+                                backgroundImage: `url(${localStorage.getItem('avatar')})`,
+                                boxShadow: "0 0px 12px rgba(0,0,0,0.7)",
+                                margin: '0',
+                                padding: '0',
+                                minWidth: '50px',
+                                minHeight: '50px'
+                            }}
+                        >
+                            <i className="bi bi-upload fs-3 m-0 p-0"></i>
+                        </label>}
                     </Col>
 
-                    <Col xs={4} lg={4} className="d-flex justify-content-center navbar-logo">
+
+                    <Col xs={4} lg={4} className="d-flex justify-content-center navbar-logo ">
                         <Navbar.Brand
                             href="/profile"
                             className="m-0"
@@ -134,6 +261,7 @@ const CustomNavbar: React.FC<Props> = ({
                                 </Nav.Link>
                                 <div className='d-xl-none'>
                                     <Nav.Link
+                                        onClick={handleLogout}
                                         style={{
                                             color: '#C14545',
                                             fontFamily: "'Rubik', sans-serif"
@@ -147,6 +275,79 @@ const CustomNavbar: React.FC<Props> = ({
                     </Col>
                 </Row>
             </Container>
+
+
+            <Modal
+                show={showUserSettings}
+                onHide={() => setShowUserSettings(false)}
+                centered
+                contentClassName="bg-dark text-light"
+                style={{fontFamily:'Rubik'}}
+            >
+                <Modal.Header closeButton>
+                    <div className="d-flex container">
+                        <div className="d-flex col justify-content-center">
+                            <Modal.Title>
+                                <p className="my-0">
+                                    Введите новые данные
+                                </p>
+                            </Modal.Title>
+                        </div>
+                    </div>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <UploadButton/>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId="name" className="mb-3">
+                            <Form.Label>Как Вас теперь зовут?</Form.Label>
+                            <Form.Control
+                                type="name"
+                                name="name"
+                                placeholder={user?.name}
+                                value={formData.name}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="email" className="mb-3">
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                type="email"
+                                name="email"
+                                placeholder={user?.email}
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="password" className="mb-3">
+                            <Form.Label>Пароль</Form.Label>
+                            <Form.Control
+                                type="password"
+                                name="password"
+                                placeholder=""
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                            <p className="my-0 text-center" style={{fontSize:"10px"}}>
+                                *если не хотите менять пароль, то просто не трогайте это поле...
+                            </p>
+                        </Form.Group>
+                        <div className="d-flex container w-100">
+                            <div className="d-flex col justify-content-center">
+                                <Button
+                                    variant="primary"
+                                    type="submit"
+                                    className="w-50 submit-btn"
+                                >
+                                    Подтвердить
+                                </Button>
+                            </div>
+                        </div>
+                    </Form>
+                </Modal.Body>
+            </Modal>
         </Navbar>
     );
 };

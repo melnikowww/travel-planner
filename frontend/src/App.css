@@ -45,10 +45,11 @@
   background-position:  center;
   background-repeat: no-repeat;
   background-size: cover;
-  max-width: 150px;
-  max-height: 150px;
-  min-width: 150px;
-  min-height: 150px;
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 100px;
+  min-height: 100px;
+  margin: 0;
 }
 
 @media (max-width: 915px) {
@@ -145,7 +146,7 @@
   --bs-btn-disabled-bg: #4682B466;
   --bs-btn-disabled-border-color: #4682B466;
 
-  min-width: 100px;
+  max-width: 50px;
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
   font-family: inherit;
@@ -181,7 +182,7 @@
   --bs-btn-disabled-bg: #4682B466;
   --bs-btn-disabled-border-color: #4682B466;
 
-  min-width: 100px;
+  width: 42px;
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
   font-family: inherit;
@@ -195,7 +196,7 @@
 }
 
 .logout-btn:hover {
-  box-shadow: 0 0 45px rgba(139, 0, 0, 0.9) !important;
+  box-shadow: 0 0 25px rgb(139, 0, 0) !important;
 }
 
 @media (max-width: 768px) {
@@ -620,4 +621,44 @@
   overflow-y: hidden !important;
   padding-left: 0 !important;
   width: 100%;
+}
+
+.custom-accordion-item {
+  background: transparent;
+  border: none;
+  pointer-events: auto;
+  margin: 0 10px;
+  max-width: 100%;
+}
+
+.custom-accordion-header button {
+  background-color: rgba(45,45,45,0.8) !important;
+  border: 2px solid #DAA520 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+  color: honeydew !important;
+}
+
+.custom-accordion-header button:not(.collapsed) {
+  background-color: rgba(45,45,45,0.9) !important;
+}
+
+.custom-accordion-body {
+  background-color: rgba(45,45,45,0.8) !important;
+  border: 2px solid #DAA520 !important;
+  border-top: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+  color: honeydew !important;
+  padding: 1rem;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  max-width: 100%;
+  margin: 0;
+}
+
+.body-scroll {
+  body {
+    overflow-y: hidden !important;
+  }
+  overflow-y: scroll !important;
+  max-height: 70vh;
 }

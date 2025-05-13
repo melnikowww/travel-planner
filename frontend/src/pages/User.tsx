@@ -1,10 +1,9 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {Expedition, User} from "../../types.ts";
-import {Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
-import UploadButton from "../elements/UploadButton.tsx";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import AddCarModal from "../elements/AddCar.tsx";
 import UpdateCar from "../elements/UpdateCar.tsx";
 import Navbar from "../elements/Navbar.tsx"
@@ -53,21 +52,7 @@ const Profile = () => {
         setCurrentPage(selected)
     }
 
-    interface FormState {
-        id: bigint | null;
-        name: string;
-        email: string;
-        password: string;
-        error: string | null;
-    }
 
-    const [formData, setFormData] = useState<FormState>({
-        id: null,
-        name: '',
-        email: '',
-        password: '',
-        error: null
-    });
 
     const fetchUser = async () => {
         try {
@@ -98,46 +83,9 @@ const Profile = () => {
         fetchUser();
     }, []);
 
-    const [showUserSettings, setShowUserSettings] = useState(false);
     const [showExpCreate, setExpCreate] = useState(false);
     const [showCarCreate, setCarCreate] = useState(false);
     const [showCarUpdate, setCarUpdate] = useState(false);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (user?.id != null) {
-            try {
-                await axios.patch<User>(`http://localhost:8081/users?id=${user?.id}`,
-                    formData, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${localStorage.getItem("authToken")}`
-                        }
-                    })
-                setError('')
-                fetchUser()
-            } catch (err) {
-                setError('Ошибка при изменении пользователя')
-                console.error(err)
-            } finally {
-                setShowUserSettings(false);
-            }
-        } else {
-            setError('пользователь не найден!')
-        }
-    }
-    const handleShow = () => {
-        if (user) {
-            setFormData({
-                id: null,
-                name: user.name,
-                email: user.email,
-                password: '',
-                error: null,
-            });
-        }
-        setShowUserSettings(true);
-    }
 
     const handleCarAdd = () => {
         setCarCreate(true);
@@ -148,13 +96,6 @@ const Profile = () => {
         setCarUpdate(true);
         setCarId(id)
     }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
 
     const [showExpChoice, setExpChoice] = useState(false)
     const [expId, setExpId] = useState(0)
@@ -190,50 +131,56 @@ const Profile = () => {
                 minHeight: "100vh",
                 backgroundColor: "#1A1A1A",
                 color: "#FFFFFF",
-                paddingTop: "80px"
+                paddingTop: "60px"
             }}
         >
             <Navbar hide={false} expeditionsShadow={false}
                     aboutShadow={false} profileShadow={true}
                     contactsShadow={false}/>
 
-            <Row className="mx-3 rounded-3 py-4" style={{
-                backgroundColor: "rgba(45,45,45,0.8)",
-                border: "2px solid #DAA520",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-            }}>
-                <Col xs={3} className="d-flex align-items-center justify-content-center px-0">
-                    <UploadButton/>
-                </Col>
+            {/*<Row className="mx-0 p-0" style={{*/}
+            {/*    backgroundColor: "rgba(45,45,45,0.8)",*/}
+            {/*    // border: "2px solid #DAA520",*/}
+            {/*    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",*/}
+            {/*    height: 'fit-content',*/}
+            {/*    width: '100%'*/}
+            {/*}}>*/}
+            {/*    /!*<Col xs={9} xxl={6} className="d-flex align-items-center justify-content-start p-1 border-black border h-100">*!/*/}
+            {/*    /!*    <UploadButton/>*!/*/}
+            {/*    /!*    <h1 className="mb-0 profile-name mx-3 fs-5 p-0" style={{*!/*/}
+            {/*    /!*        fontFamily: "'Rubik', sans-serif",*!/*/}
+            {/*    /!*        color: "#DAA520",*!/*/}
+            {/*    /!*        letterSpacing: "0.5px"*!/*/}
+            {/*    /!*    }}>*!/*/}
+            {/*    /!*        {user?.name}*!/*/}
+            {/*    /!*    </h1>*!/*/}
+            {/*    /!*</Col>*!/*/}
 
-
-                <Col xs={6} className="d-flex align-items-center px-0">
-                    <h1 className="mb-0 profile-name" style={{
-                        fontFamily: "'Rubik', sans-serif",
-                        color: "#DAA520",
-                        letterSpacing: "1.5px"
-                    }}>
-                        {user?.name}
-                    </h1>
-                </Col>
-
-                <Col xs={3} className="d-flex align-items-center justify-content-center">
-                    <Button
-                        variant="link"
-                        onClick={handleShow}
-                        className="p-0 rounded-5"
-                    >
-                        <img
-                            src='src/assets/settings.webp'
-                            alt="Настройки"
-                            style={{
-                                width: "40px",
-                                filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"
-                            }}
-                        />
-                    </Button>
-                </Col>
-            </Row>
+            {/*    <Col className="d-flex align-items-center justify-content-end border-black border p-2">*/}
+            {/*        <UploadButton/>*/}
+            {/*        <h1 className="mb-0 profile-name mx-3 fs-5 p-0" style={{*/}
+            {/*            fontFamily: "'Rubik', sans-serif",*/}
+            {/*            color: "#DAA520",*/}
+            {/*            letterSpacing: "0.5px"*/}
+            {/*        }}>*/}
+            {/*            {user?.name}*/}
+            {/*        </h1>*/}
+            {/*        <Button*/}
+            {/*            variant="link"*/}
+            {/*            onClick={handleShow}*/}
+            {/*            className="p-0 rounded-5"*/}
+            {/*        >*/}
+            {/*            <img*/}
+            {/*                src='src/assets/settings.webp'*/}
+            {/*                alt="Настройки"*/}
+            {/*                style={{*/}
+            {/*                    width: "30px",*/}
+            {/*                    filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*        </Button>*/}
+            {/*    </Col>*/}
+            {/*</Row>*/}
 
             <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center">
                 <Col md={6} lg={5} className="pe-lg-3">
@@ -378,76 +325,6 @@ const Profile = () => {
                     <AddExpedition show={showExpCreate} onHide={()=>{setExpCreate(false)}}/>}
             </Row>
 
-            <Modal
-                show={showUserSettings}
-                onHide={() => setShowUserSettings(false)}
-                centered
-                contentClassName="bg-dark text-light"
-                style={{fontFamily:'Rubik'}}
-            >
-                <Modal.Header closeButton>
-                    <div className="d-flex container">
-                        <div className="d-flex col justify-content-center">
-                            <Modal.Title>
-                                <p className="my-0">
-                                    Введите новые данные
-                                </p>
-                            </Modal.Title>
-                        </div>
-                    </div>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="name" className="mb-3">
-                            <Form.Label>Как Вас теперь зовут?</Form.Label>
-                            <Form.Control
-                                type="name"
-                                name="name"
-                                placeholder={user?.name}
-                                value={formData.name}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="email" className="mb-3">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control
-                                type="email"
-                                name="email"
-                                placeholder={user?.email}
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="password" className="mb-3">
-                            <Form.Label>Пароль</Form.Label>
-                            <Form.Control
-                                type="password"
-                                name="password"
-                                placeholder=""
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-                            <p className="my-0 text-center" style={{fontSize:"10px"}}>
-                                *если не хотите менять пароль, то просто не трогайте это поле...
-                            </p>
-                        </Form.Group>
-                        <div className="d-flex container w-100">
-                            <div className="d-flex col justify-content-center">
-                                <Button
-                                    variant="primary"
-                                    type="submit"
-                                    className="w-50 submit-btn"
-                                >
-                                    Подтвердить
-                                </Button>
-                            </div>
-                        </div>
-                    </Form>
-                </Modal.Body>
-            </Modal>
             <Contacts/>
         </Container>
     )

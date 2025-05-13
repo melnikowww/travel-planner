@@ -40,3 +40,12 @@ func (r *EquipRepository) PatchEquip(equip *models.Equipment) (*models.Equipment
 	err := r.DB.Save(&equip)
 	return equip, err.Error
 }
+
+func (r *EquipRepository) GetNotOwned(id int) ([]*models.Equipment, error) {
+	var equipment []*models.Equipment
+	err := r.DB.
+		Where("expedition_id=?", id).
+		Where("crew_id IS NULL").
+		Find(&equipment)
+	return equipment, err.Error
+}

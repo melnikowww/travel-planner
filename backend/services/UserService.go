@@ -64,6 +64,9 @@ func (s *UserService) UpdateUser(user *models.User) (*models.User, error) {
 	oldUser, err := s.GetUser(user.ID)
 	user.Name = utils.FirstNonEmptyString(user.Name, oldUser.Name)
 	user.Email = utils.FirstNonEmptyString(user.Email, oldUser.Email)
+	if len(user.ImageSrc) == 0 {
+		user.ImageSrc = oldUser.ImageSrc
+	}
 	if len(user.Password) == 0 {
 		user.Password = oldUser.Password
 	} else {

@@ -1,4 +1,4 @@
-import {Container, Modal, ModalBody, ModalHeader, Button as BootstrapButton } from "react-bootstrap";
+import {Container, Modal, Button as BootstrapButton } from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import { Form, Input, DatePicker } from "antd";
 import FormItem from "antd/es/form/FormItem";
@@ -23,6 +23,7 @@ interface ExpDTO {
     description: string,
     dates: [Dayjs | undefined, Dayjs | undefined],
     points: Point[],
+    // equip: Equipment[],
 }
 
 interface Props {
@@ -84,7 +85,7 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
 
         return (
             <Modal show={show} centered style={{fontFamily:'Rubik', zIndex:'10000'}} contentClassName='bg-dark text-light' size='sm'>
-                <ModalHeader>
+                <Modal.Header>
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
                             <Modal.Title>
@@ -94,8 +95,8 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                             </Modal.Title>
                         </div>
                     </div>
-                </ModalHeader>
-                <ModalBody>
+                </Modal.Header>
+                <Modal.Body>
                     <Form
                         form={form}
                         onFinish={() => {handleAddPoint()}}
@@ -137,7 +138,7 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                             </BootstrapButton>
                         </Container>
                     </Form>
-                </ModalBody>
+                </Modal.Body>
             </Modal>
         )
     })
@@ -194,142 +195,143 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                         </div>
                     </div>
                 </Modal.Header>
-                <ModalBody className='p-3'>
-                    <Form
-                        layout={"horizontal"}
-                        style={{
-                            fontFamily:'Rubik',
-                        }}
-                        labelCol={{span:3}}
-                        wrapperCol={{span:18}}
-                    >
-                        <FormItem
-                            label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Название</span>}
-                            validateStatus={errors.name ? 'error' : ''}
-                            help={errors.name?.message}
-                            style={{justifySelf:'center', width:'100%'}}
+                <Modal.Body className='p-3 body-scroll'>
+                        <Form
+                            layout={"horizontal"}
+                            style={{
+                                fontFamily:'Rubik',
+                            }}
+                            labelCol={{span:3}}
+                            wrapperCol={{span:18}}
                         >
-                            <Controller
-                                name='name'
-                                control={control}
-                                rules={{
-                                    required: 'Обязательно!',
-                                    pattern: {
-                                        value: /^[A-Za-zА-Яа-яЁё\s]+$/,
-                                        message: 'Только буквы и пробелы!'
-                                    }
-
-                                }}
-                                render={({field})=>(
-                                    <Input
-                                        {...field}
-                                        status={errors.name ? 'error' : ''}
-                                    />
-                                )}
+                            <FormItem
+                                label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Название</span>}
+                                validateStatus={errors.name ? 'error' : ''}
+                                help={errors.name?.message}
+                                style={{justifySelf:'center', width:'100%'}}
                             >
-                            </Controller>
-                        </FormItem>
+                                <Controller
+                                    name='name'
+                                    control={control}
+                                    rules={{
+                                        required: 'Обязательно!',
+                                        pattern: {
+                                            value: /^[A-Za-zА-Яа-яЁё\s]+$/,
+                                            message: 'Только буквы и пробелы!'
+                                        }
 
-                        <FormItem
-                            label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Описание</span>}
-                            validateStatus={errors.description ? 'error' : ''}
-                            help={errors.description?.message}
-                            style={{justifySelf:'center', width:'100%'}}
-                        >
-                            <Controller
-                                name='description'
-                                control={control}
-                                rules={{
-                                    required: 'Обязательно!',
-                                }}
-                                render={({field})=>(
-                                    <Input.TextArea
-                                        {...field}
-                                        status={errors.description ? 'error' : ''}
-                                        autoSize={{minRows:2, maxRows:10}}
-                                    />
-                                )}
+                                    }}
+                                    render={({field})=>(
+                                        <Input
+                                            {...field}
+                                            status={errors.name ? 'error' : ''}
+                                        />
+                                    )}
+                                >
+                                </Controller>
+                            </FormItem>
+
+                            <FormItem
+                                label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Описание</span>}
+                                validateStatus={errors.description ? 'error' : ''}
+                                help={errors.description?.message}
+                                style={{justifySelf:'center', width:'100%'}}
                             >
+                                <Controller
+                                    name='description'
+                                    control={control}
+                                    rules={{
+                                        required: 'Обязательно!',
+                                    }}
+                                    render={({field})=>(
+                                        <Input.TextArea
+                                            {...field}
+                                            status={errors.description ? 'error' : ''}
+                                            autoSize={{minRows:2, maxRows:10}}
+                                        />
+                                    )}
+                                >
 
-                            </Controller>
-                        </FormItem>
+                                </Controller>
+                            </FormItem>
 
-                        <FormItem
-                            label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Даты</span>}
-                            validateStatus={errors.dates ? 'error' : ''}
-                            help={errors.dates?.message}
-                        >
-                            <Controller
-                                name='dates'
-                                control={control}
-                                rules={{
-                                    required: 'Обязательно!',
-                                }}
-                                render={({ field: { value, onChange, ...restField } }) => (
-                                    <RangePicker
-                                        value={[value[0], value[1]]}
-                                        onChange={onChange}
-                                        {...restField}
-                                        status={errors.dates ? 'error' : ''}
-                                        picker="date"
-                                        popupStyle={{width: '100vw'}}
-                                        getPopupContainer={getPopupContainer}
-                                    />
-                                )}
+                            <FormItem
+                                label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Даты</span>}
+                                validateStatus={errors.dates ? 'error' : ''}
+                                help={errors.dates?.message}
+                            >
+                                <Controller
+                                    name='dates'
+                                    control={control}
+                                    rules={{
+                                        required: 'Обязательно!',
+                                    }}
+                                    render={({ field: { value, onChange, ...restField } }) => (
+                                        <RangePicker
+                                            value={[value[0], value[1]]}
+                                            onChange={onChange}
+                                            {...restField}
+                                            status={errors.dates ? 'error' : ''}
+                                            picker="date"
+                                            popupStyle={{width: '100vw'}}
+                                            getPopupContainer={getPopupContainer}
+                                        />
+                                    )}
 
-                            />
-                        </FormItem>
+                                />
+                            </FormItem>
 
-                        <FormItem
-                            label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Точки</span>}
-                        >
-                            <Controller
-                                name='points'
-                                control={control}
-                                render={({}) => (
-                                    <div className='rounded-4' style={{
-                                        backgroundColor: "rgba(45,45,45,0.8)",
-                                        border: "2px solid #DAA520",
-                                        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                                        color: 'honeydew',
-                                        overflow:'hidden',
-                                    }}>
-                                        <YMaps
-                                            query={{
-                                                load: "package.full",
-                                            }}
-                                        >
-                                            <Map
-                                                defaultState={{center: [59.95, 30.37], zoom: 9}}
-                                                style={{height: '400px'}}
-                                                onClick={handleMapClick}
+                            <FormItem
+                                label={<span style={{fontFamily:'Rubik', color:'whitesmoke'}}>Точки</span>}
+                            >
+                                <Controller
+                                    name='points'
+                                    control={control}
+                                    render={({}) => (
+                                        <div className='rounded-4' style={{
+                                            backgroundColor: "rgba(45,45,45,0.8)",
+                                            border: "2px solid #DAA520",
+                                            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                                            color: 'honeydew',
+                                            overflow:'hidden',
+                                        }}>
+                                            <YMaps
+                                                query={{
+                                                    load: "package.full",
+                                                }}
                                             >
-                                                {markers.map((coords, index) => (
-                                                    <Placemark
-                                                        key={`marker-${index}`}
-                                                        geometry={coords}
-                                                        options={{
-                                                            preset: 'islands#darkBlueCircleDotIcon',
-                                                            draggable: false
+                                                <Map
+                                                    defaultState={{center: [59.95, 30.37], zoom: 9}}
+                                                    style={{height: '400px'}}
+                                                    onClick={handleMapClick}
+                                                >
+                                                    {markers.map((coords, index) => (
+                                                        <Placemark
+                                                            key={`marker-${index}`}
+                                                            geometry={coords}
+                                                            options={{
+                                                                preset: 'islands#darkBlueCircleDotIcon',
+                                                                draggable: false
 
-                                                        }}
-                                                        properties={{
-                                                            hintContent: `${points[index]?.name}`,
-                                                            balloonContent:
-                                                                `<div>
+                                                            }}
+                                                            properties={{
+                                                                hintContent: `${points[index]?.name}`,
+                                                                balloonContent:
+                                                                    `<div>
                                                           Координаты: ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}
                                                       </div>`
-                                                        }}
-                                                    />
-                                                ))}
-                                            </Map>
-                                        </YMaps>
-                                    </div>
-                                )}
-                            />
-                        </FormItem>
-                    </Form>
-
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </Map>
+                                            </YMaps>
+                                        </div>
+                                    )}
+                                />
+                            </FormItem>
+                        </Form>
+                </Modal.Body>
+                <Modal.Footer>
                     <Container className='d-flex'
                                style={{justifyContent: 'center', width: '100%', alignItems: 'center'}}>
                         <BootstrapButton
@@ -340,8 +342,7 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                             Создать
                         </BootstrapButton>
                     </Container>
-
-                </ModalBody>
+                </Modal.Footer>
             </Modal>
         </div>
     );

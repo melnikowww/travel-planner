@@ -128,10 +128,26 @@ func (h *EquipmentHandler) UpdateEquip(c *gin.Context) {
 	c.JSON(http.StatusOK, updateEquip)
 }
 
+func (h *EquipmentHandler) GetNotOwnedEquipment(c *gin.Context) {
+	id := c.Query("id")
+	expeditionId, err := strconv.Atoi(id)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+	}
+
+	equipment, err := h.EquipService.GetNotOwned(expeditionId)
+	if err != nil {
+		c.String(http.StatusNotFound, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, equipment)
+}
+
 func (h *EquipmentHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.GET("/equip", h.GetEquip)
 	router.POST("/equip", h.CreateEquip)
 	router.PATCH("/equip", h.UpdateEquip)
 	router.DELETE("/equip", h.DeleteEquip)
+	router.GET("/not_owned_equip", h.GetNotOwnedEquipment)
 	return router
 }
