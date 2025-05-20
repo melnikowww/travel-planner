@@ -16,6 +16,7 @@ import ReactPaginate, {ReactPaginateProps} from "react-paginate";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Contacts from "../elements/Contacts.tsx";
+import AddExpeditionMobile from "../elements/AddExpeditionMobile.tsx";
 
 
 const useMobile = (breakpoint = 1000) => {
@@ -138,53 +139,9 @@ const Profile = () => {
                     aboutShadow={false} profileShadow={true}
                     contactsShadow={false}/>
 
-            {/*<Row className="mx-0 p-0" style={{*/}
-            {/*    backgroundColor: "rgba(45,45,45,0.8)",*/}
-            {/*    // border: "2px solid #DAA520",*/}
-            {/*    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",*/}
-            {/*    height: 'fit-content',*/}
-            {/*    width: '100%'*/}
-            {/*}}>*/}
-            {/*    /!*<Col xs={9} xxl={6} className="d-flex align-items-center justify-content-start p-1 border-black border h-100">*!/*/}
-            {/*    /!*    <UploadButton/>*!/*/}
-            {/*    /!*    <h1 className="mb-0 profile-name mx-3 fs-5 p-0" style={{*!/*/}
-            {/*    /!*        fontFamily: "'Rubik', sans-serif",*!/*/}
-            {/*    /!*        color: "#DAA520",*!/*/}
-            {/*    /!*        letterSpacing: "0.5px"*!/*/}
-            {/*    /!*    }}>*!/*/}
-            {/*    /!*        {user?.name}*!/*/}
-            {/*    /!*    </h1>*!/*/}
-            {/*    /!*</Col>*!/*/}
-
-            {/*    <Col className="d-flex align-items-center justify-content-end border-black border p-2">*/}
-            {/*        <UploadButton/>*/}
-            {/*        <h1 className="mb-0 profile-name mx-3 fs-5 p-0" style={{*/}
-            {/*            fontFamily: "'Rubik', sans-serif",*/}
-            {/*            color: "#DAA520",*/}
-            {/*            letterSpacing: "0.5px"*/}
-            {/*        }}>*/}
-            {/*            {user?.name}*/}
-            {/*        </h1>*/}
-            {/*        <Button*/}
-            {/*            variant="link"*/}
-            {/*            onClick={handleShow}*/}
-            {/*            className="p-0 rounded-5"*/}
-            {/*        >*/}
-            {/*            <img*/}
-            {/*                src='src/assets/settings.webp'*/}
-            {/*                alt="Настройки"*/}
-            {/*                style={{*/}
-            {/*                    width: "30px",*/}
-            {/*                    filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"*/}
-            {/*                }}*/}
-            {/*            />*/}
-            {/*        </Button>*/}
-            {/*    </Col>*/}
-            {/*</Row>*/}
-
-            <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center">
+            <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center ">
                 <Col md={6} lg={5} className="pe-lg-3">
-                    <div className="p-4 rounded-3" style={{
+                    <div className="p-4 rounded-3 pb-0" style={{
                         backgroundColor: "rgba(45,45,45,0.75)",
                         border: "1px solid #3D3D3D"
                     }}>
@@ -320,9 +277,11 @@ const Profile = () => {
                     <AddCarModal show={showCarCreate} onHide={()=> {setCarCreate(false)}}/>
                 </Col>
                 {isMobile && showExpCreate ?
-                    // <AddExpeditionMobile show={showExpCreate} onHide={()=>{setExpCreate(false)}}/> :
-                    null :
-                    <AddExpedition show={showExpCreate} onHide={()=>{setExpCreate(false)}}/>}
+                    <AddExpeditionMobile show={showExpCreate} onHide={()=>{setExpCreate(false)}}/> :
+                    <AddExpedition show={showExpCreate} onHide={()=>{
+                        setExpCreate(false)
+                        fetchUser()
+                    }}/>}
             </Row>
 
             <Contacts/>

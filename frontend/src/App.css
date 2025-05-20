@@ -87,12 +87,13 @@
 }
 
 .bg-image-reg {
-  background-image: url(assets/register.jpg);
+  background-image: linear-gradient(rgba(24, 24, 24, 0.8), rgba(24, 24, 24, 0.4)),url(assets/usualForest.webp);
   background-size: 90vh;
   background-position:  center;
   background-repeat: no-repeat;
   z-index: 0;
   overflow-x: hidden;
+  background-blend-mode: darken;
 }
 
 @media (max-width: 915px) {
@@ -146,7 +147,7 @@
   --bs-btn-disabled-bg: #4682B466;
   --bs-btn-disabled-border-color: #4682B466;
 
-  max-width: 50px;
+  max-width: 30px;
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
   font-family: inherit;
@@ -661,4 +662,35 @@
   }
   overflow-y: scroll !important;
   max-height: 70vh;
+}
+
+@media (max-width: 768px) {
+  .mobile-calendar-override {
+    .ant-picker-panels {
+      flex-direction: column !important;
+    }
+
+    .ant-picker-panel {
+      width: 100% !important;
+      border: none !important;
+    }
+
+    .ant-picker-cell {
+      padding: 4px !important;
+      height: 32px !important;
+    }
+
+    .ant-picker-content th {
+      font-size: 12px !important;
+    }
+  }
+}
+
+.register-link {
+  font-family: 'Rubik';
+  color: #eaa70c;
+  transition: all 0.3s ease;
+}
+.register-link:hover {
+  color: #3d6aac;
 }

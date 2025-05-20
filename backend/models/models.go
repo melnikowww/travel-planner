@@ -15,13 +15,14 @@ type User struct {
 }
 
 type Crew struct {
-	ID           int         `gorm:"primaryKey" json:"id" example:"1"`
-	CarID        int         `gorm:"not null" json:"car_id" example:"13"`
-	ExpeditionID int         `gorm:"not null" json:"expedition_id" example:"1"`
-	DriverID     int         `gorm:"not null;constraint:OnDelete:CASCADE;" json:"driver_id" example:"1"`
-	Members      []User      `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"members" swaggerignore:"true"`
-	Equipment    []Equipment `gorm:"foreignKey:crew_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"equipment"`
-	Goods        []Good      `gorm:"foreignKey:crew_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"goods"`
+	ID             int         `gorm:"primaryKey" json:"id" example:"1"`
+	CarID          int         `gorm:"not null" json:"car_id" example:"13"`
+	ExpeditionID   int         `gorm:"not null" json:"expedition_id" example:"1"`
+	DriverID       int         `gorm:"not null;constraint:OnDelete:CASCADE;" json:"driver_id" example:"1"`
+	Members        []User      `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"members" swaggerignore:"true"`
+	PassengerSeats int         `json:"seats,omitempty" example:"1"`
+	Equipment      []Equipment `gorm:"foreignKey:crew_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"equipment"`
+	Goods          []Good      `gorm:"foreignKey:crew_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"goods"`
 }
 
 type Car struct {

@@ -5,6 +5,7 @@ import { Button, Col, Container, Dropdown, Form, Modal, Row, Spinner } from 'rea
 import axios from 'axios';
 import {Crew, User} from '../../types.ts';
 import {useSearchParams} from "react-router-dom";
+import { InputNumber } from 'antd';
 
 interface ModalProps {
     show: boolean;
@@ -14,6 +15,7 @@ interface ModalProps {
 interface FormState {
     car_id: number | null;
     expedition_id: number | null;
+    seats: number | null;
 }
 
 const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
@@ -24,11 +26,12 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
     const [error, setError] = useState('');
     const [formData, setFormData] = useState<FormState>({
         car_id: null,
-        expedition_id: null
+        expedition_id: null,
+        seats: null,
     });
     const [searchParams, _] = useSearchParams();
 
-    const [selectedItem, setSelectedItem] = useState('Выберите автомобиль');
+    const [selectCar, setSelectCar] = useState('Выберите автомобиль');
 
     const createNew = async () => {
         setShowChoice(false);
@@ -56,7 +59,7 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
     }, [show]);
 
     const handleSelect = (eventKey: string | null) => {
-        setSelectedItem(eventKey || 'Выберите автомобиль');
+        setSelectCar(eventKey || 'Выберите автомобиль');
         if (eventKey && user?.cars) {
             const selectedCar = user.cars.find((car) => car.name === eventKey);
             if (selectedCar) {
@@ -67,7 +70,6 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
             }
             const expId = searchParams.get('id');
             if (expId != null) {
-                console.log("Exp:" + expId)
                 setFormData((prevData) => (
                     { ...prevData, expedition_id: parseInt(expId) })
                 );
@@ -86,13 +88,13 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
                     }
                 })
             setError('')
+            window.location.reload()
         } catch (e) {
             setError('Ошибка при создании экипажа')
             console.log(error)
         } finally {
             setLoad(false)
             setNew(false)
-            // window.location.reload()
         }
     }
 
@@ -117,7 +119,7 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
 
     return (
         <div>
-            <Modal show={showChoice} onHide={onHide} centered style={{ fontFamily: 'G8' }}>
+            <Modal show={showChoice} onHide={onHide} centered style={{ fontFamily: 'Rubik' }} contentClassName='bg-dark text-light'>
                 <Modal.Header closeButton>
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
@@ -145,7 +147,7 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showNew} onHide={() => setNew(false)} centered style={{ fontFamily: 'G8' }}>
+            <Modal show={showNew} onHide={() => setNew(false)} centered style={{ fontFamily: 'Rubik' }} contentClassName='bg-dark text-light'>
                 <Modal.Header closeButton>
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
@@ -162,7 +164,7 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
                                 <Col className="d-flex justify-content-center">
                                     <Dropdown onSelect={handleSelect} className="justify-content-center">
                                         <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                            {selectedItem}
+                                            {selectCar}
                                         </Dropdown.Toggle>
                                         <Dropdown.Menu>
                                             {user?.cars.map((car) => (
@@ -172,6 +174,26 @@ const CrewCreate: React.FC<ModalProps> = ({ show, onHide }) => {
                                             ))}
                                         </Dropdown.Menu>
                                     </Dropdown>
+                                </Col>
+                            </Row>
+                            <Row className='d-flex flex-column mb-2 align-content-center'>
+                                <Col className="d-flex justify-content-center">
+                                    <text className='px-1'>
+                                        Сколько пассажиров возьмем?
+                                    </text>
+                                    <InputNumber
+                                        min={1}
+                                        max={10}
+                                        defaultValue={1}
+                                        onChange={(event) => {
+                                            if (event != null) {
+                                                setFormData((prevData) => ({
+                                                    ...prevData,
+                                                    seats: event,
+                                                }));
+                                            }
+                                        }}
+                                    />
                                 </Col>
                             </Row>
                             <Row>

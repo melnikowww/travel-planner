@@ -6,6 +6,7 @@ import React, {useEffect, useState} from 'react';
 import {Crew, Equipment, Good, User} from "../../types.ts";
 import {Button, Col, Container, Dropdown, Form, Modal, Row} from "react-bootstrap";
 import axios from "axios";
+import {InputNumber} from "antd";
 
 interface ModalProps {
     show: boolean;
@@ -28,6 +29,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
     const [crew, setCrew] = useState<Crew | null>(null);
     const [user, setUser] = useState<User | null>(null)
     const [error, setError] = useState('');
+
     const [equipData, setEquip] = useState<equipState>({
         name: '',
         expedition_id: expeditionId,
@@ -41,6 +43,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     interface CrewForm {
         car_id: number | null;
+        seats: number | null;
         members: User[];
         equipment: Equipment[];
         goods: Good[];
@@ -48,6 +51,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     const [crewForm, setCrewForm] = useState<CrewForm>({
         car_id: null,
+        seats: null,
         members: [],
         equipment: [],
         goods: [],
@@ -75,7 +79,6 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                     headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
                 })
             ]);
-
             setCrew(responseCrew.data);
             setUser(responseUser.data);
             setError('');
@@ -90,8 +93,15 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
     };
 
     useEffect(() => {
-        fetchCrew()
+        fetchCrew();
     }, [driverId, expeditionId]);
+
+    useEffect(() => {
+        if (crew) {
+            console.log(crew)
+        }
+    }, [crew]);
+
 
     const handleSelect = (eventKey: string | null) => {
         setSelectedItem(eventKey || 'Выберите автомобиль');
@@ -193,7 +203,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
 
     return (
         <div>
-            <Modal show={show} onHide={onHide} centered style={{fontFamily:"Rubik"}} contentClassName='bg-dark text-light'>
+            {crew && <Modal show={show} onHide={onHide} centered style={{fontFamily:"Rubik"}} contentClassName='bg-dark text-light'>
                 <Modal.Header closeButton className="p-3">
                     <div className="d-flex container">
                         <div className="d-flex col justify-content-center">
@@ -207,71 +217,94 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                     padding:0
                 }}>
                     <Container className="d-flex align-items-center h-100 px-0 flex-column">
-                                <Form className="w-100 justify-content-center">
-                                    <Row className="mx-auto">
-                                        <Col className="d-flex justify-content-center py-2">
-                                            <Form.Group>
-                                                <div className="d-flex justify-content-center">
-                                                    <Form.Label>Сменим машину?</Form.Label>
-                                                </div>
-                                                <Dropdown onSelect={handleSelect} className="justify-content-center">
-                                                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                                        {selectedItem}
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu>
-                                                        {user?.cars.map((car) => (
-                                                            <Dropdown.Item key={car.id} eventKey={car.name}>
-                                                                {car.name}
-                                                            </Dropdown.Item>
-                                                        ))}
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col className="d-flex justify-content-center w-100 flex-row">
-                                            <Form.Group id="equip" className="">
-                                                <div className="d-flex justify-content-center align-items-center">
-                                                    <Form.Label htmlFor="equip">Новый элемент снаряжения?</Form.Label>
-                                                </div>
-                                                <div className="d-flex pb-3">
-                                                    <Form.Control
-                                                        type="name"
-                                                        name="name"
-                                                        placeholder="Хайджек"
-                                                        value={equipData.name}
-                                                        onChange={handleEquipChange}
-                                                    />
-                                                    <Button type='submit' className="mx-2 submit-btn" onClick={addEquip}>
-                                                        <FontAwesomeIcon icon={faPlus} className="mx-0" />
-                                                    </Button>
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col className="d-flex justify-content-center w-100 flex-row">
-                                            <Form.Group id="good" className="">
-                                                <div className="d-flex justify-content-center align-items-center">
-                                                    <Form.Label htmlFor="good">Новый продукт?</Form.Label>
-                                                </div>
-                                                <div className="d-flex pb-3">
-                                                    <Form.Control
-                                                        type="name"
-                                                        name="name"
-                                                        placeholder="Сгущенка"
-                                                        value={goodData.name}
-                                                        onChange={handleGoodChange}
-                                                    />
-                                                    <Button className="mx-2 submit-btn" onClick={addGood}>
-                                                        <FontAwesomeIcon icon={faPlus} className="mx-0" />
-                                                    </Button>
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                </Form>
+                        <Form className="w-100 justify-content-center">
+                            <Row className="mx-auto">
+                                <Col className="d-flex justify-content-center py-2">
+                                    <Form.Group>
+                                        <div className="d-flex justify-content-center">
+                                            <Form.Label>Сменим машину?</Form.Label>
+                                        </div>
+                                        <Dropdown onSelect={handleSelect} className="justify-content-center">
+                                            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                                {selectedItem}
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                {user?.cars.map((car) => (
+                                                    <Dropdown.Item key={car.id} eventKey={car.name}>
+                                                        {car.name}
+                                                    </Dropdown.Item>
+                                                ))}
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <Row className="mx-auto">
+                                <Col className="d-flex justify-content-center py-2">
+                                    <Form.Group>
+                                        <div className="d-flex justify-content-center">
+                                            <Form.Label>Сколько пассажиров ?</Form.Label>
+                                        </div>
+                                        <InputNumber
+                                            className='ms-5'
+                                            min={1}
+                                            max={10}
+                                            defaultValue={crew ? crew.seats : 1}
+                                            onChange={(event) => {
+                                                if (event != null) {
+                                                    setCrewForm((prevData) => ({
+                                                        ...prevData,
+                                                        seats: event,
+                                                    }));
+                                                }
+                                            }}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className="d-flex justify-content-center w-100 flex-row">
+                                    <Form.Group id="equip" className="">
+                                        <div className="d-flex justify-content-center align-items-center">
+                                            <Form.Label htmlFor="equip">Новый элемент снаряжения?</Form.Label>
+                                        </div>
+                                        <div className="d-flex pb-3">
+                                            <Form.Control
+                                                type="name"
+                                                name="name"
+                                                placeholder="Хайджек"
+                                                value={equipData.name}
+                                                onChange={handleEquipChange}
+                                            />
+                                            <Button type='submit' className="mx-2 submit-btn" onClick={addEquip}>
+                                                <FontAwesomeIcon icon={faPlus} className="mx-0" />
+                                            </Button>
+                                        </div>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className="d-flex justify-content-center w-100 flex-row">
+                                    <Form.Group id="good" className="">
+                                        <div className="d-flex justify-content-center align-items-center">
+                                            <Form.Label htmlFor="good">Новый продукт?</Form.Label>
+                                        </div>
+                                        <div className="d-flex pb-3">
+                                            <Form.Control
+                                                type="name"
+                                                name="name"
+                                                placeholder="Сгущенка"
+                                                value={goodData.name}
+                                                onChange={handleGoodChange}
+                                            />
+                                            <Button className="mx-2 submit-btn" onClick={addGood}>
+                                                <FontAwesomeIcon icon={faPlus} className="mx-0" />
+                                            </Button>
+                                        </div>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        </Form>
                         <Row>
                             <Button className="m-2 submit-btn" onClick={updateCrew}>
                                 Все верно!
@@ -279,7 +312,7 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                         </Row>
                     </Container>
                 </Modal.Body>
-            </Modal>
+            </Modal>}
         </div>
     )
 }

@@ -79,7 +79,7 @@ const Register: React.FC = () => {
             <Navbar hide={true} expeditionsShadow={false}
                     aboutShadow={false} profileShadow={false}
                     contactsShadow={false}/>
-            <Row className="justify-content-md-center m-0">
+            <Row className="justify-content-center m-0">
                 <Col className="col-md-12 col-sm-12 col-12">
                     {error && (
                         <Alert variant="danger" className="mb-3">
@@ -93,12 +93,12 @@ const Register: React.FC = () => {
                         </Alert>
                     )}
 
-                    {/* Форма */}
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="email" className="mb-3">
                             <Form.Label>
                                 {/*<p className="my-0 russo stroke" style={{opacity: "95%", color: 'honeydew'}}>Email</p>*/}
-                                <p className="my-0" style={{opacity: "95%", color: 'honeydew', fontFamily:"Scumbria"}}>Почта</p>
+                                <p className="my-0"
+                                   style={{opacity: "95%", color: 'honeydew', fontFamily: "Rubik"}}>Почта</p>
                             </Form.Label>
                             <Form.Control
                                 type="email"
@@ -113,7 +113,8 @@ const Register: React.FC = () => {
 
                         <Form.Group controlId="password" className="mb-3">
                             <Form.Label>
-                                <p className="my-0" style={{opacity:"95%", color:'honeydew', fontFamily:"Scumbria"}}>Пароль</p>
+                                <p className="my-0"
+                                   style={{opacity: "95%", color: 'honeydew', fontFamily: "Rubik"}}>Пароль</p>
                             </Form.Label>
                             <Form.Control
                                 type="password"
@@ -144,9 +145,12 @@ const Register: React.FC = () => {
                                         <span className="ms-2">Ищем Вас...</span>
                                     </>
                                 ) : (
-                                    <p className="my-0" style={{fontFamily:"Scumbria"}} >Войти</p>
+                                    <p className="my-0" style={{fontFamily: "Rubik"}}>Войти</p>
                                 )}
                             </Button>
+                        </div>
+                        <div className='d-flex justify-content-center mt-1   mx-auto'>
+                            <a href='/register' className='register-link'>Нет аккаунта?..</a>
                         </div>
                     </Form>
                 </Col>

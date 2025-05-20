@@ -113,7 +113,7 @@ const CustomNavbar: React.FC<Props> = ({
     return (
         <Navbar
             expand="xl"
-            className="w-100 border-bottom border-2 border-black rounded-bottom-2"
+            className="w-100 border-bottom border-2 border-black rounded-bottom-2 py-0"
             style={{
                 backgroundColor: '#1A1A1A',
                 position: "fixed",
@@ -122,39 +122,33 @@ const CustomNavbar: React.FC<Props> = ({
                 right: 0,
                 zIndex: 1000,
                 boxShadow: "0 1px 5px rgba(218, 165, 32, 0.4)",
-                minHeight: "60px"
+                minHeight: "fit-content",
             }}
         >
-            <Container fluid className="h-100 d-flex align-items-center px-0">
-                <Row className="w-100 align-items-center justify-content-between">
+            <Container fluid className="d-flex align-items-center px-0" style={{maxHeight: 'fit-content'}}>
+                <Row className="w-100 align-items-center justify-content-between py-1">
                     <Col xs={1} lg={4} hidden={hide} className="d-flex justify-content-start align-items-center">
-                        {user && <Button
-                            variant="primary"
-                            type="submit"
-                            className="logout-btn justify-content-center text-center px-0 mx-2 d-xs-none"
-                            style={{ fontFamily: "Rubik", color: '#C14545' }}
-                            onClick={handleLogout}
-                        >
-                            <img src='src/assets/logout.png' style={{maxWidth: '100%'}} className='p-1'/>
-                        </Button>}
+                        {user && localStorage.getItem('avatar') &&
+                            <div style={{
+                                width: '60px',
+                                height: '60px'
+                            }} className='ms-2 d-none d-md-block'
+                            >
+                                <img
+                                    src={localStorage.getItem('avatar') || undefined}
+                                    alt={'Аватар'}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center'
+                                    }}
+                                    className='rounded-circle'
+                                />
+                            </div>
+                        }
 
-                        {user && <Button
-                            variant="link"
-                            type='button'
-                            onClick={handleShow}
-                            className="p-0 rounded-5"
-                        >
-                            <img
-                                src='src/assets/settings.webp'
-                                alt="Настройки"
-                                style={{
-                                    width: "30px",
-                                    filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"
-                                }}
-                            />
-                        </Button>}
-
-                        {user && <h1 className="mb-0 profile-name mx-3 fs-5 p-0" style={{
+                        {user && <h1 className="mb-0 profile-name mx-3 fs-5 p-0 d-none d-md-block" style={{
                             fontFamily: "'Rubik', sans-serif",
                             color: "#DAA520",
                             letterSpacing: "0.5px"
@@ -162,23 +156,22 @@ const CustomNavbar: React.FC<Props> = ({
                             {user?.name}
                         </h1>}
 
-                        {user && <label
-                            htmlFor="fileInput"
-                            className="rounded-circle avatar"
-                            style={{
-                                cursor: "pointer",
-                                backgroundImage: `url(${localStorage.getItem('avatar')})`,
-                                boxShadow: "0 0px 12px rgba(0,0,0,0.7)",
-                                margin: '0',
-                                padding: '0',
-                                minWidth: '50px',
-                                minHeight: '50px'
-                            }}
+                        {user && <Button
+                            variant="link"
+                            type='button'
+                            onClick={handleShow}
+                            className="p-0 rounded-5 d-none d-md-block"
                         >
-                            <i className="bi bi-upload fs-3 m-0 p-0"></i>
-                        </label>}
+                            <img
+                                src='src/assets/settings.webp'
+                                alt="Настройки"
+                                style={{
+                                    width: "20px",
+                                    filter: "invert(72%) sepia(22%) saturate(999%) hue-rotate(5deg) brightness(92%) contrast(89%)"
+                                }}
+                            />
+                        </Button>}
                     </Col>
-
 
                     <Col xs={4} lg={4} className="d-flex justify-content-center navbar-logo ">
                         <Navbar.Brand
@@ -225,6 +218,7 @@ const CustomNavbar: React.FC<Props> = ({
                                         color: profileShadow ? '#DAA520' : '#FFFFFF',
                                         fontFamily: "'Rubik', sans-serif",
                                         fontWeight: 500,
+                                        alignContent: 'center'
                                     }}
                                 >
                                     Профиль
@@ -236,6 +230,7 @@ const CustomNavbar: React.FC<Props> = ({
                                         color: expeditionsShadow ? '#DAA520' :  '#FFFFFF',
                                         fontFamily: "'Rubik', sans-serif",
                                         fontWeight: 500,
+                                        alignContent: 'center'
                                     }}
                                 >
                                     Экспедиции
@@ -245,7 +240,8 @@ const CustomNavbar: React.FC<Props> = ({
                                     className='nav-link-custom'
                                     style={{
                                         color: aboutShadow ? '#DAA520' : '#FFFFFF',
-                                        fontFamily: "'Rubik', sans-serif"
+                                        fontFamily: "'Rubik', sans-serif",
+                                        alignContent: 'center'
                                     }}
                                 >
                                     О нас
@@ -269,6 +265,17 @@ const CustomNavbar: React.FC<Props> = ({
                                     >
                                         Выйти
                                     </Nav.Link>
+                                </div>
+                                <div className='d-none d-md-block'>
+                                    {user && <Button
+                                        variant="primary"
+                                        type="submit"
+                                        className="logout-btn justify-content-center text-center px-0"
+                                        style={{ fontFamily: "Rubik", color: '#C14545' }}
+                                        onClick={handleLogout}
+                                    >
+                                        <img src='src/assets/logout.png' style={{maxWidth: '100%'}} className='p-1'/>
+                                    </Button>}
                                 </div>
                             </Nav>
                         </Navbar.Collapse>

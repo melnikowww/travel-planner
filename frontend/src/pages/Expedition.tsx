@@ -21,7 +21,7 @@ const ExpeditionProfile = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const navigate = useNavigate()
-    const [buttonDisabled, setbuttonDisabled] = useState(false)
+    const [buttonDisabled, setButtonDisabled] = useState(false)
     const [searchParams, _] = useSearchParams();
     const [markers] = useState<[number, number][]>([]);
 
@@ -61,7 +61,7 @@ const ExpeditionProfile = () => {
         const driverId = localStorage.getItem("id") ? parseInt(localStorage.getItem("id") as string) : 0;
         if (drivers) {
             const isDriverPresent = drivers.filter((driver) => driver.id === driverId).length > 0;
-            setbuttonDisabled(isDriverPresent);
+            setButtonDisabled(isDriverPresent);
         }
     }, [currentUser, drivers]);
 
@@ -141,7 +141,7 @@ const ExpeditionProfile = () => {
                     </p>
                 </Col>
             </Row>
-            <Row className="d-flex mx-2 px-2 py-4 mb-3 rounded-4" style={{
+            {exp && (exp?.description.length > 0) && <Row className="d-flex mx-2 px-2 py-4 mb-3 rounded-4" style={{
                 backgroundColor: "rgba(45,45,45,0.8)",
                 border: "2px solid #DAA520",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
@@ -152,9 +152,9 @@ const ExpeditionProfile = () => {
                         {exp?.description}
                     </div>
                 </Col>
-            </Row>
+            </Row>}
             <Row className="d-flex expedition mt-2 mx-0 px-0">
-                <Col className="d-flex align-items-center flex-column px-0">
+                {exp && exp.crews.length > 0 && <Col className="d-flex align-items-center flex-column px-0">
                     <div className='rounded-4 px-5 py-3 mx-2' style={{
                         backgroundColor: "rgba(45,45,45,0.8)",
                         border: "2px solid #DAA520",
@@ -177,8 +177,8 @@ const ExpeditionProfile = () => {
                             })}
                         </ol>
                     </div>
-                </Col>
-                <Col className="d-flex align-items-center flex-column mx-0 px-0 mb-4 mt-4">
+                </Col>}
+                {exp && exp.points.length > 0 && <Col className="d-flex align-items-center flex-column mx-0 px-0 mb-4 mt-4">
                     <div className='rounded-4 px-5 py-3 mx-2' style={{
                         backgroundColor: "rgba(45,45,45,0.8)",
                         border: "2px solid #DAA520",
@@ -192,7 +192,7 @@ const ExpeditionProfile = () => {
                             )) || 0}
                         </ol>
                     </div>
-                </Col>
+                </Col>}
             </Row>
             <Row>
                 <Col>
@@ -234,9 +234,9 @@ const ExpeditionProfile = () => {
             </Row>
             <Row className="pb-0" hidden={buttonDisabled}>
                 <Col className="d-flex justify-content-center">
-                    <Button className="submit-btn" style={{width: "fit-content"}}
+                    <Button className="submit-btn mb-2" style={{width: "fit-content"}}
                             onClick={() => registerToExpedition()}>
-                        <p className="fs-4 my-0">Поехали!</p>
+                        <p className="fs-4 m-0">Поехали!</p>
                     </Button>
                     <CrewCreate show={showCrewModal} onHide={()=>{setCrewModal(false)}}/>
                 </Col>

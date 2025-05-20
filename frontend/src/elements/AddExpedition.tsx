@@ -5,7 +5,7 @@ import FormItem from "antd/es/form/FormItem";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {YMaps, Map, Placemark} from '@pbe/react-yandex-maps';
 import axios from "axios";
-import {Expedition, Point} from "../../types.ts";
+import {Crew, Expedition, Point, User} from "../../types.ts";
 import { debounce } from "lodash";
 import {GetPopupContainer} from "antd/es/table/interface";
 import type { Dayjs } from 'dayjs';
@@ -34,7 +34,7 @@ interface Props {
 const { RangePicker } = DatePicker;
 
 const createExpedition = async (Expedition: ExpeditionData) => {
-    await axios.post<Expedition>("http://localhost:8081/expeditions",
+    return await axios.post<Expedition>("http://localhost:8081/expeditions",
         Expedition, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -169,12 +169,26 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                 ends_at: data.dates[1]?.toISOString(),
                 points: points,
             };
-            await createExpedition(expeditionData);
+            const response = await createExpedition(expeditionData);
+            const user = await axios.get<User>('http://localhost:8081/users?id=' + localStorage.getItem("id"), {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                }
+            })
+            await axios.post<Crew>("http://localhost:8081/crews",
+                {
+                    car_id: user.data.cars[0].id,
+                    expedition_id: response.data.id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    }
+                })
             reset();
             setMarkers([]);
             setPoints([]);
             onHide();
-
         } catch (error) {
             console.error('Ошибка создания экспедиции:', error);
         }
@@ -200,6 +214,7 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                             layout={"horizontal"}
                             style={{
                                 fontFamily:'Rubik',
+                                overflowX: 'hidden'
                             }}
                             labelCol={{span:3}}
                             wrapperCol={{span:18}}

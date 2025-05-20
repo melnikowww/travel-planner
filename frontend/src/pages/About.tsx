@@ -1,10 +1,8 @@
-import {Button, Col, Container, Row} from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
+import {Col, Container, Row} from "react-bootstrap";
 import Navbar from "../elements/Navbar.tsx";
 import Contacts from "../elements/Contacts.tsx";
 
 const About = () => {
-    const navigate = useNavigate()
 
     return(
         <div>
@@ -20,7 +18,7 @@ const About = () => {
                 <Navbar hide={false} expeditionsShadow={false}
                         aboutShadow={true} profileShadow={false}
                         contactsShadow={false}/>
-                <Row className="mx-1 flex-grow-1 px-5" style={{margin: "0 auto"}}>
+                <Row className="mx-1 flex-grow-1 px-5 mb-3" style={{margin: "0 auto"}}>
                     <Col className="d-flex flex-column gap-4">
                         <h1 className="text-center mb-4" style={{
                             fontFamily: "'Bebas Neue', sans-serif",
@@ -70,11 +68,15 @@ const About = () => {
                                 fontSize: "2.5rem",
                                 marginBottom: "2rem"
                             }}>
-                                Возможности платформы
+                                Возможности сервиса
                             </h2>
 
                             <div className="d-flex flex-column gap-4">
                                 {[
+                                    {
+                                        title: "Обмен опытом",
+                                        content: "Изучайте уже проверенные другими пользователями маршруты или предложите новое направление"
+                                    },
                                     {
                                         title: "Планирование экспедиций",
                                         content: "Создавайте детальные планы маршрутов с указанием контрольных точек, временных рамок и необходимого снаряжения"
@@ -117,23 +119,23 @@ const About = () => {
                             </div>
                         </div>
 
-                        <div className="text-center mt-1">
-                            <Button
-                                variant="warning"
-                                className="px-5 py-3 rounded-pill mb-4"
-                                style={{
-                                    fontFamily: "'Rubik', sans-serif",
-                                    fontSize: "1.5rem",
-                                    letterSpacing: "1px",
-                                    background: "#DAA520",
-                                    border: "none",
-                                    transition: "all 0.3s ease"
-                                }}
-                                onClick={() => navigate('/profile')}
-                            >
-                                ПОЕХАЛИ!
-                            </Button>
-                        </div>
+                        {/*<div className="text-center mt-1">*/}
+                        {/*    <Button*/}
+                        {/*        variant="warning"*/}
+                        {/*        className="px-5 py-3 rounded-pill mb-4"*/}
+                        {/*        style={{*/}
+                        {/*            fontFamily: "'Rubik', sans-serif",*/}
+                        {/*            fontSize: "1.5rem",*/}
+                        {/*            letterSpacing: "1px",*/}
+                        {/*            background: "#DAA520",*/}
+                        {/*            border: "none",*/}
+                        {/*            transition: "all 0.3s ease"*/}
+                        {/*        }}*/}
+                        {/*        onClick={() => navigate('/profile')}*/}
+                        {/*    >*/}
+                        {/*        ПОЕХАЛИ!*/}
+                        {/*    </Button>*/}
+                        {/*</div>*/}
                     </Col>
                 </Row>
             </Container>

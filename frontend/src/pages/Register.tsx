@@ -97,14 +97,14 @@ const Register: React.FC = () => {
                         contactsShadow={false}/>
                 <Row className="d-flex text-center my-auto flex-column justify-content-center align-items-center">
                     <Col className="">
-                        <h1 className="mb-3 stroke-1 rounded-2" style={{
-                            color:"whitesmoke",
-                            fontFamily:"G8"
-                        }}>
-                            Давайте познакомимся?
-                        </h1>
+                        {/*<h1 className="mb-3 stroke-1 rounded-2" style={{*/}
+                        {/*    color:"whitesmoke",*/}
+                        {/*    fontFamily:"Rubik"*/}
+                        {/*}}>*/}
+                        {/*    Давайте познакомимся?*/}
+                        {/*</h1>*/}
                     </Col>
-                    <Col className="col-10 col-md-10 col-8 col-lg-4">
+                    <Col className="col-10 col-md-10 col-8 col-lg-2">
                         {error && (
                             <Alert variant="danger" className="mb-3">
                                 {"Кажется Вы уже регистрировались..."}
@@ -117,9 +117,10 @@ const Register: React.FC = () => {
                             </Alert>
                         )}
 
-                        <Form onSubmit={handleSubmit} >
+                        <Form onSubmit={handleSubmit}>
                             <Form.Group controlId="name" className="mb-1 form">
-                                <Form.Label className="stroke-1 fs-4" style={{color:"honeydew", fontFamily:"G8"}}>Как Вас зовут?</Form.Label>
+                                <Form.Label className="fs-4" style={{color: "honeydew", fontFamily: "Rubik"}}>Как Вас
+                                    зовут?</Form.Label>
                                 <Form.Control
                                     type="name"
                                     name="name"
@@ -131,7 +132,8 @@ const Register: React.FC = () => {
                             </Form.Group>
 
                             <Form.Group controlId="email" className="mb-1 form">
-                                <Form.Label className="stroke-1 fs-4" style={{color:"ghostwhite", fontFamily:"G8"}}>Почта</Form.Label>
+                                <Form.Label className="fs-4"
+                                            style={{color: "ghostwhite", fontFamily: "Rubik"}}>Почта</Form.Label>
                                 <Form.Control
                                     type="email"
                                     name="email"
@@ -143,7 +145,8 @@ const Register: React.FC = () => {
                             </Form.Group>
 
                             <Form.Group controlId="password" className="mb-1 form">
-                                <Form.Label className="stroke-1 fs-4" style={{color:"honeydew", fontFamily:"G8"}}>Пароль</Form.Label>
+                                <Form.Label className="fs-4"
+                                            style={{color: "honeydew", fontFamily: "Rubik"}}>Пароль</Form.Label>
                                 <Form.Control
                                     type="password"
                                     name="password"
@@ -155,11 +158,10 @@ const Register: React.FC = () => {
                             </Form.Group>
 
                             <Button
-                                variant="primary"
                                 type="submit"
-                                className="w-75 logout-btn mt-3"
+                                className="submit-btn mt-3"
                                 disabled={isLoading}
-                                style={{fontFamily:"Scumbria"}}
+                                style={{fontFamily: "Rubik"}}
                             >
                                 {isLoading ? (
                                     <>
@@ -177,11 +179,9 @@ const Register: React.FC = () => {
                                 )}
                             </Button>
                         </Form>
-                    </Col>
-                </Row>
-                <Row className="d-flex w-100">
-                    <Col className="fs-6 text-end" style={{color:"whitesmoke"}}>
-                        photo by @ilmenkov_egor
+                        <div className='d-flex justify-content-center mt-1 mx-auto' >
+                            <a href='/' className='register-link'>Уже есть аккаунт?..</a>
+                        </div>
                     </Col>
                 </Row>
             </Container>

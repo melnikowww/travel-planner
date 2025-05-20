@@ -34,6 +34,7 @@ export interface Point {
 export interface Crew {
     id: number;
     car_id: number;
+    seats: number;
     expedition_id: number;
     driver_id: number;
     members: User[];
