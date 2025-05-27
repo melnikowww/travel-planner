@@ -106,6 +106,20 @@ func (h *CrewHandler) GetByDriverAndExpedition(c *gin.Context) {
 	c.JSON(http.StatusOK, crew)
 }
 
+func (h *CrewHandler) GetByExpedition(c *gin.Context) {
+	expeditionId, err := strconv.Atoi(c.Query("expedition_id"))
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+	crews, err := h.CrewService.FindByExpedition(expeditionId)
+	if err != nil {
+		c.String(http.StatusConflict, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, crews)
+}
+
 // Update Обновление экипажа
 // @Summary Обновить экипаж
 // @Description Обновление данных экипажа. Требуются права создателя.
@@ -175,5 +189,6 @@ func (h *CrewHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.PATCH("/crews", h.Update)
 	router.DELETE("/crews", h.Delete)
 	router.GET("/crew", h.GetByDriverAndExpedition)
+	router.GET("/exp_crews", h.GetByExpedition)
 	return router
 }

@@ -6,7 +6,7 @@ import {Expedition, User} from "../../types.ts";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import Navbar from "../elements/Navbar.tsx"
-import CrewCreate from "../elements/CreateCrew.tsx";
+import CrewChoice from "../elements/CrewChoice.tsx";
 import Load from "../elements/Loading.tsx";
 import ErrorPage from "../elements/Error.tsx";
 import {Map, Placemark, YMaps} from "@pbe/react-yandex-maps";
@@ -101,8 +101,8 @@ const ExpeditionProfile = () => {
 
     const [showCrewModal, setCrewModal] = useState(false)
     const registerToExpedition = async () => {
-        if (localStorage.getItem("authToken") == null) {
-            navigate("/register")
+        if (localStorage.getItem("authToken") === null) {
+            navigate("/")
         } else {
             setCrewModal(true)
         }
@@ -238,7 +238,7 @@ const ExpeditionProfile = () => {
                             onClick={() => registerToExpedition()}>
                         <p className="fs-4 m-0">Поехали!</p>
                     </Button>
-                    <CrewCreate show={showCrewModal} onHide={()=>{setCrewModal(false)}}/>
+                    {showCrewModal && <CrewChoice drivers={drivers} expedition={exp ? exp : null} show={showCrewModal} onHide={()=>{setCrewModal(false)}}/>}
                 </Col>
             </Row>
             <Contacts/>

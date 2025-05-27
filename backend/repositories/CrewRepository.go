@@ -50,3 +50,14 @@ func (r *CrewRepository) UpdateCrew(crew *models.Crew) (*models.Crew, error) {
 func (r *CrewRepository) DeleteCrew(id int) error {
 	return r.DB.Delete(&models.Crew{}, id).Error
 }
+
+func (r *CrewRepository) FindByExpedition(id int) ([]*models.Crew, error) {
+	var crews []*models.Crew
+	err := r.DB.
+		Preload("Members").
+		Preload("Equipment").
+		Preload("Goods").
+		Where("expedition_id = ?", id).
+		Find(&crews).Error
+	return crews, err
+}

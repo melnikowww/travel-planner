@@ -37,6 +37,15 @@ func (s *CrewService) FindByDriverAndExpedition(driverId int, expeditionId int) 
 	return crew, err
 }
 
+func (s *CrewService) FindByExpedition(expeditionId int) ([]*models.Crew, error) {
+	crew, err := s.CrewRepo.FindByExpedition(expeditionId)
+	if err != nil {
+		log.Printf("Crew by expedition search error: %v", err)
+		return nil, err
+	}
+	return crew, err
+}
+
 func (s *CrewService) Update(crew *models.Crew, userId int) (*models.Crew, error) {
 	oldCrew, err := s.CrewRepo.FindByID(crew.ID)
 	if err != nil {

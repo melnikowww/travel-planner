@@ -247,9 +247,9 @@ const UpdateCrew: React.FC<ModalProps> = ({show, onHide, driverId, expeditionId}
                                         </div>
                                         <InputNumber
                                             className='ms-5'
-                                            min={1}
+                                            min={0}
                                             max={10}
-                                            defaultValue={crew ? crew.seats : 1}
+                                            defaultValue={crew ? crew.seats : 0}
                                             onChange={(event) => {
                                                 if (event != null) {
                                                     setCrewForm((prevData) => ({

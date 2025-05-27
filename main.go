@@ -67,7 +67,7 @@ func main() {
 		log.Fatalf("Ошибка подключения к БД: %v ", err)
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.Car{}, &models.Expedition{}, &models.Point{}, &models.Good{}, &models.Equipment{}, &models.Crew{})
+	err = db.AutoMigrate(&models.User{}, &models.Car{}, &models.Expedition{}, &models.Point{}, &models.Good{}, &models.Equipment{}, &models.Crew{}, &models.Message{})
 	if err != nil {
 		log.Fatalf("Не удалось совершить миграцию БД %v", err)
 	}

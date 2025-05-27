@@ -20,7 +20,7 @@ type Crew struct {
 	ExpeditionID   int         `gorm:"not null" json:"expedition_id" example:"1"`
 	DriverID       int         `gorm:"not null;constraint:OnDelete:CASCADE;" json:"driver_id" example:"1"`
 	Members        []User      `gorm:"many2many:crews_users;constraint:OnDelete:CASCADE;" json:"members" swaggerignore:"true"`
-	PassengerSeats int         `json:"seats,omitempty" example:"1"`
+	PassengerSeats int         `json:"seats" example:"1"`
 	Equipment      []Equipment `gorm:"foreignKey:crew_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"equipment"`
 	Goods          []Good      `gorm:"foreignKey:crew_id;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"goods"`
 }
@@ -62,4 +62,15 @@ type Good struct {
 	ID     int    `gorm:"primaryKey" json:"id" example:"1"`
 	Name   string `gorm:"type:varchar(100);not null" json:"name" example:"First Aid Kit"`
 	CrewID int    `json:"crew_id"`
+}
+
+type Message struct {
+	ID           int         `gorm:"primaryKey" json:"id" example:"1"`
+	Type         MessageType `gorm:"type:varchar(50);not null" json:"type" example:"CrewRequest"`
+	ProducerId   int         `gorm:"type:bigint" json:"producerId,omitempty" example:"1"`
+	ConsumerId   int         `gorm:"type:bigint" json:"consumerId,omitempty" example:"1"`
+	CreatedAt    time.Time   `json:"CreatedAt"`
+	Description  string      `gorm:"type:varchar(255)" json:"description,omitempty"`
+	ExpeditionId int         `gorm:"type:bigint" json:"expeditionId,omitempty" example:"1"`
+	CrewId       int         `gorm:"type:bigint" json:"crewId,omitempty" example:"1"`
 }

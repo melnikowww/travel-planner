@@ -82,14 +82,14 @@ func (h *UserHandler) DeleteUserHandler(c *gin.Context) {
 	id, err := strconv.Atoi(key)
 	if err != nil {
 		c.String(http.StatusBadRequest, "Invalid user ID")
-		return // Завершение функции
+		return
 	}
 	err = h.UserService.DeleteUser(id)
 	if err != nil {
 		c.String(http.StatusNotFound, "User not found")
-		return // Завершение функции
+		return
 	}
-	c.Status(http.StatusNoContent) // Успешное удаление
+	c.Status(http.StatusNoContent)
 }
 
 // PatchUserHandler Обновление данных пользователя
