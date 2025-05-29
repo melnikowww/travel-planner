@@ -67,9 +67,10 @@ type Good struct {
 type Message struct {
 	ID           int         `gorm:"primaryKey" json:"id" example:"1"`
 	Type         MessageType `gorm:"type:varchar(50);not null" json:"type" example:"CrewRequest"`
+	Status       Status      `gorm:"type:varchar(20);not null" json:"status" example:"active"`
 	ProducerId   int         `gorm:"type:bigint" json:"producerId,omitempty" example:"1"`
 	ConsumerId   int         `gorm:"type:bigint" json:"consumerId,omitempty" example:"1"`
-	CreatedAt    time.Time   `json:"CreatedAt"`
+	CreatedAt    time.Time   `gorm:"autoCreateTime" json:"createdAt"`
 	Description  string      `gorm:"type:varchar(255)" json:"description,omitempty"`
 	ExpeditionId int         `gorm:"type:bigint" json:"expeditionId,omitempty" example:"1"`
 	CrewId       int         `gorm:"type:bigint" json:"crewId,omitempty" example:"1"`

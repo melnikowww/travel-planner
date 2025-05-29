@@ -22,13 +22,19 @@ func (r *MessagesRepository) GetMessageById(id int) (*models.Message, error) {
 
 func (r *MessagesRepository) GetMessagesByConsumer(id int) ([]*models.Message, error) {
 	var messages []*models.Message
-	err := r.DB.Find(&messages, id).Order("consumerId").Error
+	err := r.DB.Where("consumer_id=?", id).Find(&messages).Order("created_at").Error
+	return messages, err
+}
+
+func (r *MessagesRepository) GetMessagesByProducer(id int) ([]*models.Message, error) {
+	var messages []*models.Message
+	err := r.DB.Where("producer_id=?", id).Find(&messages).Order("created_at").Error
 	return messages, err
 }
 
 func (r *MessagesRepository) GetMessagesLastTen() ([]*models.Message, error) {
 	var messages []*models.Message
-	err := r.DB.Find(&messages).Order("consumerId").Limit(10).Error
+	err := r.DB.Find(&messages).Order("created_at").Limit(10).Error
 	return messages, err
 }
 

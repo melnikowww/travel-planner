@@ -51,3 +51,27 @@ export interface Good {
     id: number;
     name: string;
 }
+
+export interface Message{
+    id: number;
+    type: MessageType;
+    status: Status;
+    producerId: number;
+    consumerId: number;
+    description: string;
+    expeditionId: number;
+    crewId: number;
+}
+
+export enum MessageType {
+    CrewRequest = 'CrewRequest',
+    News = 'News',
+    NewExpedition = 'NewExpedition'
+}
+
+export enum Status {
+    Active = "active",
+    Approved = "approved",
+    Rejected = "rejected",
+    Empty = "empty"
+}

@@ -34,6 +34,14 @@ func (s *MessagesService) GetMessagesByConsumer(id int) ([]*models.Message, erro
 	return msgs, err
 }
 
+func (s *MessagesService) GetMessagesByProducer(id int) ([]*models.Message, error) {
+	msgs, err := s.Repo.GetMessagesByProducer(id)
+	if err != nil {
+		log.Printf("Get message by producer error: %v", err)
+	}
+	return msgs, err
+}
+
 func (s *MessagesService) GetMessagesLastTen() ([]*models.Message, error) {
 	msgs, err := s.Repo.GetMessagesLastTen()
 	if err != nil {

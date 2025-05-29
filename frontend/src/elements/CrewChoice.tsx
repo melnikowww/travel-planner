@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Dropdown, Form, Modal, Row, Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import { Crew, Expedition, User} from '../../types.ts';
+import {Crew, Expedition, Message, MessageType, Status, User} from '../../types.ts';
 import {useSearchParams} from "react-router-dom";
 import { InputNumber } from 'antd';
 
@@ -20,6 +20,16 @@ interface FormState {
     seats: number | null;
 }
 
+interface MessageState {
+    type: MessageType | null;
+    status: Status | null;
+    producerId: number | null;
+    consumerId: number | null;
+    description: string | null;
+    expeditionId: number | null;
+    crewId: number | null;
+}
+
 const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers }) => {
     const [user, setUser] = useState<User | null>(null);
     const [showChoice, setShowChoice] = useState(show);
@@ -32,11 +42,25 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers })
     const [load, setLoad] = useState(false);
     const [error, setError] = useState('');
 
+    let userId = localStorage.getItem("id")
+    let id = userId != null ? parseInt(userId) : 0;
+
     const [formData, setFormData] = useState<FormState>({
         car_id: null,
         expedition_id: null,
         seats: null,
     });
+
+    const [crewRequest] = useState<MessageState>({
+        type: null,
+        status: null,
+        producerId: null,
+        consumerId: null,
+        description: null,
+        expeditionId: null,
+        crewId: null,
+    })
+
     const [searchParams, _] = useSearchParams();
 
     const [selectCar, setSelectCar] = useState('Выберите автомобиль');
@@ -82,10 +106,6 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers })
     }
 
     useEffect(() => {
-
-    }, [crews]);
-
-    useEffect(() => {
         setShowChoice(show);
     }, [show]);
 
@@ -129,6 +149,46 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers })
         }
     }
 
+    const sendCrewRequest = async (requestData: typeof crewRequest) => {
+        try {
+            await axios.post<Message>("http://localhost:8081/message",
+                requestData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    }
+                })
+            setJoinCrew(false)
+            onHide();
+        } catch (e) {
+            setError('Ошибка при отправке заявки😥')
+        }
+    }
+
+    const [hasRequest, setHasRequest] = useState(false);
+
+    useEffect(() => {
+        console.log(hasRequest)
+        const checkRequest = async () => {
+            try {
+                const requests = await axios.get<Message[]>(`http://localhost:8081/prod_messages?user=${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    }
+                });
+
+                if (expedition) {
+                    setHasRequest(requests.data.some(request => request.expeditionId === expedition.id));
+                }
+            } catch (e) {
+                setError('Ошибка при проверке списка заявок');
+                setHasRequest(false);
+            }
+        };
+
+        if (id && expedition) {
+            checkRequest();
+        }
+    }, [id, expedition]);
 
     if (load) {
         return (
@@ -170,7 +230,7 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers })
                                 </Button>
                             </Col>
                             <Col className="d-flex justify-content-center">
-                                <Button disabled={!(expedition && expedition.crews.filter((crew) => crew.seats > 0).length)}
+                                <Button disabled={!(expedition && !hasRequest && expedition.crews.filter((crew) => crew.seats > 0).length)}
                                         className="fs-4 w-100" onClick={joinCrew}>
                                     Вписаться пассажиром
                                 </Button>
@@ -271,7 +331,20 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers })
                                         }
                                         return (
                                             <Button variant='outline-dark' className='p-3 my-2 gap-2 rounded-2 w-100 text-light'
-                                                    style={{border: '1px solid rgba(0, 0, 0, 0.2)'}}>
+                                                    style={{border: '1px solid rgba(0, 0, 0, 0.2)'}}
+                                                    onClick={()=> {
+                                                        const requestData = {
+                                                            type: MessageType.CrewRequest,
+                                                            status: Status.Active,
+                                                            producerId: id,
+                                                            consumerId: driver.id,
+                                                            description: null,
+                                                            expeditionId: expedition.id,
+                                                            crewId: crew.id,
+                                                        };
+                                                        sendCrewRequest(requestData);
+                                                    }}
+                                            >
                                                 {driver.name}, {car.name}
                                             </Button>
                                         )

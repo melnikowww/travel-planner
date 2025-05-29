@@ -2,7 +2,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import {useState, useEffect} from "react";
-import {Expedition, User} from "../../types.ts";
+import {Expedition, Message, User} from "../../types.ts";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import AddCarModal from "../elements/AddCar.tsx";
 import UpdateCar from "../elements/UpdateCar.tsx";
@@ -36,7 +36,7 @@ const useMobile = (breakpoint = 1000) => {
 
 const Profile = () => {
     const isMobile = useMobile()
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User>();
     const [expeditions, setExpeditions] = useState<Expedition[]>([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('')
@@ -119,13 +119,45 @@ const Profile = () => {
     };
 
 
+    const [notifications, setNotifications] = useState<Message[]>([])
+    const [news, setNews] = useState<Message[]>([])
+
+    useEffect(() => {
+        const getMessages = async () => {
+            if (user) {
+                try {
+                    const [notificationsResponse, newsResponse] = await Promise.all([
+                        axios.get<Message[]>(`http://localhost:8081/cons_messages?user=` + user.id, {
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                            }
+                        }),
+                        axios.get<Message[]>(`http://localhost:8081/last_messages`, {
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                            }
+                        })
+                    ])
+                    setNotifications(notificationsResponse.data)
+                    setNews(newsResponse.data)
+                } catch (e) {
+                    setError('Ошибка при получении новостей...')
+                }
+            }
+        }
+
+        getMessages()
+
+    }, [user]);
+
+
     if (loading) return <Load/>
     if (error) return <ErrorPage error={error}/>
 
     return (
         <Container
             fluid
-            className="d-flex flex-column px-0 bg-image-profile mb-0 "
+            className="d-flex flex-column px-0 bg-image-profile mb-0 flex-row"
             style={{
                 fontFamily: "'Rubik', sans-serif",
                 minWidth: "100vw",
@@ -139,9 +171,9 @@ const Profile = () => {
                     aboutShadow={false} profileShadow={true}
                     contactsShadow={false}/>
 
-            <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center ">
+            <Row className="d-flex mt-4 mx-3 g-4 align-items-start justify-content-center">
                 <Col md={6} lg={5} className="pe-lg-3">
-                    <div className="p-4 rounded-3 pb-0" style={{
+                    <div className="p-4 rounded-3 pb-0 mb-4" style={{
                         backgroundColor: "rgba(45,45,45,0.75)",
                         border: "1px solid #3D3D3D"
                     }}>
@@ -154,7 +186,7 @@ const Profile = () => {
                             </h2>
                             <Button
                                 variant="outline-warning"
-                                onClick={()=>setExpCreate(true)}
+                                onClick={() => setExpCreate(true)}
                                 className='add-car-button'
                                 style={{
                                     borderColor: "#DAA520",
@@ -171,12 +203,12 @@ const Profile = () => {
                                     <motion.ul
                                         key={expId}
                                         layoutId={`exp-${exp.id}`}
-                                        initial={{ opacity: 0,  x: direction === "right" ? -25 : 25 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: direction === "right" ? 25 : -25 }}
-                                        transition={{ duration: 0.75 }}
+                                        initial={{opacity: 0, x: direction === "right" ? -25 : 25}}
+                                        animate={{opacity: 1, x: 0}}
+                                        exit={{opacity: 0, x: direction === "right" ? 25 : -25}}
+                                        transition={{duration: 0.75}}
                                         className="list"
-                                        style={{width:'100%', padding:'0', margin:'0', overflow:'hidden'}}
+                                        style={{width: '100%', padding: '0', margin: '0', overflow: 'hidden'}}
                                     >
                                         <Button
                                             key={exp.id}
@@ -188,8 +220,9 @@ const Profile = () => {
                                             }}
                                             onClick={() => handleExpButton(exp)}
                                         >
-                                            <span className="d-block" style={{ color: "#DAA520" }}>{exp.name}</span>
-                                            <small className="text-muted">Даты: {new Date(exp.starts_at).toLocaleString('ru-RU', {
+                                            <span className="d-block" style={{color: "#DAA520"}}>{exp.name}</span>
+                                            <small
+                                                className="text-muted">Даты: {new Date(exp.starts_at).toLocaleString('ru-RU', {
                                                 timeZone: 'Europe/Moscow',
                                                 day: '2-digit',
                                                 month: '2-digit',
@@ -209,9 +242,9 @@ const Profile = () => {
                             <ReactPaginate
                                 className='pagination'
                                 previousLabel={currentPage > 0 ? <FaChevronLeft
-                                    color='floralwhite' size='15' style={{paddingBottom:'2px'}}/> : null}
+                                    color='floralwhite' size='15' style={{paddingBottom: '2px'}}/> : null}
                                 nextLabel={currentPage < pageCount - 1 ? <FaChevronRight
-                                    color='floralwhite' size='15' style={{paddingBottom:'2px'}}/> : null}
+                                    color='floralwhite' size='15' style={{paddingBottom: '2px'}}/> : null}
                                 pageCount={pageCount}
                                 marginPagesDisplayed={0}
                                 pageRangeDisplayed={0}
@@ -223,14 +256,13 @@ const Profile = () => {
                     </div>
                     <ExpeditionCrew show={showExpChoice} disabledExp={canNotUpdateExp} disabledCrew={canNotUpdateCrew}
                                     driverId={driverId}
-                                    onHide={()=> {
+                                    onHide={() => {
                                         setExpChoice(false);
                                         fetchUser();
                                     }}
                                     expeditionId={expId}/>
-                </Col>
 
-                <Col md={6} lg={5} className="ps-lg-3">
+
                     <div className="p-4 rounded-3" style={{
                         backgroundColor: "rgba(45,45,45,0.75)",
                         border: "1px solid #3D3D3D"
@@ -268,25 +300,55 @@ const Profile = () => {
                                     }}
                                     onClick={() => handleCarUpdate(car.id)}
                                 >
-                                    <span className="d-block" style={{ color: "#B0B0B0" }}>{car.name}</span>
+                                    <span className="d-block" style={{color: "#B0B0B0"}}>{car.name}</span>
                                 </Button>
                             ))}
-                            <UpdateCar show={showCarUpdate} onHide={()=>setCarUpdate(false)} id={carId} />
+                            <UpdateCar show={showCarUpdate} onHide={() => setCarUpdate(false)} id={carId}/>
                         </div>
                     </div>
-                    <AddCarModal show={showCarCreate} onHide={()=> {setCarCreate(false)}}/>
+                    <AddCarModal show={showCarCreate} onHide={() => {
+                        setCarCreate(false)
+                    }}/>
                 </Col>
-                {isMobile && showExpCreate ?
-                    <AddExpeditionMobile show={showExpCreate} onHide={()=>{setExpCreate(false)}}/> :
-                    <AddExpedition show={showExpCreate} onHide={()=>{
-                        setExpCreate(false)
-                        fetchUser()
-                    }}/>}
-            </Row>
 
-            <Contacts/>
-        </Container>
-    )
+                <Col md={6} lg={5} className="ps-lg-3">
+                    <div className="p-4 rounded-3 pb-4 mb-2" style={{
+                        backgroundColor: "rgba(45,45,45,0.75)",
+                        border: "1px solid #3D3D3D"
+                    }}>
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h2 className="flex-text" style={{
+                                fontFamily: "'Rubik', sans-serif",
+                                color: "#DAA520",
+                            }}>
+                                Новости
+                            </h2>
+                        </div>
+
+                        <div className="d-grid gap-2 bg-dark rounded-2 p-3"
+                             style={{
+                                 backgroundColor: "rgba(45,45,45,0.9)",
+                             }}
+                        >
+                            Уведомления
+                        </div>
+                    </div>
+                </Col>
+
+
+                {isMobile && showExpCreate ?
+                    <AddExpeditionMobile show={showExpCreate} onHide={() => {
+                        setExpCreate(false)
+                    }}/> :
+                <AddExpedition show={showExpCreate} onHide={() => {
+                    setExpCreate(false)
+                    fetchUser()
+                }}/>}
+        </Row>
+
+    <Contacts/>
+</Container>
+)
 
 }
 

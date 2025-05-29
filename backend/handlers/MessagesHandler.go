@@ -62,6 +62,23 @@ func (h *MessagesHandler) GetByConsumer(c *gin.Context) {
 	}
 }
 
+func (h *MessagesHandler) GetByProducer(c *gin.Context) {
+	key := c.Query("user")
+	if key != "" {
+		id, err := strconv.Atoi(key)
+		if err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+			return
+		}
+		message, err := h.Service.GetMessagesByProducer(id)
+		if err != nil {
+			c.String(http.StatusNotFound, err.Error())
+			return
+		}
+		c.JSON(http.StatusOK, &message)
+	}
+}
+
 func (h *MessagesHandler) GetLastTen(c *gin.Context) {
 	message, err := h.Service.GetMessagesLastTen()
 	if err != nil {
@@ -109,7 +126,8 @@ func (h *MessagesHandler) DeleteMessage(c *gin.Context) {
 
 func (h *MessagesHandler) RegisterRoutes(router *gin.RouterGroup) *gin.RouterGroup {
 	router.POST("/message", h.CreateMessage)
-	router.GET("/users_messages", h.GetByConsumer)
+	router.GET("/cons_messages", h.GetByConsumer)
+	router.GET("/prod_messages", h.GetByProducer)
 	router.GET("/last_messages", h.GetLastTen)
 	router.GET("/message", h.GetById)
 	router.DELETE("/messages", h.DeleteMessage)

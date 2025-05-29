@@ -82,11 +82,11 @@ func main() {
 		AllowOrigins:           []string{os.Getenv("FRONTEND")},
 		AllowMethods:           []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowCredentials:       true,
-		AllowWildcard:          true,
 		AllowBrowserExtensions: false,
 		AllowWebSockets:        true,
 		AllowFiles:             true,
 	}
+
 	router.Use(cors.New(corsConfig))
 	auth.Use(cors.New(corsConfig))
 
