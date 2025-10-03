@@ -1,4 +1,0 @@
-port: "8081"
-db:
-#  dsn: "postgres://melnikvv:120999@localhost:5432/gorm_travel"
-  dsn: "postgresql://traveldb_er5l_user:n4edXzeVq9iF62uZX6IrZYahoEvAY9kd@dpg-d1bud3je5dus73f0128g-a.frankfurt-postgres.render.com/traveldb_er5l"
