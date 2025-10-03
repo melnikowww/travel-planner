@@ -1,0 +1,72 @@
+### Общие системные файлы ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+~$*
+
+### Логи и временные файлы ###
+*.log
+*.tmp
+*.bak
+*.backup
+
+### Java ###
+# Скомпилированные файлы
+*.class
+*.jar
+*.war
+*.ear
+
+# Файлы сборки
+target/
+build/
+bin/
+out/
+
+# Логи IDE
+.idea/
+*.iml
+
+### TypeScript/JavaScript ###
+# Зависимости
+node_modules/
+jspm_packages/
+
+# Скомпилированные файлы
+dist/
+*.js
+*.js.map
+*.d.ts
+
+# Настройки
+.eslintcache
+.tsbuildinfo
+
+# Конфигурации
+.eslintrc.js
+.prettierrc.js
+
+### Docker ###
+docker-compose.override.yml
+.env
+.env.local
+
+### IDE ###
+.vscode/
+.idea/
+
+### Тесты ###
+coverage/
+.nyc_output/
+
+### Другое ###
+# Файлы с секретами
+*.key
+*.pem
+*.cert
+*.secret
+
+# Автогенерируемые файлы
+*.swagger.json

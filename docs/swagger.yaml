@@ -1,0 +1,1194 @@
+basePath: /
+definitions:
+  models.Car:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Toyota Land Cruiser 100
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Crew:
+    properties:
+      car_id:
+        example: 13
+        type: integer
+      driver_id:
+        example: 1
+        type: integer
+      equipment:
+        items:
+          $ref: '#/definitions/models.Equipment'
+        type: array
+      expedition_id:
+        example: 1
+        type: integer
+      goods:
+        items:
+          $ref: '#/definitions/models.Good'
+        type: array
+      id:
+        example: 1
+        type: integer
+    type: object
+  models.Equipment:
+    properties:
+      crew_id:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: GPS Navigator
+        type: string
+    type: object
+  models.Expedition:
+    properties:
+      creator_id:
+        type: integer
+      crews:
+        items:
+          $ref: '#/definitions/models.Crew'
+        type: array
+      description:
+        example: Good vibes only
+        type: string
+      ends_at:
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Karjala
+        type: string
+      points:
+        items:
+          $ref: '#/definitions/models.Point'
+        type: array
+      starts_at:
+        type: string
+    type: object
+  models.Good:
+    properties:
+      crew_id:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: First Aid Kit
+        type: string
+    type: object
+  models.Point:
+    properties:
+      expedition_id:
+        type: integer
+      id:
+        example: 1
+        type: integer
+      location:
+        example: 69.164529, 35.138287
+        type: string
+      name:
+        example: Teriberka
+        type: string
+    type: object
+  models.User:
+    properties:
+      cars:
+        items:
+          $ref: '#/definitions/models.Car'
+        type: array
+      crews:
+        items:
+          $ref: '#/definitions/models.Crew'
+        type: array
+      email:
+        example: alex@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      imageSrc:
+        type: string
+      name:
+        example: Alex
+        type: string
+      password:
+        example: password
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  title: Travel Planner
+  version: "1.0"
+paths:
+  /cars:
+    delete:
+      description: Удаление автомобиля по идентификатору
+      parameters:
+      - description: Идентификатор автомобиля
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Автомобиль успешно удален
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+      summary: Удалить автомобиль
+      tags:
+      - Автомобили
+    get:
+      description: Получить список всех автомобилей или конкретный автомобиль по ID
+      parameters:
+      - description: Идентификатор автомобиля (необязательно)
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное получение автомобиля
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "404":
+          description: Автомобиль не найден
+          schema:
+            type: string
+      summary: Получить автомобиль(и)
+      tags:
+      - Автомобили
+    patch:
+      consumes:
+      - application/json
+      description: Частичное обновление данных автомобиля
+      parameters:
+      - description: Идентификатор автомобиля
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: car
+        required: true
+        schema:
+          $ref: '#/definitions/models.Car'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Автомобиль успешно обновлен
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: Некорректный ID или данные
+          schema:
+            type: string
+        "404":
+          description: Автомобиль не найден
+          schema:
+            type: string
+      summary: Обновить автомобиль
+      tags:
+      - Автомобили
+    post:
+      consumes:
+      - application/json
+      description: Добавить новый автомобиль в базу данных
+      parameters:
+      - description: Данные автомобиля
+        in: body
+        name: car
+        required: true
+        schema:
+          $ref: '#/definitions/models.Car'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Автомобиль успешно создан
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: Некорректные входные данные
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Создать автомобиль
+      tags:
+      - Автомобили
+  /crew:
+    get:
+      description: Поиск экипажа по связке водитель-экспедиция
+      parameters:
+      - description: ID водителя
+        in: query
+        name: driver_id
+        required: true
+        type: integer
+      - description: ID экспедиции
+        in: query
+        name: expedition_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные экипажа
+          schema:
+            $ref: '#/definitions/models.Crew'
+        "400":
+          description: Некорректные параметры
+          schema:
+            type: string
+        "404":
+          description: Экипаж не найден
+          schema:
+            type: string
+      summary: Найти экипаж по водителю и экспедиции
+      tags:
+      - Экипажи
+  /crews:
+    delete:
+      description: Удаление экипажа. Требуются права создателя.
+      parameters:
+      - description: ID экипажа
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Экипаж удален
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "403":
+          description: Доступ запрещен
+          schema:
+            type: string
+        "404":
+          description: Экипаж не найден
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить экипаж
+      tags:
+      - Экипажи
+    get:
+      description: Возвращает список всех экипажей или конкретный экипаж по ID
+      parameters:
+      - description: ID экипажа
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные экипажа
+          schema:
+            $ref: '#/definitions/models.Crew'
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Экипаж не найден
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Получить экипажи
+      tags:
+      - Экипажи
+    patch:
+      consumes:
+      - application/json
+      description: Обновление данных экипажа. Требуются права создателя.
+      parameters:
+      - description: ID экипажа
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Обновленные данные
+        in: body
+        name: crew
+        required: true
+        schema:
+          $ref: '#/definitions/models.Crew'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленный экипаж
+          schema:
+            $ref: '#/definitions/models.Crew'
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "403":
+          description: Доступ запрещен
+          schema:
+            type: string
+        "404":
+          description: Экипаж не найден
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Обновить экипаж
+      tags:
+      - Экипажи
+    post:
+      consumes:
+      - application/json
+      description: Создание нового экипажа. Требуется авторизация водителя.
+      parameters:
+      - description: Данные экипажа
+        in: body
+        name: crew
+        required: true
+        schema:
+          $ref: '#/definitions/models.Crew'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданный экипаж
+          schema:
+            $ref: '#/definitions/models.Crew'
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "401":
+          description: Неавторизованный доступ
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Создать экипаж
+      tags:
+      - Экипажи
+  /equip:
+    delete:
+      description: Удалить снаряжение по ID
+      parameters:
+      - description: ID снаряжения
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Снаряжение удалено
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "409":
+          description: Ошибка удаления
+          schema:
+            type: string
+      summary: Удалить снаряжение
+      tags:
+      - Снаряжение
+    get:
+      description: Получить список всего снаряжения или конкретный экземпляр по ID
+      parameters:
+      - description: ID снаряжения
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список снаряжения
+          schema:
+            items:
+              $ref: '#/definitions/models.Equipment'
+            type: array
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "404":
+          description: Снаряжение не найдено
+          schema:
+            type: string
+      summary: Получить снаряжение
+      tags:
+      - Снаряжение
+    patch:
+      consumes:
+      - application/json
+      description: Частичное обновление данных снаряжения
+      parameters:
+      - description: ID снаряжения
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Обновляемые поля
+        in: body
+        name: equipment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Equipment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленное снаряжение
+          schema:
+            $ref: '#/definitions/models.Equipment'
+        "400":
+          description: Неверные данные
+          schema:
+            type: string
+        "404":
+          description: Снаряжение не найдено
+          schema:
+            type: string
+        "409":
+          description: Ошибка обновления
+          schema:
+            type: string
+      summary: Обновить снаряжение
+      tags:
+      - Снаряжение
+    post:
+      consumes:
+      - application/json
+      description: Создать новое снаряжение
+      parameters:
+      - description: Данные снаряжения
+        in: body
+        name: equipment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Equipment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданное снаряжение
+          schema:
+            $ref: '#/definitions/models.Equipment'
+        "400":
+          description: Ошибка валидации
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Создать снаряжение
+      tags:
+      - Снаряжение
+  /expedition_drivers:
+    get:
+      description: Возвращает список водителей для указанной экспедиции
+      parameters:
+      - description: ID экспедиции
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список водителей
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Экспедиция не найдена
+          schema:
+            type: string
+      summary: Получить водителей экспедиции
+      tags:
+      - Экспедиции
+  /expeditions:
+    delete:
+      description: Удаление экспедиции. Требуются права создателя.
+      parameters:
+      - description: ID экспедиции
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Экспедиция удалена
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "403":
+          description: Доступ запрещен
+          schema:
+            type: string
+        "404":
+          description: Экспедиция не найдена
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Удалить экспедицию
+      tags:
+      - Экспедиции
+    get:
+      description: Возвращает список всех экспедиций или конкретную экспедицию по
+        ID
+      parameters:
+      - description: ID экспедиции
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные экспедиции
+          schema:
+            $ref: '#/definitions/models.Expedition'
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Экспедиция не найдена
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Получить экспедиции
+      tags:
+      - Экспедиции
+    patch:
+      consumes:
+      - application/json
+      description: Обновление данных экспедиции. Требуются права создателя.
+      parameters:
+      - description: ID экспедиции
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Обновляемые данные
+        in: body
+        name: expedition
+        required: true
+        schema:
+          $ref: '#/definitions/models.Expedition'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленные данные
+          schema:
+            $ref: '#/definitions/models.Expedition'
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "403":
+          description: Доступ запрещен
+          schema:
+            type: string
+        "404":
+          description: Экспедиция не найдена
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Обновить экспедицию
+      tags:
+      - Экспедиции
+    post:
+      consumes:
+      - application/json
+      description: Создание новой экспедиции. Требуются права авторизованного пользователя.
+      parameters:
+      - description: Данные экспедиции
+        in: body
+        name: expedition
+        required: true
+        schema:
+          $ref: '#/definitions/models.Expedition'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданная экспедиция
+          schema:
+            $ref: '#/definitions/models.Expedition'
+        "400":
+          description: Ошибка валидации данных
+          schema:
+            type: string
+        "401":
+          description: Неавторизованный доступ
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Создать экспедицию
+      tags:
+      - Экспедиции
+  /goods:
+    delete:
+      description: Удаление позиции продукта по ID
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Успешное удаление
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Не найдено
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Удалить позицию
+      tags:
+      - Продукты
+    get:
+      description: Получение списка всех продуктов или конкретной позиции по ID
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Конкретная позиция
+          schema:
+            $ref: '#/definitions/models.Good'
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "404":
+          description: Не найдено
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить список продуктов
+      tags:
+      - Продукты
+    patch:
+      consumes:
+      - application/json
+      description: Обновление существующей позиции (частичное обновление)
+      parameters:
+      - description: ID продукта
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/models.Good'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная позиция
+          schema:
+            $ref: '#/definitions/models.Good'
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "404":
+          description: Не найдено
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Обновить позицию
+      tags:
+      - Продукты
+    post:
+      consumes:
+      - application/json
+      description: Создание новой позиции продуктов
+      parameters:
+      - description: Данные продукта
+        in: body
+        name: good
+        required: true
+        schema:
+          $ref: '#/definitions/models.Good'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданная позиция
+          schema:
+            $ref: '#/definitions/models.Good'
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "409":
+          description: Конфликт - позиция уже существует
+          schema:
+            type: string
+      summary: Создать новую позицию
+      tags:
+      - Продукты
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Аутентификация пользователя по email и паролю с получением JWT
+        токена
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT токен
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректный запрос
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Неверные учетные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка генерации токена
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Войти в систему
+      tags:
+      - Аутентификация
+  /points:
+    delete:
+      description: Удаление точки по ID
+      parameters:
+      - description: ID точки
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Точка удалена
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "404":
+          description: Точка не найдена
+          schema:
+            type: string
+      summary: Удалить точку
+      tags:
+      - Контрольные точки
+    get:
+      description: Получить все точки или конкретную точку по ID
+      parameters:
+      - description: ID точки
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ для одной точки
+          schema:
+            $ref: '#/definitions/models.Point'
+        "400":
+          description: Неверный ID
+          schema:
+            type: string
+        "404":
+          description: Точка не найдена
+          schema:
+            type: string
+      summary: Получить точку/точки
+      tags:
+      - Контрольные точки
+    patch:
+      consumes:
+      - application/json
+      description: Частичное или полное обновление данных точки
+      parameters:
+      - description: ID точки
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Обновленные данные
+        in: body
+        name: point
+        required: true
+        schema:
+          $ref: '#/definitions/models.Point'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная точка
+          schema:
+            $ref: '#/definitions/models.Point'
+        "400":
+          description: Неверные данные
+          schema:
+            type: string
+        "404":
+          description: Точка не найдена
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Обновить точку
+      tags:
+      - Контрольные точки
+    post:
+      consumes:
+      - application/json
+      description: Добавление новой географической точки
+      parameters:
+      - description: Данные точки
+        in: body
+        name: point
+        required: true
+        schema:
+          $ref: '#/definitions/models.Point'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданная точка
+          schema:
+            $ref: '#/definitions/models.Point'
+        "400":
+          description: Неверный формат данных
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Создать новую точку
+      tags:
+      - Контрольные точки
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя в системе. Пароль автоматически
+        хешируется.
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданный пользователь
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Некорректные входные данные
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Конфликт данных (пользователь существует)
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать пользователя
+      tags:
+      - Аутентификация
+  /upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Загрузка изображения аватара пользователя. Файл будет автоматически
+        переименован в формат "avatar_<user_id>.jpg"
+      parameters:
+      - description: Файл изображения (jpg, png, gif)
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение об успешной загрузке
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Ошибка при получении файла
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка при сохранении файла
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Загрузить аватар пользователя
+      tags:
+      - Файлы
+  /user:
+    get:
+      description: Поиск пользователя по email
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь удален
+        "401":
+          description: Ошибка поиска
+          schema:
+            type: string
+      summary: Найти пользователя по email
+      tags:
+      - Пользователи
+  /user-to-exp:
+    get:
+      description: Возвращает список всех экспедиций, связанных с текущим авторизованным
+        пользователем
+      parameters:
+      - description: Токен авторизации
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список экспедиций
+          schema:
+            items:
+              $ref: '#/definitions/models.Expedition'
+            type: array
+        "400":
+          description: Ошибка при получении данных
+          schema:
+            type: string
+        "401":
+          description: Неавторизованный доступ
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Получить экспедиции пользователя
+      tags:
+      - Экспедиции
+  /users:
+    delete:
+      description: Удаление пользователя по ID
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Пользователь удален
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
+          schema:
+            type: string
+      summary: Удалить пользователя
+      tags:
+      - Пользователи
+    get:
+      description: Возвращает конкретного пользователя по ID или всех пользователей,
+        если ID не указан
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные пользователя
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
+          schema:
+            type: string
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            type: string
+      summary: Получить пользователя/пользователей
+      tags:
+      - Пользователи
+    patch:
+      consumes:
+      - application/json
+      description: Частичное обновление данных пользователя. Пароль будет автоматически
+        хеширован.
+      parameters:
+      - description: ID пользователя
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Обновляемые данные
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленные данные
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
+          schema:
+            type: string
+        "409":
+          description: Конфликт данных
+          schema:
+            type: string
+      summary: Обновить пользователя
+      tags:
+      - Пользователи
+swagger: "2.0"
