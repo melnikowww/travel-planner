@@ -88,6 +88,7 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers, u
         }
     };
 
+    // Показывает список экипажей, где есть свободные места
     const joinCrew = async () => {
         setShowChoice(false)
         setJoinCrew(true)
@@ -153,8 +154,8 @@ const CrewChoice: React.FC<ModalProps> = ({ show, onHide, expedition, drivers, u
         }
     }
 
+    // Создает заявку на участие в экипаже
     const sendCrewRequest = async (requestData: typeof crewRequest) => {
-        console.log(requestData);
         try {
             await axios.post<Message>("http://localhost:8081/message",
                 requestData, {

@@ -35,7 +35,7 @@ func (r *MessagesRepository) GetMessagesByProducer(id int) ([]*models.Message, e
 
 func (r *MessagesRepository) GetMessagesLastTen() ([]*models.Message, error) {
 	var messages []*models.Message
-	err := r.DB.Where("type=?", "News").Find(&messages).Order("created_at").Limit(10).Error
+	err := r.DB.Where("type IN ?", []string{"News", "NewExpedition"}).Find(&messages).Order("created_at").Limit(10).Error
 	return messages, err
 }
 

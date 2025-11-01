@@ -5,7 +5,7 @@ import FormItem from "antd/es/form/FormItem";
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import {YMaps, Map, Placemark} from '@pbe/react-yandex-maps';
 import axios from "axios";
-import {Crew, Expedition, Point, User} from "../../types.ts";
+import {Crew, Expedition, Message, MessageType, Point, Status, User} from "../../types.ts";
 import { debounce } from "lodash";
 import {GetPopupContainer} from "antd/es/table/interface";
 import type { Dayjs } from 'dayjs';
@@ -181,6 +181,18 @@ const AddExpedition: React.FC<Props> = (({show, onHide}) => {
                     expedition_id: response.data.id
                 },
                 {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    }
+                })
+            await axios.post<Message>("http://localhost:8081/message",
+                {
+                    type: MessageType.NewExpedition,
+                    status: Status.Active,
+                    description: expeditionData.description,
+                    expeditionName: expeditionData.name,
+                    producerName: user.data.name
+                }, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                     }

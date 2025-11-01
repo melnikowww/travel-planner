@@ -325,7 +325,7 @@ const Profile = () => {
 
                             <div>
                                 {news?.map((n) => (
-                                    <div className="d-grid gap-2 bg-dark rounded-2 p-3"
+                                    <div className="d-grid gap-2 bg-dark rounded-2 p-3 mb-2"
                                          style={{
                                              backgroundColor: "rgba(45,45,45,0.9)",
                                          }}>
